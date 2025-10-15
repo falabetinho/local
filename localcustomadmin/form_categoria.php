@@ -51,6 +51,10 @@ $category = null;
 
 if ($editing) {
     $category = $DB->get_record('course_categories', ['id' => $id], '*', MUST_EXIST);
+    // Debug: verificar se a categoria foi carregada corretamente
+    if (debugging()) {
+        debugging('Category loaded: ID=' . $category->id . ', Parent=' . $category->parent . ', Name=' . $category->name);
+    }
     $PAGE->set_title(get_string('edit_category', 'local_localcustomadmin'));
 } else {
     $PAGE->set_title(get_string('add_category', 'local_localcustomadmin'));
@@ -88,9 +92,36 @@ class category_form extends moodleform {
         $parent_options = [0 => get_string('top')];
         
         if ($categories) {
+            $current_category_id = null;
+            $current_category_path = null;
+            
+            // Get current category info if editing
+            if ($editing && isset($customdata['category'])) {
+                $current_category_id = $customdata['category']->id;
+                $current_category_path = isset($customdata['category']->path) ? $customdata['category']->path : '';
+            }
+            
             foreach ($categories as $catid => $catname) {
                 // Don't allow a category to be its own parent or child
-                if (!$editing || ($catid != $category->id && strpos($category->path, '/' . $catid . '/') === false)) {
+                $exclude = false;
+                
+                if ($editing && $current_category_id) {
+                    // Exclude self
+                    if ($catid == $current_category_id) {
+                        $exclude = true;
+                    }
+                    
+                    // Exclude children (categories that have current category in their path)
+                    if (!$exclude) {
+                        $child_category = $DB->get_record('course_categories', ['id' => $catid], 'path');
+                        if ($child_category && $child_category->path && 
+                            strpos($child_category->path, '/' . $current_category_id . '/') !== false) {
+                            $exclude = true;
+                        }
+                    }
+                }
+                
+                if (!$exclude) {
                     $parent_options[$catid] = format_string($catname);
                 }
             }
@@ -164,26 +195,42 @@ $form = new category_form(null, [
 ]);
 
 // Set default data
+$formdata = new stdClass();
+$formdata->modal = $modal;
+
 if ($category) {
     // Prepare file areas
     $draftitemid = file_get_submitted_draft_itemid('categoryimage');
     file_prepare_draft_area($draftitemid, $context->id, 'coursecat', 'description', $category->id,
         ['subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 1]);
     
-    $category->categoryimage = $draftitemid;
-    
-    // Prepare description editor
-    $category->description_editor = [
+    // Prepare all form data
+    $formdata->id = $category->id;
+    $formdata->name = $category->name;
+    $formdata->parent = isset($category->parent) ? (int)$category->parent : 0; // Ensure parent is set correctly
+    $formdata->categoryimage = $draftitemid;
+    $formdata->description_editor = [
         'text' => $category->description,
         'format' => $category->descriptionformat
     ];
     
-    $form->set_data($category);
+    // Debug output to verify data
+    if (debugging()) {
+        debugging('Setting form parent to: ' . $category->parent);
+        debugging('Form data parent value: ' . $formdata->parent);
+    }
+    
 } else if ($parent) {
-    $form->set_data(['parent' => $parent]);
+    $formdata->parent = $parent;
 }
 
-$form->set_data(['modal' => $modal]);
+// Debug final formdata before setting
+if (debugging()) {
+    debugging('Final formdata parent before set_data: ' . (isset($formdata->parent) ? $formdata->parent : 'NOT SET'));
+}
+
+// Set all data at once
+$form->set_data($formdata);
 
 // Handle form submission
 if ($form->is_cancelled()) {

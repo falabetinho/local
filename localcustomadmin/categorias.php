@@ -49,6 +49,61 @@ $sql = "SELECT cc.id, cc.name, cc.description, cc.parent, cc.coursecount, cc.dep
 
 $categories = $DB->get_records_sql($sql);
 
+/**
+ * Build hierarchical category structure for dropdown
+ */
+function build_category_hierarchy($categories) {
+    $hierarchy = [];
+    $indexed = [];
+    
+    // First, index all categories by ID
+    foreach ($categories as $category) {
+        $indexed[$category->id] = (object)[
+            'id' => $category->id,
+            'name' => $category->name,
+            'parent' => $category->parent,
+            'depth' => $category->depth,
+            'courses_count' => $category->courses_count,
+            'subcategories_count' => $category->subcategories_count,
+            'children' => []
+        ];
+    }
+    
+    // Build hierarchy
+    foreach ($indexed as $category) {
+        if ($category->parent == 0) {
+            $hierarchy[] = $category;
+        } else {
+            if (isset($indexed[$category->parent])) {
+                $indexed[$category->parent]->children[] = $category;
+            }
+        }
+    }
+    
+    return $hierarchy;
+}
+
+/**
+ * Flatten hierarchy for dropdown display
+ */
+function flatten_hierarchy($hierarchy, $level = 0) {
+    $flat = [];
+    foreach ($hierarchy as $category) {
+        $category->display_name = str_repeat('└ ', $level) . $category->name;
+        $category->level = $level;
+        $flat[] = $category;
+        
+        if (!empty($category->children)) {
+            $flat = array_merge($flat, flatten_hierarchy($category->children, $level + 1));
+        }
+    }
+    return $flat;
+}
+
+// Build hierarchical structure
+$category_hierarchy = build_category_hierarchy($categories);
+$flat_categories = flatten_hierarchy($category_hierarchy);
+
 // Prepare template context
 $templatecontext = [
     'page_description' => get_string('categories_management_desc', 'local_localcustomadmin'),
@@ -57,39 +112,30 @@ $templatecontext = [
     'back_to_courses_url' => (new moodle_url('/local/localcustomadmin/cursos.php'))->out(),
     'back_to_courses_text' => 'Voltar para Cursos',
     'categories' => [],
+    'flat_categories' => [],
     'has_categories' => !empty($categories)
 ];
 
-// Populate categories data
-foreach ($categories as $category) {
+// Use flat categories for both table and accordion
+$category_count = count($flat_categories);
+foreach ($flat_categories as $index => $category) {
     $edit_url = new moodle_url('/local/localcustomadmin/form_categoria.php', ['id' => $category->id]);
     
-    // Build category path for better visualization
-    $category_path = '';
-    if ($category->depth > 1) {
-        $path_parts = explode('/', trim($category->path, '/'));
-        $parent_names = [];
-        foreach ($path_parts as $path_id) {
-            if ($path_id != $category->id && isset($categories[$path_id])) {
-                $parent_names[] = $categories[$path_id]->name;
-            }
-        }
-        if (!empty($parent_names)) {
-            $category_path = implode(' > ', $parent_names) . ' > ';
-        }
-    }
+    // Get original category data for parent info
+    $original_category = $categories[$category->id];
     
     $templatecontext['categories'][] = [
         'id' => $category->id,
         'name' => format_string($category->name),
-        'description' => format_text($category->description, FORMAT_HTML),
-        'full_path' => $category_path . format_string($category->name),
+        'display_name' => $category->display_name,
         'courses_count' => $category->courses_count,
         'subcategories_count' => $category->subcategories_count,
-        'depth' => $category->depth,
+        'depth' => $category->level + 1, // Adjust for template compatibility
         'edit_url' => $edit_url->out(),
-        'parent_id' => $category->parent,
-        'is_root' => $category->depth == 1
+        'parent_id' => $original_category->parent,
+        'is_root' => $category->level == 0,
+        'level' => $category->level,
+        'is_last' => ($index === $category_count - 1)
     ];
 }
 
