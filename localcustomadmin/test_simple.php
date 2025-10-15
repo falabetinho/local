@@ -33,7 +33,6 @@ $PAGE->set_url(new moodle_url('/local/localcustomadmin/test_simple.php'));
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title('String Test');
-$PAGE->set_heading('String Test');
 
 echo $OUTPUT->header();
 

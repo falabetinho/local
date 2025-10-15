@@ -38,7 +38,6 @@ echo $OUTPUT->header();
 
 // Prepare template context data
 $templatecontext = [
-    'pagetitle' => get_string('localcustomadmin', 'local_localcustomadmin'),
     'welcome_message' => get_string('welcome', 'local_localcustomadmin'),
     'cards' => []
 ];

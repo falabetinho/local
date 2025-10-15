@@ -34,7 +34,6 @@ $PAGE->set_url(new moodle_url('/local/localcustomadmin/cursos.php'));
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('courses_management', 'local_localcustomadmin'));
-$PAGE->set_heading(get_string('courses_management', 'local_localcustomadmin'));
 
 // Add navigation breadcrumb
 $PAGE->navbar->add(get_string('localcustomadmin', 'local_localcustomadmin'), '/local/localcustomadmin/index.php');
@@ -64,7 +63,6 @@ $popularcourses = $DB->get_records_sql($sql, [SITEID], 0, 10);
 
 // Prepare template context
 $templatecontext = [
-    'pagetitle' => get_string('courses_management', 'local_localcustomadmin'),
     'statistics' => [
         [
             'title' => get_string('total_courses', 'local_localcustomadmin'),
@@ -119,7 +117,7 @@ $templatecontext['actions'] = [
     [
         'title' => get_string('manage_categories', 'local_localcustomadmin'),
         'description' => get_string('manage_categories_desc', 'local_localcustomadmin'),
-        'url' => (new moodle_url('/course/management.php'))->out(),
+        'url' => (new moodle_url('/local/localcustomadmin/categorias.php'))->out(),
         'icon' => 'fa-sitemap',
         'variant' => 'secondary'
     ],

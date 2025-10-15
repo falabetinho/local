@@ -19,7 +19,6 @@ $PAGE->set_url(new moodle_url('/local/localcustomadmin/debug_strings.php'));
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title('Debug Language Strings');
-$PAGE->set_heading('Debug Language Strings');
 
 echo $OUTPUT->header();
 

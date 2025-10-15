@@ -41,6 +41,16 @@ $string['admindashboard'] = 'Administrative Dashboard';
 $string['adminsettings'] = 'Administrative Settings';
 $string['courses_management'] = 'Courses Management';
 
+// Categories Management.
+$string['categories'] = 'Categories';
+$string['categories_management'] = 'Categories Management';
+$string['categories_management_desc'] = 'Manage course categories, view statistics and organize your educational content structure.';
+$string['add_category'] = 'Add Category';
+$string['edit_category'] = 'Edit Category';
+$string['view_subcategories'] = 'View Subcategories';
+$string['no_categories'] = 'No categories found';
+$string['create_first_category'] = 'Create first category';
+
 // Messages.
 $string['welcome'] = 'Welcome to Local Custom Admin';
 $string['nopermission'] = 'You do not have permission to access this page.';
