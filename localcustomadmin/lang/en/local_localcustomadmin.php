@@ -39,13 +39,38 @@ $string['courses'] = 'Courses';
 // Page titles.
 $string['admindashboard'] = 'Administrative Dashboard';
 $string['adminsettings'] = 'Administrative Settings';
+$string['courses_management'] = 'Courses Management';
 
 // Messages.
-$string['welcome'] = 'Welcome ';
+$string['welcome'] = 'Welcome to Local Custom Admin';
 $string['nopermission'] = 'You do not have permission to access this page.';
 $string['notfound'] = 'Page not found.';
 $string['success'] = 'Operation completed successfully.';
 $string['error'] = 'An error occurred while processing your request.';
+
+// Template strings.
+$string['no_admin_tools'] = 'No administrative tools are currently available for your user role.';
+
+// Card descriptions.
+$string['dashboard_desc'] = 'Access the administrative dashboard to view system statistics and quick actions.';
+$string['settings_desc'] = 'Configure and manage administrative settings for the plugin.';
+$string['courses_desc'] = 'Manage and monitor all courses in the system';
+
+// Button texts.
+$string['open_dashboard'] = 'Open Dashboard';
+$string['open_settings'] = 'Open Settings';
+$string['open_courses'] = 'Open Courses';
+
+// Course related strings.
+$string['total_courses'] = 'Total Courses';
+$string['visible_courses'] = 'Visible Courses';
+$string['hidden_courses'] = 'Hidden Courses';
+$string['create_course'] = 'Create Course';
+$string['create_course_desc'] = 'Create a new course in the system';
+$string['manage_categories'] = 'Manage Categories';
+$string['manage_categories_desc'] = 'Organize courses into categories';
+$string['course_backups'] = 'Course Backups';
+$string['course_backups_desc'] = 'Restore courses from backup files';
 
 // Privacy API.
 $string['privacy:metadata'] = 'The Local Custom Admin plugin does not store any personal data.';

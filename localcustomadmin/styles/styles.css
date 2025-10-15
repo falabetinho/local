@@ -1,0 +1,133 @@
+/**
+ * Custom styles for Local Custom Admin plugin
+ *
+ * @package    local_localcustomadmin
+ * @copyright  2025 Your Name
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* Main container styling */
+.local-customadmin-index {
+    padding: 20px 0;
+}
+
+.local-customadmin-index .lead {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+/* Card enhancements */
+.local-customadmin-index .card {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,.125);
+}
+
+.local-customadmin-index .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15) !important;
+}
+
+.local-customadmin-index .card-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid rgba(0,0,0,.125);
+}
+
+.local-customadmin-index .card-title {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.local-customadmin-index .card-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Button styling */
+.local-customadmin-index .btn-block {
+    width: 100%;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.local-customadmin-index .btn-block:hover {
+    text-decoration: none;
+}
+
+/* Icon styling */
+.local-customadmin-index .card-header i {
+    margin-bottom: 0;
+}
+
+/* Alert styling */
+.local-customadmin-index .alert {
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+/* Course page specific styles */
+.local-customadmin-cursos {
+    padding: 20px 0;
+}
+
+.local-customadmin-cursos .lead {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.local-customadmin-cursos .card {
+    transition: all 0.3s ease;
+}
+
+.local-customadmin-cursos .card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,.1);
+}
+
+.local-customadmin-cursos .badge {
+    font-size: 0.875rem;
+}
+
+.local-customadmin-cursos .alert-light {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+}
+
+/* Course list styling */
+.local-customadmin-cursos .course-item {
+    border-left: 4px solid #007bff;
+    transition: border-color 0.3s ease;
+}
+
+.local-customadmin-cursos .course-item:hover {
+    border-left-color: #0056b3;
+}
+
+/* Quick actions section */
+.local-customadmin-cursos .quick-actions .card {
+    border: 1px solid rgba(0,0,0,.125);
+}
+
+.local-customadmin-cursos .quick-actions .card:hover {
+    border-color: rgba(0,123,255,.25);
+}
+
+/* Responsive design */
+@media (max-width: 576px) {
+    .local-customadmin-index {
+        padding: 15px 10px;
+    }
+    
+    .local-customadmin-index .lead {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .local-customadmin-cursos {
+        padding: 15px 10px;
+    }
+    
+    .local-customadmin-cursos .lead {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+}

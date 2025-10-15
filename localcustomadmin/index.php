@@ -29,21 +29,55 @@ require_login();
 $context = context_system::instance();
 require_capability('local/localcustomadmin:view', $context);
 
-// SOLUTION: Use string instead of moodle_url object to avoid state conflicts
-$PAGE->set_url('/local/localcustomadmin/index.php');
+$PAGE->set_url(new moodle_url('/local/localcustomadmin/index.php'));
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('localcustomadmin', 'local_localcustomadmin'));
-$PAGE->set_heading(get_string('localcustomadmin', 'local_localcustomadmin'));
 
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading(get_string('welcome', 'local_localcustomadmin'));
+// Prepare template context data
+$templatecontext = [
+    'pagetitle' => get_string('localcustomadmin', 'local_localcustomadmin'),
+    'welcome_message' => get_string('welcome', 'local_localcustomadmin'),
+    'cards' => []
+];
 
-// Simple card layout
-echo html_writer::start_div('row');
+// Dashboard card - always available
+$templatecontext['cards'][] = [
+    'title' => get_string('dashboard', 'local_localcustomadmin'),
+    'description' => get_string('dashboard_desc', 'local_localcustomadmin'),
+    'url' => (new moodle_url('/local/localcustomadmin/dashboard.php'))->out(),
+    'btntext' => get_string('open_dashboard', 'local_localcustomadmin'),
+    'icon' => 'fa-tachometer-alt'
+];
 
+// Courses card - always available
+$templatecontext['cards'][] = [
+    'title' => get_string('courses', 'local_localcustomadmin'),
+    'description' => get_string('courses_desc', 'local_localcustomadmin'),
+    'url' => (new moodle_url('/local/localcustomadmin/cursos.php'))->out(),
+    'btntext' => get_string('open_courses', 'local_localcustomadmin'),
+    'icon' => 'fa-graduation-cap'
+];
 
-echo html_writer::end_div(); // row
+// Settings card - only for managers
+if (has_capability('local/localcustomadmin:manage', $context)) {
+    $templatecontext['cards'][] = [
+        'title' => get_string('settings', 'local_localcustomadmin'),
+        'description' => get_string('settings_desc', 'local_localcustomadmin'),
+        'url' => (new moodle_url('/local/localcustomadmin/settings.php'))->out(),
+        'btntext' => get_string('open_settings', 'local_localcustomadmin'),
+        'icon' => 'fa-cog'
+    ];
+}
+
+// Check if no cards are available
+if (empty($templatecontext['cards'])) {
+    $templatecontext['no_cards'] = true;
+}
+
+// Render the template
+echo $OUTPUT->render_from_template('local_localcustomadmin/index', $templatecontext);
 
 echo $OUTPUT->footer();

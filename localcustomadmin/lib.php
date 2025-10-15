@@ -25,6 +25,37 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Serves the plugin files.
+ *
+ * @param stdClass $course The course object
+ * @param stdClass $cm The course module object
+ * @param stdClass $context The context
+ * @param string $filearea The name of the file area
+ * @param array $args Extra arguments (itemid, path)
+ * @param bool $forcedownload Whether or not force download
+ * @param array $options Additional options affecting the file serving
+ * @return bool False if the file not found, just send the file otherwise and do not return anything
+ */
+function local_localcustomadmin_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+    // No files to serve currently.
+    return false;
+}
+
+/**
+ * Hook to add custom CSS to pages.
+ *
+ * @return void
+ */
+function local_localcustomadmin_before_http_headers() {
+    global $PAGE;
+    
+    // Add custom CSS for local_localcustomadmin pages
+    if (strpos($PAGE->url->get_path(), '/local/localcustomadmin/') === 0) {
+        $PAGE->requires->css('/local/localcustomadmin/styles/styles.css');
+    }
+}
+
+/**
  * Add nodes to the admin tree.
  *
  * @param admin_root $adminroot Admin root object.
