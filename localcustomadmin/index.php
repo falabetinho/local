@@ -60,6 +60,17 @@ $templatecontext['cards'][] = [
     'icon' => 'fa-graduation-cap'
 ];
 
+// Users card - only for managers
+if (has_capability('local/localcustomadmin:manage', $context)) {
+    $templatecontext['cards'][] = [
+        'title' => get_string('users', 'local_localcustomadmin'),
+        'description' => get_string('users_desc', 'local_localcustomadmin'),
+        'url' => (new moodle_url('/local/localcustomadmin/usuarios.php'))->out(),
+        'btntext' => get_string('open_users', 'local_localcustomadmin'),
+        'icon' => 'fa-users'
+    ];
+}
+
 // Settings card - only for managers
 if (has_capability('local/localcustomadmin:manage', $context)) {
     $templatecontext['cards'][] = [

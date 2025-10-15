@@ -48,6 +48,12 @@ $string['settings'] = 'Settings';
 $string['users'] = 'Users';
 $string['courses'] = 'Courses';
 
+// Users management strings
+$string['users_management'] = 'Users Management';
+$string['users_management_desc'] = 'Manage and view system users with advanced filtering options.';
+$string['users_desc'] = 'Comprehensive user management with filtering and actions.';
+$string['open_users'] = 'Manage Users';
+
 // Page titles.
 $string['admindashboard'] = 'Administrative Dashboard';
 $string['adminsettings'] = 'Administrative Settings';
