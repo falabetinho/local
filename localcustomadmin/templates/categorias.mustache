@@ -5,11 +5,8 @@
     
     <!-- Add Category Button -->
     <div class="mb-4">
-        <button type="button" class="btn btn-primary" id="add-category-btn" data-url="{{add_category_modal_url}}">
+        <a href="{{add_category_url}}" class="btn btn-primary">
             <i class="fas fa-plus-circle me-2"></i>{{add_category_text}}
-        </button>
-        <a href="{{add_category_modal_url}}" class="btn btn-outline-primary ms-2" id="add-category-fallback">
-            <i class="fas fa-plus-circle me-2"></i>{{add_category_text}} (Direct)
         </a>
     </div>
     
@@ -75,12 +72,10 @@
                                         <i class="fas fa-eye"></i>
                                     </button>
                                     {{/subcategories_count}}
-                                    <button type="button" class="btn btn-outline-primary edit-category-modal" 
-                                            data-url="{{edit_modal_url}}" 
-                                            data-category-name="{{name}}" 
-                                            title="Editar Categoria">
+                                    <a href="{{edit_url}}" class="btn btn-outline-primary btn-sm" 
+                                       title="Editar Categoria">
                                         <i class="fas fa-edit"></i>
-                                    </button>
+                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -108,116 +103,3 @@
     </div>
 </div>
 
-{{#js}}
-require(['jquery', 'core/modal'], function($, Modal) {
-    
-    console.log('JavaScript loaded successfully');
-    console.log('jQuery available:', typeof $);
-    console.log('Modal available:', typeof Modal);
-    
-function showCategoryModal(url, title) {
-        console.log('Creating modal with title:', title);
-        
-        return Modal.create({
-            title: title,
-            body: '<div class="text-center p-4"><i class="fa fa-spinner fa-spin fa-2x text-primary"></i><br><div class="mt-2">Loading form...</div></div>',
-            large: true,
-            show: true
-        }).then(function(modal) {
-            console.log('Modal created successfully:', modal);
-            
-            // Load content via AJAX
-            var modalUrl = url + (url.indexOf('?') > -1 ? '&modal=1' : '?modal=1');
-            $.get(modalUrl)
-                .done(function(response) {
-                    modal.setBody(response);
-                    
-                    // Handle form submission directly
-                    var modalBody = modal.getBody();
-                    modalBody.on('submit', 'form', function(e) {
-                        e.preventDefault();
-                        var form = $(this);
-                        
-                        var submitBtn = form.find('input[type="submit"]');
-                        var originalText = submitBtn.val();
-                        submitBtn.val('Saving...').prop('disabled', true);
-                        
-                        $.ajax({
-                            url: form.attr('action') || window.location.href,
-                            method: 'POST',
-                            data: new FormData(form[0]),
-                            processData: false,
-                            contentType: false,
-                            success: function(formResponse) {
-                                if (formResponse.indexOf('alert-success') !== -1) {
-                                    modal.hide();
-                                    setTimeout(function() {
-                                        window.location.reload();
-                                    }, 500);
-                                } else {
-                                    modal.setBody(formResponse);
-                                }
-                            },
-                            error: function() {
-                                modal.setBody('<div class="alert alert-danger">Error saving category. Please try again.</div>');
-                            },
-                            complete: function() {
-                                submitBtn.val(originalText).prop('disabled', false);
-                            }
-                        });
-                    });
-                    
-                    // Handle cancel button
-                    modalBody.on('click', 'input[name="cancel"]', function(e) {
-                        e.preventDefault();
-                        modal.hide();
-                    });
-                    
-                })
-                .fail(function() {
-                    modal.setBody('<div class="alert alert-danger">Error loading form. Please try again.</div>');
-                });
-            
-            return modal;
-        }).catch(function(error) {
-            console.error('Error creating modal:', error);
-            alert('Erro ao criar modal: ' + error.message);
-        });
-    }
-    
-    // Wait for DOM to be ready
-    $(document).ready(function() {
-        console.log('DOM ready');
-        console.log('Add button exists:', $('#add-category-btn').length);
-        console.log('Edit buttons exist:', $('.edit-category-modal').length);
-    });
-    
-    $(document).on('click', '#add-category-btn', function(e) {
-        e.preventDefault();
-        console.log('Add category button clicked');
-        var url = $(this).data('url');
-        console.log('URL:', url);
-        if (url) {
-            showCategoryModal(url, 'Add New Category');
-        } else {
-            console.error('No URL found for modal');
-            alert('Erro: URL não encontrada para o modal');
-        }
-    });
-    
-    $(document).on('click', '.edit-category-modal', function(e) {
-        e.preventDefault();
-        console.log('Edit category button clicked');
-        var url = $(this).data('url');
-        var categoryName = $(this).data('category-name');
-        console.log('URL:', url, 'Category:', categoryName);
-        if (url) {
-            showCategoryModal(url, 'Edit Category: ' + categoryName);
-        } else {
-            console.error('No URL found for edit modal');
-            alert('Erro: URL não encontrada para o modal de edição');
-        }
-    });
-
-});
-{{/js}}

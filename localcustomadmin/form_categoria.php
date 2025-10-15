@@ -313,6 +313,16 @@ if ($modal) {
 
 echo '<div class="category-form-container">';
 
+// Add back button
+if (!$modal) {
+    $back_url = new moodle_url('/local/localcustomadmin/categorias.php');
+    echo '<div class="mb-3">';
+    echo '<a href="' . $back_url . '" class="btn btn-secondary">';
+    echo '<i class="fas fa-arrow-left me-2"></i>' . get_string('back') . ' ' . get_string('categories', 'local_localcustomadmin');
+    echo '</a>';
+    echo '</div>';
+}
+
 if ($editing) {
     echo '<h3><i class="fas fa-edit me-2"></i>' . get_string('edit_category', 'local_localcustomadmin') . ': ' . format_string($category->name) . '</h3>';
 } else {
@@ -325,6 +335,51 @@ echo '</div>';
 
 if ($modal) {
     echo '</div>';
+    // Add JavaScript to initialize file managers and other Moodle components
+    echo '<script>
+    // Initialize file managers after modal content is loaded
+    $(document).ready(function() {
+        // Re-initialize any file managers
+        if (window.M && window.M.util && window.M.util.init_filemanager) {
+            $(".filemanager").each(function() {
+                var options = $(this).data("options");
+                if (options) {
+                    try {
+                        window.M.util.init_filemanager(options);
+                    } catch (e) {
+                        console.log("File manager init error:", e);
+                    }
+                }
+            });
+        }
+        
+        // Re-initialize form elements
+        if (window.M && window.M.core && window.M.core.init_skiplink) {
+            window.M.core.init_skiplink();
+        }
+        
+        // Initialize any HTML editors
+        if (window.M && window.M.editor_atto) {
+            $("textarea[data-fieldtype=editor]").each(function() {
+                var id = $(this).attr("id");
+                if (id && !$(this).data("editor-initialized")) {
+                    try {
+                        $(this).data("editor-initialized", true);
+                    } catch (e) {
+                        console.log("Editor init error:", e);
+                    }
+                }
+            });
+        }
+        
+        // Trigger Moodle form initialization
+        if (window.M && window.M.util && window.M.util.js_complete) {
+            setTimeout(function() {
+                window.M.util.js_complete();
+            }, 100);
+        }
+    });
+    </script>';
 }
 
 echo $OUTPUT->footer();

@@ -29,6 +29,18 @@ $string['localcustomadmin'] = 'Local Custom Admin';
 $string['localcustomadmin:view'] = 'View Local Custom Admin';
 $string['localcustomadmin:manage'] = 'Manage Local Custom Admin';
 
+// Modal form strings
+$string['addcategory'] = 'Add Category';
+$string['editcategory'] = 'Edit Category';
+$string['categoryname'] = 'Category Name';
+$string['categoryimage'] = 'Category Image';
+$string['categoryimage_help'] = 'Upload an image to represent this category';
+$string['categorysaved'] = 'Category saved successfully';
+$string['categoryupdated'] = 'Category updated successfully';
+$string['categoryadded'] = 'Category added successfully';
+$string['categorynameexists'] = 'A category with this name already exists at this level';
+$string['idnumberexists'] = 'A category with this ID number already exists';
+
 // General strings.
 $string['administration'] = 'Administration';
 $string['dashboard'] = 'Dashboard';
