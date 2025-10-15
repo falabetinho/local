@@ -50,6 +50,9 @@ $string['edit_category'] = 'Edit Category';
 $string['view_subcategories'] = 'View Subcategories';
 $string['no_categories'] = 'No categories found';
 $string['create_first_category'] = 'Create first category';
+$string['category_created'] = 'Category created successfully';
+$string['category_updated'] = 'Category updated successfully';
+$string['category_deleted'] = 'Category deleted successfully';
 
 // Messages.
 $string['welcome'] = 'Welcome to Local Custom Admin';

@@ -53,6 +53,7 @@ $categories = $DB->get_records_sql($sql);
 $templatecontext = [
     'page_description' => get_string('categories_management_desc', 'local_localcustomadmin'),
     'add_category_url' => (new moodle_url('/course/editcategory.php'))->out(),
+    'add_category_modal_url' => (new moodle_url('/local/localcustomadmin/form_categoria.php'))->out(),
     'add_category_text' => get_string('add_category', 'local_localcustomadmin'),
     'back_to_courses_url' => (new moodle_url('/local/localcustomadmin/cursos.php'))->out(),
     'back_to_courses_text' => 'Voltar para Cursos',
@@ -63,6 +64,7 @@ $templatecontext = [
 // Populate categories data
 foreach ($categories as $category) {
     $edit_url = new moodle_url('/course/editcategory.php', ['id' => $category->id]);
+    $edit_modal_url = new moodle_url('/local/localcustomadmin/form_categoria.php', ['id' => $category->id]);
     
     // Build category path for better visualization
     $category_path = '';
@@ -88,6 +90,7 @@ foreach ($categories as $category) {
         'subcategories_count' => $category->subcategories_count,
         'depth' => $category->depth,
         'edit_url' => $edit_url->out(),
+        'edit_modal_url' => $edit_modal_url->out(),
         'parent_id' => $category->parent,
         'is_root' => $category->depth == 1
     ];
