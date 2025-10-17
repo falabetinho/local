@@ -1,0 +1,17 @@
+{
+  "name": "local-localcustomadmin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Moodle local plugin: development tooling (Grunt watcher)",
+  "license": "UNLICENSED",
+  "scripts": {
+    "watch": "grunt watch",
+    "start": "grunt",
+    "amd": "grunt amd"
+  },
+  "devDependencies": {
+    "grunt": "^1.6.1",
+    "grunt-contrib-uglify": "^5.2.2",
+    "grunt-contrib-watch": "^1.1.0"
+  }
+}
