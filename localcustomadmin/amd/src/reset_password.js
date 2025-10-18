@@ -1,8 +1,5 @@
-define(['core/modal_save_cancel', 
-    'core/str', 
-    'core/ajax',
-    'core/notification'], 
-    function(ModalSaveCancel, Str, Ajax, Notification){
+define(['jquery', 'core/modal_factory', 'core/str', 'core/ajax', 'core/notification'], 
+    function($, ModalFactory, Str, Ajax, Notification){
     'use strict';
 
     /**
@@ -10,87 +7,72 @@ define(['core/modal_save_cancel',
      * @param {number} userId ID do usuário
      */
     const open = function(userId) {
-        // Log para debug
         console.log('[reset_password.open] Called with userId:', userId);
         
-        // Obtém as strings do modal primeiro
-        Promise.all([
+        // Carrega as strings
+        const promises = [
             Str.get_string('resetpassword', 'local_localcustomadmin'),
-            getBody()
-        ]).then(function(results) {
-            const title = results[0];
-            const body = results[1];
-
-            // Cria o modal usando modal_save_cancel
-            const modal = new ModalSaveCancel({
-                title: title,
-                body: body,
-                buttons: {
-                    save: Str.get_string('save', 'core'),
-                    cancel: Str.get_string('cancel', 'core')
-                }
-            });
-            
-            // Armazena o userId no modal para uso posterior
-            modal.userId = userId;
-            
-            // Configura o botão Salvar
-            modal.getRoot().on(modal.events.save, function(e) {
-                e.preventDefault();
-                handleSubmit(modal);
-            });
-            
-            // Mostra o modal
-            modal.show();
-            
-            return modal;
-        }).catch(function(error) {
-            console.error('[reset_password.open] Error:', error);
-            Notification.addNotification({
-                message: 'Erro ao abrir o modal de reset de senha',
-                type: 'danger'
-            });
-        });
-    };
-
-    /**
-     * Retorna o corpo do modal (formulário)
-     * @return {Promise}
-     */
-    const getBody = function() {
-        return Promise.all([
             Str.get_string('newpassword', 'local_localcustomadmin'),
             Str.get_string('confirmpassword', 'local_localcustomadmin'),
             Str.get_string('passwordmustmatch', 'local_localcustomadmin'),
             Str.get_string('passwordempty', 'local_localcustomadmin')
-        ]).then(function(strings) {
-            const newPasswordLabel = strings[0];
-            const confirmPasswordLabel = strings[1];
-            const matchErrorMsg = strings[2];
-            const emptyErrorMsg = strings[3];
+        ];
+        
+        $.when.apply($, promises).done(function(title, newPasswordLabel, confirmPasswordLabel, matchErrorMsg, emptyErrorMsg) {
+            console.log('[reset_password.open] Strings loaded');
             
-            const bodyHtml = `
+            // Cria o HTML do modal
+            const bodyHtml = $(`
                 <div class="reset-password-form">
-                    <div class="mb-3">
+                    <div class="form-group mb-3">
                         <label for="newPassword" class="form-label">${newPasswordLabel}</label>
-                        <input type="password" class="form-control" id="newPassword" 
-                               placeholder="Digite a nova senha" required>
-                        <small class="form-text text-muted">
-                            ${emptyErrorMsg}
-                        </small>
+                        <input type="password" class="form-control" id="newPassword" required>
+                        <small class="form-text text-muted">${emptyErrorMsg}</small>
                     </div>
-                    <div class="mb-3">
+                    <div class="form-group mb-3">
                         <label for="confirmPassword" class="form-label">${confirmPasswordLabel}</label>
-                        <input type="password" class="form-control" id="confirmPassword" 
-                               placeholder="Confirme a nova senha" required>
+                        <input type="password" class="form-control" id="confirmPassword" required>
                     </div>
                     <div id="passwordError" class="alert alert-danger d-none" role="alert">
                         ${matchErrorMsg}
                     </div>
                 </div>
-            `;
+            `);
             
-            return bodyHtml;
+            // Cria o modal
+            ModalFactory.create({
+                type: ModalFactory.types.SAVE_CANCEL,
+                title: title,
+                body: bodyHtml
+            }).done(function(modal) {
+                console.log('[reset_password.open] Modal created successfully');
+                
+                // Armazena o userId no modal
+                modal.userId = userId;
+                
+                // Configura evento no botão Salvar
+                const root = modal.getRoot();
+                root.on('click', '[data-action="save"]', function(e) {
+                    e.preventDefault();
+                    console.log('[reset_password.open] Save button clicked');
+                    handleSubmit(modal);
+                });
+                
+                // Mostra o modal
+                modal.show();
+            }).fail(function(error) {
+                console.error('[reset_password.open] Modal creation failed:', error);
+                Notification.addNotification({
+                    message: 'Erro ao criar o modal',
+                    type: 'danger'
+                });
+            });
+        }).fail(function(error) {
+            console.error('[reset_password.open] Error loading strings:', error);
+            Notification.addNotification({
+                message: 'Erro ao carregar strings',
+                type: 'danger'
+            });
         });
     };
 
@@ -102,26 +84,28 @@ define(['core/modal_save_cancel',
         console.log('[reset_password.handleSubmit] Starting submit');
         
         const root = modal.getRoot();
-        const newPassword = root[0].querySelector('#newPassword').value;
-        const confirmPassword = root[0].querySelector('#confirmPassword').value;
-        const errorDiv = root[0].querySelector('#passwordError');
+        const newPassword = root.find('#newPassword').val().trim();
+        const confirmPassword = root.find('#confirmPassword').val().trim();
+        const errorDiv = root.find('#passwordError');
         
-        // Valida se as senhas estão vazias
-        if (!newPassword.trim() || !newPassword.trim()) {
-            errorDiv.classList.remove('d-none');
+        // Valida senhas vazias
+        if (!newPassword || !confirmPassword) {
+            errorDiv.removeClass('d-none');
+            console.log('[reset_password.handleSubmit] Passwords are empty');
             return;
         }
         
         // Valida se as senhas conferem
         if (newPassword !== confirmPassword) {
-            errorDiv.classList.remove('d-none');
+            errorDiv.removeClass('d-none');
+            console.log('[reset_password.handleSubmit] Passwords do not match');
             return;
         }
         
-        // Remove mensagem de erro se houver
-        errorDiv.classList.add('d-none');
+        // Remove mensagem de erro
+        errorDiv.addClass('d-none');
         
-        console.log('[reset_password.handleSubmit] Passwords validated, sending to server');
+        console.log('[reset_password.handleSubmit] Sending to server - userId:', modal.userId);
         
         // Chama o webservice
         Ajax.call([{
@@ -132,25 +116,20 @@ define(['core/modal_save_cancel',
             },
             done: function(response) {
                 console.log('[reset_password.handleSubmit] Success:', response);
-                
                 Notification.addNotification({
                     message: 'Senha alterada com sucesso!',
                     type: 'success'
                 });
-                
-                // Aguarda um pouco antes de fechar para a notificação ser vista
                 setTimeout(function() {
                     modal.destroy();
                 }, 1500);
             },
             fail: function(error) {
                 console.error('[reset_password.handleSubmit] Error:', error);
-                
                 let errorMessage = 'Erro ao alterar a senha. Tente novamente.';
                 if (error && error.error) {
                     errorMessage = error.error;
                 }
-                
                 Notification.addNotification({
                     message: errorMessage,
                     type: 'danger'
