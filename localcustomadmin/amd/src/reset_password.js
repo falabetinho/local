@@ -107,9 +107,10 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/ajax', 'core/notificat
         
         console.log('[reset_password.handleSubmit] Sending to server - userId:', modal.userId);
         
-        // Chama o webservice
+        // Chama o webservice via POST
         Ajax.call([{
             methodname: 'local_localcustomadmin_reset_password',
+            method: 'post',
             args: {
                 userid: modal.userId,
                 password: newPassword
