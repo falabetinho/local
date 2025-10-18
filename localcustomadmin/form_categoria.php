@@ -127,14 +127,14 @@ class category_form extends moodleform {
             }
         }
         
-        $mform->addElement('select', 'parent', get_string('categoryparent', 'core'), $parent_options);
-        $mform->addHelpButton('parent', 'categoryparent', 'core');
+        $mform->addElement('select', 'parent', get_string('categoryparent', 'local_localcustomadmin'), $parent_options);
+        $mform->addHelpButton('parent', 'categoryparent', 'local_localcustomadmin');
         
         // Category description
-        $mform->addElement('editor', 'description_editor', get_string('categorydescription', 'core'), 
+        $mform->addElement('editor', 'description_editor', get_string('categorydescription', 'local_localcustomadmin'), 
             ['rows' => 10], ['maxfiles' => EDITOR_UNLIMITED_FILES, 'noclean' => true, 'context' => $customdata['context']]);
         $mform->setType('description_editor', PARAM_RAW);
-        $mform->addHelpButton('description_editor', 'categorydescription', 'core');
+        $mform->addHelpButton('description_editor', 'categorydescription', 'local_localcustomadmin');
         
         // Category image
         $mform->addElement('filemanager', 'categoryimage', get_string('categoryimage', 'core'), null,
@@ -157,8 +157,8 @@ class category_form extends moodleform {
                     $theme_options[$key] = get_string('pluginname', 'theme_' . $key);
                 }
             }
-            $mform->addElement('select', 'theme', get_string('categorytheme', 'core'), $theme_options);
-            $mform->addHelpButton('theme', 'categorytheme', 'core');
+            $mform->addElement('select', 'theme', get_string('categorytheme', 'local_localcustomadmin'), $theme_options);
+            $mform->addHelpButton('theme', 'categorytheme', 'local_localcustomadmin');
         }
         
         // Action buttons
@@ -181,7 +181,7 @@ class category_form extends moodleform {
         }
         
         if ($DB->record_exists_sql($sql, $params)) {
-            $errors['name'] = get_string('categoryduplicate', 'core');
+            $errors['name'] = get_string('categoryduplicate', 'local_localcustomadmin');
         }
         
         return $errors;
@@ -269,7 +269,7 @@ if ($form->is_cancelled()) {
             // Clear cache
             cache_helper::purge_by_event('changesincoursecat');
             
-            $message = get_string('categoryupdated', 'core');
+            $message = get_string('categoryupdated', 'local_localcustomadmin');
             
         } else {
             // Create new category
@@ -315,7 +315,7 @@ if ($form->is_cancelled()) {
             // Clear cache
             cache_helper::purge_by_event('changesincoursecat');
             
-            $message = get_string('categorycreated', 'core');
+            $message = get_string('categorycreated', 'local_localcustomadmin');
         }
         
         if ($modal) {
