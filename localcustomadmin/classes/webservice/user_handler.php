@@ -26,10 +26,10 @@ namespace local_localcustomadmin\webservice;
 
 defined('MOODLE_INTERNAL') || die();
 
-use external_api;
-use external_function_parameters;
-use external_single_structure;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 use moodle_exception;
 
 /**
@@ -99,10 +99,10 @@ class user_handler extends external_api {
 
         // Trigger event
         $event = \core\event\user_password_updated::create(array(
-            'objectid' => $user->id,
             'relateduserid' => $user->id,
             'context' => $context,
-            'userid' => $USER->id
+            'userid' => $USER->id,
+            'other' => array('forgottenreset' => 0)
         ));
         $event->trigger();
 
