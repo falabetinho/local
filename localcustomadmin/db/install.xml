@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/localcustomadmin/db" VERSION="2025101801" COMMENT="XMLDB file for local_localcustomadmin plugin">
+    <TABLES>
+        <TABLE NAME="local_customadmin_category_prices" COMMENT="Table to store course category prices">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" />
+                <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" />
+                <FIELD NAME="price" TYPE="float" NOTNULL="true" />
+                <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="enddate" TYPE="int" LENGTH="10" NOTNULL="true" />
+                <FIELD NAME="ispromotional" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" />
+                <FIELD NAME="isenrollmentfee" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" />
+                <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" COMMENT="0 = Inactive, 1 = Active" />
+                <FIELD NAME="scheduledtask" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" COMMENT="0 = No, 1 = Yes" />
+                <FIELD NAME="installments" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" COMMENT="Number of payment installments" />
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" />
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+                <KEY NAME="categoryid" TYPE="foreign" FIELDS="categoryid" REFTABLE="course_categories" REFFIELDS="id" />
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="categoryid_idx" UNIQUE="false" FIELDS="categoryid" />
+                <INDEX NAME="status_idx" UNIQUE="false" FIELDS="status" />
+            </INDEXES>
+        </TABLE>
+    </TABLES>
+</XMLDB>

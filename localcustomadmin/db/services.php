@@ -34,5 +34,45 @@ $functions = array(
         'ajax'         => true,
         'loginrequired' => true,
         'capabilities' => 'local/localcustomadmin:manage'
+    ),
+    'local_localcustomadmin_get_category_prices' => array(
+        'classname'    => 'local_localcustomadmin\webservice\price_handler',
+        'methodname'   => 'get_category_prices',
+        'classpath'    => 'local/localcustomadmin/classes/webservice/price_handler.php',
+        'description'  => 'Get prices for a category',
+        'type'         => 'read',
+        'ajax'         => true,
+        'loginrequired' => true,
+        'capabilities' => 'local/localcustomadmin:manage'
+    ),
+    'local_localcustomadmin_create_category_price' => array(
+        'classname'    => 'local_localcustomadmin\webservice\price_handler',
+        'methodname'   => 'create_category_price',
+        'classpath'    => 'local/localcustomadmin/classes/webservice/price_handler.php',
+        'description'  => 'Create a new category price',
+        'type'         => 'write',
+        'ajax'         => true,
+        'loginrequired' => true,
+        'capabilities' => 'local/localcustomadmin:manage'
+    ),
+    'local_localcustomadmin_update_category_price' => array(
+        'classname'    => 'local_localcustomadmin\webservice\price_handler',
+        'methodname'   => 'update_category_price',
+        'classpath'    => 'local/localcustomadmin/classes/webservice/price_handler.php',
+        'description'  => 'Update a category price',
+        'type'         => 'write',
+        'ajax'         => true,
+        'loginrequired' => true,
+        'capabilities' => 'local/localcustomadmin:manage'
+    ),
+    'local_localcustomadmin_delete_category_price' => array(
+        'classname'    => 'local_localcustomadmin\webservice\price_handler',
+        'methodname'   => 'delete_category_price',
+        'classpath'    => 'local/localcustomadmin/classes/webservice/price_handler.php',
+        'description'  => 'Delete a category price',
+        'type'         => 'write',
+        'ajax'         => true,
+        'loginrequired' => true,
+        'capabilities' => 'local/localcustomadmin:manage'
     )
 );

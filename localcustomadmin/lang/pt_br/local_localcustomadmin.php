@@ -120,3 +120,42 @@ $string['stringsloaderror'] = 'Erro ao carregar strings de idioma.';
 
 // Privacy API
 $string['privacy:metadata'] = 'O plugin Admin Personalizado Local não armazena dados pessoais.';
+
+// Category pricing management strings
+$string['categoryprices'] = 'Preços de Categorias';
+$string['categoryprices_management'] = 'Gerenciamento de Preços de Categorias';
+$string['categoryprices_management_desc'] = 'Gerencie preços de categorias, descontos e taxas de inscrição.';
+$string['add_price'] = 'Adicionar Preço';
+$string['edit_price'] = 'Editar Preço';
+$string['delete_price'] = 'Deletar Preço';
+$string['pricename'] = 'Nome do Preço';
+$string['pricevalue'] = 'Valor do Preço';
+$string['startdate'] = 'Data de Início';
+$string['enddate'] = 'Data de Fim';
+$string['ispromotional'] = 'É Promocional';
+$string['isenrollmentfee'] = 'É Taxa de Inscrição';
+$string['nofees'] = 'Sem taxas';
+$string['status'] = 'Status';
+$string['active'] = 'Ativo';
+$string['inactive'] = 'Inativo';
+$string['installments'] = 'Número de Parcelas';
+$string['pricecreatorsuccess'] = 'Preço criado com sucesso!';
+$string['priceupdatesuccess'] = 'Preço atualizado com sucesso!';
+$string['pricedeletesuccess'] = 'Preço deletado com sucesso!';
+$string['pricedeletefailed'] = 'Falha ao deletar preço.';
+
+// Validation error strings
+$string['errorcategoryid'] = 'ID da categoria é obrigatório';
+$string['errorcategorynotfound'] = 'Categoria não encontrada';
+$string['errorname'] = 'Nome do preço é obrigatório';
+$string['errornametoolong'] = 'Nome do preço não deve exceder 255 caracteres';
+$string['errorprice'] = 'Valor do preço é obrigatório';
+$string['errorpriceinvalid'] = 'Preço deve ser um número positivo válido';
+$string['errorstartdateinvalid'] = 'Data de início deve ser um timestamp válido';
+$string['errorenddateinvalid'] = 'Data de fim deve ser um timestamp válido';
+$string['errordaterange'] = 'Data de início deve ser anterior à data de fim';
+$string['errordateoverlap'] = 'Este período de preço sobrepõe um preço ativo existente';
+$string['errorinstallments'] = 'Número de parcelas deve estar entre 0 e 12';
+$string['errorstatus'] = 'Status deve ser 0 ou 1';
+$string['errorispromotional'] = 'Flag promocional deve ser 0 ou 1';
+$string['errorisenrollmentfee'] = 'Flag de taxa de inscrição deve ser 0 ou 1';

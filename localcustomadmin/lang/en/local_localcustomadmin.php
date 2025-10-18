@@ -120,3 +120,42 @@ $string['stringsloaderror'] = 'Error loading language strings.';
 
 // Privacy API.
 $string['privacy:metadata'] = 'The Local Custom Admin plugin does not store any personal data.';
+
+// Category pricing management strings
+$string['categoryprices'] = 'Category Prices';
+$string['categoryprices_management'] = 'Category Pricing Management';
+$string['categoryprices_management_desc'] = 'Manage category prices, discounts, and enrollment fees.';
+$string['add_price'] = 'Add Price';
+$string['edit_price'] = 'Edit Price';
+$string['delete_price'] = 'Delete Price';
+$string['pricename'] = 'Price Name';
+$string['pricevalue'] = 'Price Value';
+$string['startdate'] = 'Start Date';
+$string['enddate'] = 'End Date';
+$string['ispromotional'] = 'Is Promotional';
+$string['isenrollmentfee'] = 'Is Enrollment Fee';
+$string['nofees'] = 'No fees';
+$string['status'] = 'Status';
+$string['active'] = 'Active';
+$string['inactive'] = 'Inactive';
+$string['installments'] = 'Number of Installments';
+$string['pricecreatorsuccess'] = 'Price created successfully!';
+$string['priceupdatesuccess'] = 'Price updated successfully!';
+$string['pricedeletesuccess'] = 'Price deleted successfully!';
+$string['pricedeletefailed'] = 'Failed to delete price.';
+
+// Validation error strings
+$string['errorcategoryid'] = 'Category ID is required';
+$string['errorcategorynotfound'] = 'Category not found';
+$string['errorname'] = 'Price name is required';
+$string['errornametoolong'] = 'Price name must not exceed 255 characters';
+$string['errorprice'] = 'Price value is required';
+$string['errorpriceinvalid'] = 'Price must be a valid positive number';
+$string['errorstartdateinvalid'] = 'Start date must be a valid timestamp';
+$string['errorenddateinvalid'] = 'End date must be a valid timestamp';
+$string['errordaterange'] = 'Start date must be before end date';
+$string['errordateoverlap'] = 'This price period overlaps with an existing active price';
+$string['errorinstallments'] = 'Number of installments must be between 0 and 12';
+$string['errorstatus'] = 'Status must be 0 or 1';
+$string['errorispromotional'] = 'Promotional flag must be 0 or 1';
+$string['errorisenrollmentfee'] = 'Enrollment fee flag must be 0 or 1';
