@@ -15,10 +15,12 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/ajax', 'core/notificat
             Str.get_string('newpassword', 'local_localcustomadmin'),
             Str.get_string('confirmpassword', 'local_localcustomadmin'),
             Str.get_string('passwordmustmatch', 'local_localcustomadmin'),
-            Str.get_string('passwordempty', 'local_localcustomadmin')
+            Str.get_string('passwordempty', 'local_localcustomadmin'),
+            Str.get_string('passwordresetsuccess', 'local_localcustomadmin'),
+            Str.get_string('passwordresetfailed', 'local_localcustomadmin')
         ];
         
-        $.when.apply($, promises).done(function(title, newPasswordLabel, confirmPasswordLabel, matchErrorMsg, emptyErrorMsg) {
+        $.when.apply($, promises).done(function(title, newPasswordLabel, confirmPasswordLabel, matchErrorMsg, emptyErrorMsg, successMsg, failureMsg) {
             console.log('[reset_password.open] Strings loaded');
             
             // Cria o HTML do modal
@@ -38,6 +40,12 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/ajax', 'core/notificat
                     </div>
                 </div>
             `);
+            
+            // Armazena as mensagens para uso posterior
+            window.resetPasswordStrings = {
+                success: successMsg,
+                failure: failureMsg
+            };
             
             // Cria o modal
             ModalFactory.create({
@@ -117,8 +125,15 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/ajax', 'core/notificat
             },
             done: function(response) {
                 console.log('[reset_password.handleSubmit] Success:', response);
+                
+                // Usa a string carregada do idioma
+                let successMessage = 'Senha alterada com sucesso!';
+                if (window.resetPasswordStrings && window.resetPasswordStrings.success) {
+                    successMessage = window.resetPasswordStrings.success;
+                }
+                
                 Notification.addNotification({
-                    message: 'Senha alterada com sucesso!',
+                    message: successMessage,
                     type: 'success'
                 });
                 setTimeout(function() {
@@ -127,10 +142,16 @@ define(['jquery', 'core/modal_factory', 'core/str', 'core/ajax', 'core/notificat
             },
             fail: function(error) {
                 console.error('[reset_password.handleSubmit] Error:', error);
+                
+                // Usa a string carregada do idioma
                 let errorMessage = 'Erro ao alterar a senha. Tente novamente.';
+                if (window.resetPasswordStrings && window.resetPasswordStrings.failure) {
+                    errorMessage = window.resetPasswordStrings.failure;
+                }
                 if (error && error.error) {
                     errorMessage = error.error;
                 }
+                
                 Notification.addNotification({
                     message: errorMessage,
                     type: 'danger'

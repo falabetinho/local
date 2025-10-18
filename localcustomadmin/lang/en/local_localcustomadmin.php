@@ -110,6 +110,13 @@ $string['confirmpassword'] = 'Confirm Password';
 $string['passwordmustmatch'] = 'The passwords do not match. Please try again.';
 $string['passwordempty'] = 'The password field cannot be empty.';
 $string['passwordchanged'] = 'Password changed successfully!';
+$string['passwordpolicyerror'] = 'The password does not meet password policy requirements.';
+$string['passwordresetalert'] = 'Alert';
+$string['resetpasswordtitle'] = 'Reset User Password';
+$string['passwordresetsuccess'] = 'Password changed successfully!';
+$string['passwordresetfailed'] = 'Error resetting password. Please try again.';
+$string['modalopenerror'] = 'Error opening password reset modal.';
+$string['stringsloaderror'] = 'Error loading language strings.';
 
 // Privacy API.
 $string['privacy:metadata'] = 'The Local Custom Admin plugin does not store any personal data.';
