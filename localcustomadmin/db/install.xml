@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/localcustomadmin/db" VERSION="2025101801" COMMENT="XMLDB file for local_localcustomadmin plugin">
+<XMLDB PATH="local/localcustomadmin/db" VERSION="2025101802" COMMENT="XMLDB file for local_localcustomadmin plugin">
     <TABLES>
         <TABLE NAME="local_customadmin_category_prices" COMMENT="Table to store course category prices">
             <FIELDS>
