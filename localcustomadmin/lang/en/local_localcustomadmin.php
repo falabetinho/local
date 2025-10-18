@@ -159,3 +159,12 @@ $string['errorinstallments'] = 'Number of installments must be between 0 and 12'
 $string['errorstatus'] = 'Status must be 0 or 1';
 $string['errorispromotional'] = 'Promotional flag must be 0 or 1';
 $string['errorisenrollmentfee'] = 'Enrollment fee flag must be 0 or 1';
+
+// Form categoria strings
+$string['back'] = 'Back';
+$string['categoryparent'] = 'Parent Category';
+$string['categorydescription'] = 'Category Description';
+$string['categorytheme'] = 'Category Theme';
+$string['categorycreated'] = 'Category created successfully';
+$string['categoryupdated'] = 'Category updated successfully';
+$string['categoryduplicate'] = 'A category with this name already exists at this level';

@@ -159,3 +159,12 @@ $string['errorinstallments'] = 'Número de parcelas deve estar entre 0 e 12';
 $string['errorstatus'] = 'Status deve ser 0 ou 1';
 $string['errorispromotional'] = 'Flag promocional deve ser 0 ou 1';
 $string['errorisenrollmentfee'] = 'Flag de taxa de inscrição deve ser 0 ou 1';
+
+// Form categoria strings
+$string['back'] = 'Voltar';
+$string['categoryparent'] = 'Categoria Pai';
+$string['categorydescription'] = 'Descrição da Categoria';
+$string['categorytheme'] = 'Tema da Categoria';
+$string['categorycreated'] = 'Categoria criada com sucesso';
+$string['categoryupdated'] = 'Categoria atualizada com sucesso';
+$string['categoryduplicate'] = 'Uma categoria com este nome já existe neste nível';
