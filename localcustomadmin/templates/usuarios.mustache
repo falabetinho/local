@@ -162,7 +162,7 @@
                                                 <i class="fas fa-graduation-cap"></i>
                                             </button>
                                             <button type="button" class="btn btn-outline-danger btn-sm" 
-                                                    title="Resetar Senha" onclick="resetUserPassword({{id}})">
+                                                    title="Resetar Senha" data-userid="{{id}}">
                                                 <i class="fas fa-key"></i>
                                             </button>
                                         </div>
@@ -283,11 +283,9 @@ function showUserCourses(userId) {
     // Future enhancement: show modal with user's courses
     alert('Visualização de cursos do usuário ID: ' + userId);
 }
-
-function resetUserPassword(userId) {
-    if (confirm('Tem certeza que deseja resetar a senha deste usuário?')) {
-        // Future enhancement: implement password reset
-        alert('Reset de senha para usuário ID: ' + userId);
-    }
-}
 </script>
+{{#js}}
+require(['local_localcustomadmin/usuarios'], function(Usuarios) {
+    Usuarios.init();
+});
+{{/js}}

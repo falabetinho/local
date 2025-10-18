@@ -103,5 +103,13 @@ $string['manage_categories_desc'] = 'Organize courses into categories';
 $string['course_backups'] = 'Course Backups';
 $string['course_backups_desc'] = 'Restore courses from backup files';
 
+// Password reset strings
+$string['resetpassword'] = 'Reset Password';
+$string['newpassword'] = 'New Password';
+$string['confirmpassword'] = 'Confirm Password';
+$string['passwordmustmatch'] = 'The passwords do not match. Please try again.';
+$string['passwordempty'] = 'The password field cannot be empty.';
+$string['passwordchanged'] = 'Password changed successfully!';
+
 // Privacy API.
 $string['privacy:metadata'] = 'The Local Custom Admin plugin does not store any personal data.';
