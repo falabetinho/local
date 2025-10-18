@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2025101801;  // YYYYMMDDHH (year, month, day, 24-hr time)
+$plugin->version   = 2025101802;  // YYYYMMDDHH (year, month, day, 24-hr time)
 $plugin->requires  = 2023100900;        // Requires this Moodle version (4.4+).
 $plugin->component = 'local_localcustomadmin'; // Full name of the plugin (used for diagnostics).
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = 'v1.8';
+$plugin->release   = 'v1.9';
