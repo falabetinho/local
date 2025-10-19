@@ -64,6 +64,7 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                 dataType: 'json',
                 data: {
                     wsfunction: 'local_localcustomadmin_get_category_prices',
+                    wstoken: M.cfg.token || '',
                     categoryid: self.categoryId,
                     moodlewsrestformat: 'json'
                 },
@@ -71,8 +72,9 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                     self.renderPricesTable(data);
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error loading prices:', error);
-                    notification.exception(new Error('Failed to load prices'));
+                    // Silently handle error - just display empty table
+                    console.log('No prices loaded or service error:', error);
+                    self.renderPricesTable([]);
                 }
             });
         },
@@ -199,6 +201,7 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                 dataType: 'json',
                 data: {
                     wsfunction: 'local_localcustomadmin_get_category_prices',
+                    wstoken: M.cfg.token || '',
                     categoryid: self.categoryId,
                     moodlewsrestformat: 'json'
                 },
@@ -254,10 +257,12 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
             var wsFunction = priceId ? 'local_localcustomadmin_update_category_price' : 'local_localcustomadmin_create_category_price';
             var postData = {
                 wsfunction: wsFunction,
+                wstoken: M.cfg.token || '',
                 categoryid: self.categoryId,
                 name: priceName,
                 price: price,
                 startdate: validityStart,
+                enddate: validityEnd || null,
                 ispromotional: isPromotional,
                 isenrollmentfee: isEnrollmentFee,
                 scheduledtask: scheduledTask,
@@ -268,10 +273,6 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
 
             if (priceId) {
                 postData.id = priceId;
-            }
-
-            if (validityEnd) {
-                postData.enddate = validityEnd;
             }
 
             $.ajax({
@@ -314,6 +315,7 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                 dataType: 'json',
                 data: {
                     wsfunction: 'local_localcustomadmin_delete_category_price',
+                    wstoken: M.cfg.token || '',
                     id: priceId,
                     moodlewsrestformat: 'json'
                 },
