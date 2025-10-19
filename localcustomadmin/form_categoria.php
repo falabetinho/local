@@ -540,6 +540,13 @@ function get_price_modal_html($category_id) {
     $html .= '</div>';
     
     $html .= '<div class="modal-body">';
+    
+    // Error/Success alert container
+    $html .= '<div id="price-alert" class="alert alert-dismissible fade" role="alert" style="display: none;">';
+    $html .= '<span id="price-alert-message"></span>';
+    $html .= '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+    $html .= '</div>';
+    
     $html .= '<form id="price-form">';
     
     $html .= '<input type="hidden" id="category_id" value="' . $category_id . '">';

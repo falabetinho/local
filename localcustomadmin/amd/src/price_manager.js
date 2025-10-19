@@ -125,6 +125,9 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
             var self = this;
             var title = priceData ? 'Edit Price' : 'Add Price';
             
+            // Clear any previous error alerts
+            self.hideErrorAlert();
+            
             $('#priceModalLabel').text(title);
             
             if (priceData) {
@@ -283,14 +286,46 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                         self.loadPrices();
                         notification.alert(priceId ? 'Price updated successfully' : 'Price created successfully', 'Success');
                     } else {
-                        notification.alert(response.error || 'Error saving price', 'Error');
+                        self.showErrorAlert(response.error || 'Error saving price');
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('Error saving price:', error);
-                    notification.exception(new Error('Failed to save price'));
+                    var errorMsg = 'Failed to save price';
+                    try {
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMsg = xhr.responseJSON.error;
+                        }
+                    } catch (e) {
+                        // Ignore parsing errors
+                    }
+                    self.showErrorAlert(errorMsg);
                 }
             });
+        },
+
+        /**
+         * Show error alert inside the modal
+         */
+        showErrorAlert: function(message) {
+            var alertEl = $('#price-alert');
+            var messageEl = $('#price-alert-message');
+            
+            messageEl.text(message);
+            alertEl.removeClass('alert-success alert-info').addClass('alert-danger');
+            alertEl.show();
+            
+            // Auto-hide after 5 seconds
+            setTimeout(function() {
+                alertEl.fadeOut();
+            }, 5000);
+        },
+
+        /**
+         * Hide alert inside the modal
+         */
+        hideErrorAlert: function() {
+            $('#price-alert').hide().removeClass('alert-danger alert-success alert-info');
         },
 
         /**
