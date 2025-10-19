@@ -65,6 +65,11 @@ try {
             $status = optional_param('status', 1, PARAM_INT);
             $enddate = optional_param('enddate', null, PARAM_INT);
 
+            // Validate startdate is not empty
+            if (empty($startdate)) {
+                throw new Exception('Start date is required');
+            }
+
             $pricedata = new stdClass();
             $pricedata->categoryid = $categoryid;
             $pricedata->name = $name;
@@ -94,6 +99,11 @@ try {
             $installments = optional_param('installments', 0, PARAM_INT);
             $status = optional_param('status', 1, PARAM_INT);
             $enddate = optional_param('enddate', null, PARAM_INT);
+
+            // Validate startdate is not empty
+            if (empty($startdate)) {
+                throw new Exception('Start date is required');
+            }
 
             $pricedata = new stdClass();
             $pricedata->id = $id;
