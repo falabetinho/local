@@ -60,13 +60,12 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
 
             $.ajax({
                 type: 'POST',
-                url: M.cfg.wwwroot + '/webservice/rest/server.php',
+                url: M.cfg.wwwroot + '/local/localcustomadmin/ajax/price_action.php',
                 dataType: 'json',
                 data: {
-                    wsfunction: 'local_localcustomadmin_get_category_prices',
-                    wstoken: M.cfg.token || '',
+                    action: 'getprices',
                     categoryid: self.categoryId,
-                    moodlewsrestformat: 'json'
+                    activeonly: true
                 },
                 success: function(data) {
                     self.renderPricesTable(data);
@@ -197,13 +196,12 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
 
             $.ajax({
                 type: 'POST',
-                url: M.cfg.wwwroot + '/webservice/rest/server.php',
+                url: M.cfg.wwwroot + '/local/localcustomadmin/ajax/price_action.php',
                 dataType: 'json',
                 data: {
-                    wsfunction: 'local_localcustomadmin_get_category_prices',
-                    wstoken: M.cfg.token || '',
+                    action: 'getprices',
                     categoryid: self.categoryId,
-                    moodlewsrestformat: 'json'
+                    activeonly: false
                 },
                 success: function(data) {
                     var price = data.find(function(p) { return p.id == priceId; });
@@ -254,10 +252,9 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                 return;
             }
 
-            var wsFunction = priceId ? 'local_localcustomadmin_update_category_price' : 'local_localcustomadmin_create_category_price';
+            var wsFunction = priceId ? 'updateprice' : 'createprice';
             var postData = {
-                wsfunction: wsFunction,
-                wstoken: M.cfg.token || '',
+                action: wsFunction,
                 categoryid: self.categoryId,
                 name: priceName,
                 price: price,
@@ -267,8 +264,7 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                 isenrollmentfee: isEnrollmentFee,
                 scheduledtask: scheduledTask,
                 installments: installments,
-                status: status,
-                moodlewsrestformat: 'json'
+                status: status
             };
 
             if (priceId) {
@@ -277,7 +273,7 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
 
             $.ajax({
                 type: 'POST',
-                url: M.cfg.wwwroot + '/webservice/rest/server.php',
+                url: M.cfg.wwwroot + '/local/localcustomadmin/ajax/price_action.php',
                 dataType: 'json',
                 data: postData,
                 success: function(response) {
@@ -311,13 +307,11 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
 
             $.ajax({
                 type: 'POST',
-                url: M.cfg.wwwroot + '/webservice/rest/server.php',
+                url: M.cfg.wwwroot + '/local/localcustomadmin/ajax/price_action.php',
                 dataType: 'json',
                 data: {
-                    wsfunction: 'local_localcustomadmin_delete_category_price',
-                    wstoken: M.cfg.token || '',
-                    id: priceId,
-                    moodlewsrestformat: 'json'
+                    action: 'deleteprice',
+                    id: priceId
                 },
                 success: function(response) {
                     if (response.success) {
