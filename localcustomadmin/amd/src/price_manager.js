@@ -11,10 +11,15 @@
 define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], function($, notification, Modal, ModalFactory) {
     return {
         /**
-         * Get Bootstrap instance (workaround for AMD scope)
+         * Get Bootstrap instance from window (with delay for initialization)
          */
         getBootstrap: function() {
-            return window.bootstrap || null;
+            // Bootstrap 5 might not be immediately available
+            // Try to access it from window
+            if (typeof window !== 'undefined' && window.bootstrap) {
+                return window.bootstrap;
+            }
+            return null;
         },
 
         /**
@@ -47,7 +52,9 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
             // Edit price
             $(document).on('click', '.btn-edit-price', function(e) {
                 e.preventDefault();
+                console.log('Edit button clicked');
                 var priceId = $(this).data('price-id');
+                console.log('Price ID:', priceId);
                 self.editPrice(priceId);
             });
 
@@ -138,12 +145,15 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
          */
         showPriceForm: function(priceData) {
             var self = this;
+            console.log('showPriceForm called with data:', priceData);
+            
             var title = priceData ? 'Edit Price' : 'Add Price';
             
             // Clear any previous error alerts
             self.hideErrorAlert();
             
             $('#priceModalLabel').text(title);
+            console.log('Modal title set to:', title);
             
             if (priceData) {
                 // Edit mode: populate form with existing data
@@ -164,9 +174,26 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
             }
 
             var bootstrap = self.getBootstrap();
+            console.log('Bootstrap object:', bootstrap);
+            
             if (bootstrap) {
-                var priceModal = new bootstrap.Modal(document.getElementById('priceModal'));
-                priceModal.show();
+                try {
+                    console.log('Creating new modal instance');
+                    var modalElement = document.getElementById('priceModal');
+                    console.log('Modal element found:', modalElement);
+                    
+                    var priceModal = new bootstrap.Modal(modalElement);
+                    console.log('Modal instance created:', priceModal);
+                    priceModal.show();
+                    console.log('Modal shown');
+                } catch (e) {
+                    console.error('Error showing modal with Bootstrap:', e);
+                    // Fallback to jQuery
+                    $('#priceModal').modal('show');
+                }
+            } else {
+                console.log('Bootstrap not available, using jQuery modal');
+                $('#priceModal').modal('show');
             }
         },
 
@@ -214,6 +241,7 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
          */
         editPrice: function(priceId) {
             var self = this;
+            console.log('editPrice called with ID:', priceId);
 
             $.ajax({
                 type: 'POST',
@@ -225,14 +253,25 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                     activeonly: false
                 },
                 success: function(response) {
+                    console.log('Edit AJAX response:', response);
                     if (response.success && Array.isArray(response.data) && response.data.length > 0) {
-                        var price = response.data.find(function(p) { return p.id == priceId; });
+                        // Convert priceId to number for comparison
+                        var targetId = parseInt(priceId, 10);
+                        var price = response.data.find(function(p) { 
+                            return parseInt(p.id, 10) === targetId; 
+                        });
+                        console.log('Found price:', price);
                         if (price) {
                             self.showPriceForm(price);
+                        } else {
+                            console.warn('Price not found with ID:', priceId, 'in data:', response.data);
                         }
+                    } else {
+                        console.warn('Invalid response data:', response.data);
                     }
                 },
-                error: function() {
+                error: function(xhr, status, error) {
+                    console.error('Edit AJAX error:', error);
                     self.showErrorAlert('Failed to load price details');
                 }
             });
@@ -303,10 +342,18 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                     if (response.success) {
                         var bootstrap = self.getBootstrap();
                         if (bootstrap) {
-                            var priceModal = bootstrap.Modal.getInstance(document.getElementById('priceModal'));
-                            if (priceModal) {
-                                priceModal.hide();
+                            try {
+                                var priceModal = bootstrap.Modal.getInstance(document.getElementById('priceModal'));
+                                if (priceModal) {
+                                    priceModal.hide();
+                                }
+                            } catch (e) {
+                                console.log('Bootstrap hide failed, using jQuery');
+                                $('#priceModal').modal('hide');
                             }
+                        } else {
+                            // Fallback to jQuery
+                            $('#priceModal').modal('hide');
                         }
                         self.loadPrices();
                         notification.alert(priceId ? 'Price updated successfully' : 'Price created successfully', 'Success');

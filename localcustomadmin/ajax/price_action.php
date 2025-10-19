@@ -59,6 +59,22 @@ try {
             // Convert Moodle records (object keyed by id) to array of objects
             if (is_array($prices) && !empty($prices)) {
                 $prices = array_values($prices);
+                
+                // Convert numeric strings to proper types for JSON
+                foreach ($prices as &$price) {
+                    $price->id = (int) $price->id;
+                    $price->categoryid = (int) $price->categoryid;
+                    $price->price = (float) $price->price;
+                    $price->startdate = (int) $price->startdate;
+                    $price->enddate = $price->enddate ? (int) $price->enddate : null;
+                    $price->ispromotional = (int) $price->ispromotional;
+                    $price->isenrollmentfee = (int) $price->isenrollmentfee;
+                    $price->scheduledtask = (int) $price->scheduledtask;
+                    $price->status = (int) $price->status;
+                    $price->installments = (int) $price->installments;
+                    $price->timecreated = (int) $price->timecreated;
+                    $price->timemodified = (int) $price->timemodified;
+                }
             } else {
                 $prices = array();
             }
