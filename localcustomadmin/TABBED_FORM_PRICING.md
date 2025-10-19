@@ -23,9 +23,13 @@ Implemented a tabbed interface for the category form (`form_categoria.php`) with
 
 ### 3. Pricing Tab Features
 - **Price List Table** - Displays all prices for the category with:
+  - Price name
   - Price amount (formatted as R$)
   - Validity start date
   - Validity end date (optional)
+  - Promotional flag (badge)
+  - Enrollment fee flag (badge)
+  - Number of installments
   - Status (Active/Inactive badge)
   - Action buttons (Edit/Delete)
 
@@ -34,18 +38,25 @@ Implemented a tabbed interface for the category form (`form_categoria.php`) with
 
 ### 4. Price Management Modal
 - **Form Fields:**
+  - Price Name (text, required, max 255 chars)
   - Price (decimal number, required)
   - Validity Start Date (datetime, required)
   - Validity End Date (datetime, optional)
+  - Promotional Price (checkbox)
+  - Enrollment Fee (checkbox)
+  - Scheduled Task (checkbox)
+  - Number of Installments (0-12)
   - Status (Active/Inactive dropdown)
 
 - **Form Validation:**
+  - Validates price name is not empty
   - Validates price is a positive number
   - Validates dates are valid datetime
+  - Validates installments are between 0-12
   - Shows user-friendly error messages
 
 - **Operations:**
-  - Create new price
+  - Create new price with all fields
   - Edit existing price
   - Delete price with confirmation
   - Cancel without saving
@@ -85,6 +96,7 @@ The module provides:
 - `category_prices` - Preços da Categoria
 - `add_price` - Adicionar Preço
 - `price` - Preço
+- `price_name` - Nome do Preço
 - `validity_start` - Data de Início
 - `validity_end` - Data de Fim
 - `status` - Status
@@ -94,6 +106,10 @@ The module provides:
 - `cancel` - Cancelar
 - `save` - Salvar
 - `create_category_first` - Por favor, crie a categoria primeiro para gerenciar preços
+- `promotional` - Preço Promocional
+- `enrollment_fee` - Taxa de Inscrição
+- `scheduled_task` - Agendado
+- `installments` - Número de Parcelas
 
 ## File Changes
 
@@ -232,8 +248,10 @@ To test the feature:
 
 ## Git Commit
 
-**Commit ID:** 442c9ed
-**Message:** feat: Add tabbed interface for category form with pricing management
+**Latest Commits:**
+- **737a3a2** - feat: Expand price form with all database table fields
+- **674742c** - docs: Add comprehensive documentation for tabbed form pricing feature
+- **442c9ed** - feat: Add tabbed interface for category form with pricing management
 
 ## Author
 Heber
