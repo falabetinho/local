@@ -170,6 +170,41 @@ class course_manager {
     }
 
     /**
+     * Handle category change - deletes old enrollments and recreates with new category pricing
+     *
+     * @param int $courseid Course ID
+     * @param int $newcategoryid New category ID
+     * @param int $oldcategoryid Old category ID (optional)
+     * @return bool Success status
+     * @throws \Exception
+     */
+    public static function handle_category_change($courseid, $newcategoryid, $oldcategoryid = null) {
+        global $DB;
+
+        $course = get_course($courseid);
+        if (!$course) {
+            throw new \Exception("Course not found: $courseid");
+        }
+
+        // Only proceed if category actually changed
+        if ($oldcategoryid !== null && $oldcategoryid === $newcategoryid) {
+            return false;
+        }
+
+        // Delete existing fee enrollments for this course
+        $DB->delete_records('enrol', array('courseid' => $courseid, 'enrol' => 'fee'));
+
+        // Delete related user enrollments for fee method
+        $feeenrols = $DB->get_records('enrol', array('courseid' => $courseid, 'enrol' => 'fee'));
+        foreach ($feeenrols as $enrol) {
+            $DB->delete_records('user_enrolments', array('enrolid' => $enrol->id));
+        }
+
+        // Re-initialize enrollments with new category pricing
+        return self::initialize_course_enrolments($courseid);
+    }
+
+    /**
      * Get enrollment method statistics for a course
      *
      * @param int $courseid Course ID

@@ -90,7 +90,7 @@ $templatecontext = [
 // Populate courses data
 foreach ($popularcourses as $course) {
     $courseurl = new moodle_url('/course/view.php', ['id' => $course->id]);
-    $editurl = new moodle_url('/course/edit.php', ['id' => $course->id]);
+    $editurl = new moodle_url('/local/localcustomadmin/edit_curso.php', ['id' => $course->id]);
     
     $templatecontext['courses'][] = [
         'id' => $course->id,

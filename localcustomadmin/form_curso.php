@@ -154,6 +154,11 @@ class local_localcustomadmin_course_form extends moodleform {
             return $html;
         }
 
+        // Debug: mostrar quantos enrolments foram encontrados
+        if (debugging()) {
+            $html .= '<!-- DEBUG: Found ' . count($enrolments) . ' enrolment instances -->';
+        }
+
         $html .= '<table class="table table-striped table-hover">';
         $html .= '<thead>';
         $html .= '<tr>';
@@ -165,28 +170,48 @@ class local_localcustomadmin_course_form extends moodleform {
         $html .= '</thead>';
         $html .= '<tbody>';
 
+        $rowcount = 0;
         foreach ($enrolments as $enrolment) {
-            $enrolmethod = enrol_get_plugin($enrolment->enrol);
-            $methodname = $enrolmethod->get_instance_name($enrolment);
+            try {
+                $enrolmethod = enrol_get_plugin($enrolment->enrol);
+                if (!$enrolmethod) {
+                    continue;
+                }
+                
+                $methodname = $enrolmethod->get_instance_name($enrolment);
 
-            // Try to get price from custom fields or database
-            $price = $this->get_enrolment_price($enrolment->id);
+                // Get price from enrol record
+                $price = isset($enrolment->cost) && $enrolment->cost > 0 ? $enrolment->cost : '-';
 
-            $statusclass = $enrolment->status == ENROL_INSTANCE_ENABLED ? 'badge bg-success' : 'badge bg-danger';
-            $statustext = $enrolment->status == ENROL_INSTANCE_ENABLED ? get_string('active') : get_string('inactive');
+                $statusclass = $enrolment->status == ENROL_INSTANCE_ENABLED ? 'badge bg-success' : 'badge bg-danger';
+                $statustext = $enrolment->status == ENROL_INSTANCE_ENABLED ? get_string('active') : get_string('inactive');
 
-            $html .= '<tr>';
-            $html .= '<td>' . $methodname . '</td>';
-            $html .= '<td><span class="' . $statusclass . '">' . $statustext . '</span></td>';
-            $html .= '<td>' . ($price ? $price : '-') . '</td>';
-            $html .= '<td>';
-            $html .= '<a href="#" class="btn btn-sm btn-primary" data-enrolid="' . $enrolment->id . '" onclick="return false;">' . get_string('edit') . '</a>';
-            $html .= '</td>';
-            $html .= '</tr>';
+                $html .= '<tr>';
+                $html .= '<td>' . htmlspecialchars($methodname) . '</td>';
+                $html .= '<td><span class="' . $statusclass . '">' . $statustext . '</span></td>';
+                $html .= '<td>' . htmlspecialchars($price) . '</td>';
+                $html .= '<td>';
+                $html .= '<a href="#" class="btn btn-sm btn-primary" data-enrolid="' . $enrolment->id . '" onclick="return false;">' . get_string('edit') . '</a>';
+                $html .= '</td>';
+                $html .= '</tr>';
+                $rowcount++;
+            } catch (Exception $e) {
+                // Log error and continue
+                if (debugging()) {
+                    $html .= '<!-- ERROR processing enrolment ' . $enrolment->id . ': ' . $e->getMessage() . ' -->';
+                }
+                continue;
+            }
         }
 
         $html .= '</tbody>';
         $html .= '</table>';
+        
+        // Debug: mostrar quantas linhas foram renderizadas
+        if (debugging()) {
+            $html .= '<!-- DEBUG: Rendered ' . $rowcount . ' rows -->';
+        }
+
         $html .= '</div>';
 
         return $html;

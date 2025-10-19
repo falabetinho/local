@@ -145,14 +145,15 @@ class category_price_manager {
         $params = array(
             'categoryid' => $categoryid,
             'status' => 1,
-            'timestamp' => $timestamp
+            'timestamp' => $timestamp,
+            'timestamp2' => $timestamp
         );
 
         $sql = 'SELECT * FROM {local_customadmin_category_prices}
                 WHERE categoryid = :categoryid
                 AND status = :status
                 AND startdate <= :timestamp
-                AND (enddate = 0 OR enddate >= :timestamp)
+                AND (enddate = 0 OR enddate >= :timestamp2)
                 ORDER BY startdate DESC
                 LIMIT 1';
 

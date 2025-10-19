@@ -82,13 +82,27 @@ if ($mform->is_cancelled()) {
     // Process form data
     if ($courseid) {
         // Update existing course
+        $oldcategory = $course->category;
         $formdata->id = $courseid;
         
         // Use native Moodle function to update course
         update_course($formdata);
 
-        // Initialize/update enrollment fees if needed
-        \local_localcustomadmin\course_manager::initialize_course_enrolments($courseid);
+        // Check if category changed - if so, recreate enrollments with new category pricing
+        if ($oldcategory !== $formdata->category) {
+            try {
+                \local_localcustomadmin\course_manager::handle_category_change(
+                    $courseid,
+                    $formdata->category,
+                    $oldcategory
+                );
+            } catch (Exception $e) {
+                debugging('Error handling category change: ' . $e->getMessage());
+            }
+        } else {
+            // Category didn't change, just ensure enrollments are up to date
+            \local_localcustomadmin\course_manager::initialize_course_enrolments($courseid);
+        }
 
         redirect(
             new moodle_url('/local/localcustomadmin/cursos.php'),
