@@ -599,7 +599,7 @@ function get_price_modal_html($category_id) {
     
     $html .= '<div class="col-md-4 mb-3">';
     $html .= '<label for="installments" class="form-label">' . get_string('installments', 'local_localcustomadmin') . '</label>';
-    $html .= '<input type="number" class="form-control" id="installments" name="installments" min="0" max="12" value="0">';
+    $html .= '<input type="number" class="form-control" id="installments" name="installments" min="0" value="0">';
     $html .= '</div>';
     
     $html .= '<div class="col-md-4 mb-3">';

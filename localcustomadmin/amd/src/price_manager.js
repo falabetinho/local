@@ -127,6 +127,7 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
             $('#priceModalLabel').text(title);
             
             if (priceData) {
+                // Edit mode: populate form with existing data
                 $('#price_id').val(priceData.id);
                 $('#price-name').val(priceData.name || '');
                 $('#price-value').val(priceData.price);
@@ -138,11 +139,50 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                 $('#installments').val(priceData.installments || 0);
                 $('#price-status').val(priceData.status);
             } else {
+                // Add mode: reset and initialize with default dates
                 self.resetPriceForm();
+                self.initializeDateFields();
             }
 
             var priceModal = new bootstrap.Modal(document.getElementById('priceModal'));
             priceModal.show();
+        },
+
+        /**
+         * Initialize date fields with default values
+         * Start date: today at 00:00
+         * End date: today + 5 years at 00:00
+         */
+        initializeDateFields: function() {
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            // Start date: today
+            var startDateStr = this.formatDateForInput(today);
+            $('#validity-start').val(startDateStr);
+            
+            // End date: today + 5 years
+            var endDate = new Date(today);
+            endDate.setFullYear(endDate.getFullYear() + 5);
+            var endDateStr = this.formatDateForInput(endDate);
+            $('#validity-end').val(endDateStr);
+        },
+
+        /**
+         * Format date for datetime-local input
+         * Format: YYYY-MM-DDTHH:mm
+         * 
+         * @param {Date} date - The date to format
+         * @returns {string} Formatted date string
+         */
+        formatDateForInput: function(date) {
+            var year = date.getFullYear();
+            var month = String(date.getMonth() + 1).padStart(2, '0');
+            var day = String(date.getDate()).padStart(2, '0');
+            var hours = String(date.getHours()).padStart(2, '0');
+            var minutes = String(date.getMinutes()).padStart(2, '0');
+            
+            return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
         },
 
         /**
@@ -206,8 +246,8 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                 return;
             }
 
-            if (installments < 0 || installments > 12) {
-                notification.alert('Installments must be between 0 and 12', 'Validation Error');
+            if (installments < 0) {
+                notification.alert('Installments cannot be negative', 'Validation Error');
                 return;
             }
 
