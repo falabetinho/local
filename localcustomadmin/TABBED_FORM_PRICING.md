@@ -40,24 +40,30 @@ Implemented a tabbed interface for the category form (`form_categoria.php`) with
 - **Form Fields:**
   - Price Name (text, required, max 255 chars)
   - Price (decimal number, required)
-  - Validity Start Date (datetime, required)
-  - Validity End Date (datetime, optional)
+  - Validity Start Date (datetime, required) - **Auto-initialized to today at 00:00**
+  - Validity End Date (datetime, optional) - **Auto-initialized to today + 5 years at 00:00**
   - Promotional Price (checkbox)
   - Enrollment Fee (checkbox)
   - Scheduled Task (checkbox)
-  - Number of Installments (0-12)
+  - Number of Installments (unrestricted) - **No maximum limit**
   - Status (Active/Inactive dropdown)
 
 - **Form Validation:**
   - Validates price name is not empty
   - Validates price is a positive number
   - Validates dates are valid datetime
-  - Validates installments are between 0-12
+  - Validates installments is not negative
   - Shows user-friendly error messages
 
+- **Default Values:**
+  - Start Date: Always set to today at 00:00 for new prices
+  - End Date: Always set to today + 5 years at 00:00 for new prices
+  - Installments: Default 0 (can be any positive number)
+  - Status: Default Active
+
 - **Operations:**
-  - Create new price with all fields
-  - Edit existing price
+  - Create new price with auto-initialized dates
+  - Edit existing price (loads actual dates)
   - Delete price with confirmation
   - Cancel without saving
 
@@ -246,9 +252,10 @@ To test the feature:
 7. Batch operations (enable/disable multiple prices)
 8. Advanced filtering and sorting in table
 
-## Git Commit
+## Git Commits
 
 **Latest Commits:**
+- **353f6c3** - feat: Auto-initialize date fields and remove installments limit
 - **737a3a2** - feat: Expand price form with all database table fields
 - **674742c** - docs: Add comprehensive documentation for tabbed form pricing feature
 - **442c9ed** - feat: Add tabbed interface for category form with pricing management
