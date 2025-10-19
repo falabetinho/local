@@ -46,10 +46,23 @@ $response->data = null;
 try {
     $categoryid = required_param('categoryid', PARAM_INT);
     
+    // Validate categoryid
+    if (empty($categoryid)) {
+        throw new Exception('Category ID is required');
+    }
+    
     switch ($action) {
         case 'getprices':
             $activeonly = optional_param('activeonly', true, PARAM_BOOL);
             $prices = \local_localcustomadmin\category_price_manager::get_category_prices($categoryid, $activeonly);
+            
+            // Convert Moodle records (object keyed by id) to array of objects
+            if (is_array($prices) && !empty($prices)) {
+                $prices = array_values($prices);
+            } else {
+                $prices = array();
+            }
+            
             $response->data = $prices;
             $response->success = true;
             break;

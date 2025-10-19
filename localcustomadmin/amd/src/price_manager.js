@@ -75,9 +75,12 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                     activeonly: true
                 },
                 success: function(response) {
-                    if (response.success && response.data) {
+                    console.log('Price response:', response);
+                    
+                    if (response.success && response.data && Array.isArray(response.data)) {
                         self.renderPricesTable(response.data);
                     } else {
+                        console.warn('Invalid price data received:', response.data);
                         self.renderPricesTable([]);
                     }
                 },
@@ -98,7 +101,8 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
             var tbody = $('#prices-tbody');
             tbody.html('');
 
-            if (!prices || prices.length === 0) {
+            // Ensure prices is an array
+            if (!Array.isArray(prices) || prices.length === 0) {
                 tbody.html('<tr><td colspan="9" class="text-center text-muted">No prices found. Click "Add Price" to create one.</td></tr>');
                 return;
             }
@@ -221,7 +225,7 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                     activeonly: false
                 },
                 success: function(response) {
-                    if (response.success && response.data) {
+                    if (response.success && Array.isArray(response.data) && response.data.length > 0) {
                         var price = response.data.find(function(p) { return p.id == priceId; });
                         if (price) {
                             self.showPriceForm(price);
