@@ -11,6 +11,13 @@
 define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], function($, notification, Modal, ModalFactory) {
     return {
         /**
+         * Get Bootstrap instance (workaround for AMD scope)
+         */
+        getBootstrap: function() {
+            return window.bootstrap || null;
+        },
+
+        /**
          * Initialize the price manager
          * 
          * @param {number} categoryId - The category ID
@@ -152,8 +159,11 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                 self.initializeDateFields();
             }
 
-            var priceModal = new bootstrap.Modal(document.getElementById('priceModal'));
-            priceModal.show();
+            var bootstrap = self.getBootstrap();
+            if (bootstrap) {
+                var priceModal = new bootstrap.Modal(document.getElementById('priceModal'));
+                priceModal.show();
+            }
         },
 
         /**
@@ -287,8 +297,13 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                 data: postData,
                 success: function(response) {
                     if (response.success) {
-                        var priceModal = bootstrap.Modal.getInstance(document.getElementById('priceModal'));
-                        priceModal.hide();
+                        var bootstrap = self.getBootstrap();
+                        if (bootstrap) {
+                            var priceModal = bootstrap.Modal.getInstance(document.getElementById('priceModal'));
+                            if (priceModal) {
+                                priceModal.hide();
+                            }
+                        }
                         self.loadPrices();
                         notification.alert(priceId ? 'Price updated successfully' : 'Price created successfully', 'Success');
                     } else {
