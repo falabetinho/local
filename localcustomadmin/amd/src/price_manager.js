@@ -67,8 +67,12 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                     categoryid: self.categoryId,
                     activeonly: true
                 },
-                success: function(data) {
-                    self.renderPricesTable(data);
+                success: function(response) {
+                    if (response.success && response.data) {
+                        self.renderPricesTable(response.data);
+                    } else {
+                        self.renderPricesTable([]);
+                    }
                 },
                 error: function(xhr, status, error) {
                     // Silently handle error - just display empty table
@@ -206,14 +210,16 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                     categoryid: self.categoryId,
                     activeonly: false
                 },
-                success: function(data) {
-                    var price = data.find(function(p) { return p.id == priceId; });
-                    if (price) {
-                        self.showPriceForm(price);
+                success: function(response) {
+                    if (response.success && response.data) {
+                        var price = response.data.find(function(p) { return p.id == priceId; });
+                        if (price) {
+                            self.showPriceForm(price);
+                        }
                     }
                 },
                 error: function() {
-                    notification.exception(new Error('Failed to load price details'));
+                    self.showErrorAlert('Failed to load price details');
                 }
             });
         },
