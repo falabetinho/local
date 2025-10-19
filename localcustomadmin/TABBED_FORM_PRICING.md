@@ -252,9 +252,27 @@ To test the feature:
 7. Batch operations (enable/disable multiple prices)
 8. Advanced filtering and sorting in table
 
+## Authentication & Security
+
+### WebService Token (wstoken)
+All AJAX calls to the Moodle webservice API include the `wstoken` parameter obtained from `M.cfg.token`. This ensures:
+- Proper authentication with the webservice endpoint
+- Prevention of 403 Forbidden errors
+- Secure validation of user permissions
+
+**Affected Functions:**
+- `loadPrices()` - Fetches prices
+- `savePrice()` - Creates/updates prices
+- `editPrice()` - Loads price for editing
+- `deletePrice()` - Deletes a price
+
+### Required Capability
+User must have `local/localcustomadmin:manage` capability to perform CRUD operations on prices. This is defined in `db/access.php` and restricted to managers by default.
+
 ## Git Commits
 
 **Latest Commits:**
+- **eb03924** - fix: Add wstoken to all AJAX calls for webservice authentication
 - **353f6c3** - feat: Auto-initialize date fields and remove installments limit
 - **737a3a2** - feat: Expand price form with all database table fields
 - **674742c** - docs: Add comprehensive documentation for tabbed form pricing feature
