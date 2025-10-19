@@ -24,6 +24,7 @@
 
 require_once('../../config.php');
 require_once($CFG->libdir . '/formslib.php');
+require_once(__DIR__ . '/classes/category_price_manager.php');
 
 require_login();
 
@@ -34,6 +35,7 @@ require_capability('local/localcustomadmin:manage', $context);
 $id = optional_param('id', 0, PARAM_INT); // Category ID for editing
 $parent = optional_param('parent', 0, PARAM_INT); // Parent category ID for new categories
 $modal = optional_param('modal', 0, PARAM_INT); // Is this being displayed in a modal?
+$tab = optional_param('tab', 'general', PARAM_ALPHA); // Current tab (general or pricing)
 
 // Set up page
 if ($modal) {
@@ -42,7 +44,8 @@ if ($modal) {
     $PAGE->set_pagelayout('base');
 }
 
-$PAGE->set_url(new moodle_url('/local/localcustomadmin/form_categoria.php', ['id' => $id, 'parent' => $parent, 'modal' => $modal]));
+$PAGE->set_url(new moodle_url('/local/localcustomadmin/form_categoria.php', 
+    ['id' => $id, 'parent' => $parent, 'modal' => $modal, 'tab' => $tab]));
 $PAGE->set_context($context);
 
 // Determine if we're editing or creating
@@ -376,7 +379,46 @@ if ($editing) {
     echo '<h3><i class="fas fa-plus-circle me-2"></i>' . get_string('add_category', 'local_localcustomadmin') . '</h3>';
 }
 
+// Tab Navigation
+echo '<ul class="nav nav-tabs mb-3" role="tablist">';
+
+echo '<li class="nav-item" role="presentation">';
+echo '<button class="nav-link ' . ($tab !== 'pricing' ? 'active' : '') . '" id="general-tab" data-bs-toggle="tab" data-bs-target="#general-tab-content" type="button" role="tab" aria-controls="general-tab-content" ' . ($tab !== 'pricing' ? 'aria-selected="true"' : 'aria-selected="false"') . '>';
+echo '<i class="fas fa-info-circle me-2"></i>' . get_string('general') . '</button>';
+echo '</li>';
+
+echo '<li class="nav-item" role="presentation">';
+$pricing_disabled = !$editing ? 'disabled' : '';
+$pricing_class = !$editing ? 'text-muted' : '';
+echo '<button class="nav-link ' . ($tab === 'pricing' ? 'active' : '') . ' ' . $pricing_class . '" id="pricing-tab" data-bs-toggle="tab" data-bs-target="#pricing-tab-content" type="button" role="tab" aria-controls="pricing-tab-content" ' . $pricing_disabled . ' ' . ($tab === 'pricing' ? 'aria-selected="true"' : 'aria-selected="false"') . '>';
+echo '<i class="fas fa-tag me-2"></i>' . get_string('pricing', 'local_localcustomadmin') . '</button>';
+echo '</li>';
+
+echo '</ul>';
+
+// Tab Content
+echo '<div class="tab-content">';
+
+// General Tab
+echo '<div class="tab-pane fade ' . ($tab !== 'pricing' ? 'show active' : '') . '" id="general-tab-content" role="tabpanel" aria-labelledby="general-tab">';
 $form->display();
+echo '</div>';
+
+// Pricing Tab
+echo '<div class="tab-pane fade ' . ($tab === 'pricing' ? 'show active' : '') . '" id="pricing-tab-content" role="tabpanel" aria-labelledby="pricing-tab">';
+
+if ($editing) {
+    // Pricing content will be loaded here
+    echo render_pricing_tab($category->id);
+} else {
+    echo '<div class="alert alert-info">';
+    echo '<i class="fas fa-info-circle me-2"></i>' . get_string('create_category_first', 'local_localcustomadmin');
+    echo '</div>';
+}
+
+echo '</div>';
+
+echo '</div>'; // End tab-content
 
 echo '</div>';
 
@@ -430,3 +472,112 @@ if ($modal) {
 }
 
 echo $OUTPUT->footer();
+
+/**
+ * Render pricing tab content
+ * 
+ * @param int $category_id
+ * @return string HTML content
+ */
+function render_pricing_tab($category_id) {
+    $html = '';
+    
+    // Pricing Section Header
+    $html .= '<div class="pricing-section">';
+    $html .= '<div class="d-flex justify-content-between align-items-center mb-3">';
+    $html .= '<h4><i class="fas fa-list me-2"></i>' . get_string('category_prices', 'local_localcustomadmin') . '</h4>';
+    $html .= '<button type="button" class="btn btn-primary btn-sm" id="btn-add-price" data-bs-toggle="modal" data-bs-target="#priceModal">';
+    $html .= '<i class="fas fa-plus me-2"></i>' . get_string('add_price', 'local_localcustomadmin') . '</button>';
+    $html .= '</div>';
+    
+    // Pricing List Table
+    $html .= '<div class="table-responsive">';
+    $html .= '<table class="table table-striped table-hover" id="prices-table">';
+    $html .= '<thead class="table-light">';
+    $html .= '<tr>';
+    $html .= '<th>' . get_string('price', 'local_localcustomadmin') . '</th>';
+    $html .= '<th>' . get_string('validity_start', 'local_localcustomadmin') . '</th>';
+    $html .= '<th>' . get_string('validity_end', 'local_localcustomadmin') . '</th>';
+    $html .= '<th>' . get_string('status', 'local_localcustomadmin') . '</th>';
+    $html .= '<th>' . get_string('actions', 'local_localcustomadmin') . '</th>';
+    $html .= '</tr>';
+    $html .= '</thead>';
+    $html .= '<tbody id="prices-tbody">';
+    $html .= '</tbody>';
+    $html .= '</table>';
+    $html .= '</div>';
+    
+    $html .= '</div>';
+    
+    // Modal para adicionar/editar preço
+    $html .= get_price_modal_html($category_id);
+    
+    return $html;
+}
+
+/**
+ * Get HTML for price management modal
+ * 
+ * @param int $category_id
+ * @return string HTML
+ */
+function get_price_modal_html($category_id) {
+    global $PAGE;
+    
+    $html = '';
+    
+    $html .= '<div class="modal fade" id="priceModal" tabindex="-1" aria-labelledby="priceModalLabel" aria-hidden="true">';
+    $html .= '<div class="modal-dialog">';
+    $html .= '<div class="modal-content">';
+    
+    $html .= '<div class="modal-header">';
+    $html .= '<h5 class="modal-title" id="priceModalLabel">' . get_string('add_price', 'local_localcustomadmin') . '</h5>';
+    $html .= '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
+    $html .= '</div>';
+    
+    $html .= '<div class="modal-body">';
+    $html .= '<form id="price-form">';
+    
+    $html .= '<input type="hidden" id="category_id" value="' . $category_id . '">';
+    $html .= '<input type="hidden" id="price_id" value="">';
+    
+    $html .= '<div class="mb-3">';
+    $html .= '<label for="price-value" class="form-label">' . get_string('price', 'local_localcustomadmin') . ' *</label>';
+    $html .= '<input type="number" class="form-control" id="price-value" name="price" step="0.01" min="0" required>';
+    $html .= '</div>';
+    
+    $html .= '<div class="mb-3">';
+    $html .= '<label for="validity-start" class="form-label">' . get_string('validity_start', 'local_localcustomadmin') . ' *</label>';
+    $html .= '<input type="datetime-local" class="form-control" id="validity-start" name="validity_start" required>';
+    $html .= '</div>';
+    
+    $html .= '<div class="mb-3">';
+    $html .= '<label for="validity-end" class="form-label">' . get_string('validity_end', 'local_localcustomadmin') . '</label>';
+    $html .= '<input type="datetime-local" class="form-control" id="validity-end" name="validity_end">';
+    $html .= '</div>';
+    
+    $html .= '<div class="mb-3">';
+    $html .= '<label for="price-status" class="form-label">' . get_string('status', 'local_localcustomadmin') . '</label>';
+    $html .= '<select class="form-select" id="price-status" name="status">';
+    $html .= '<option value="1">' . get_string('active', 'local_localcustomadmin') . '</option>';
+    $html .= '<option value="0">' . get_string('inactive', 'local_localcustomadmin') . '</option>';
+    $html .= '</select>';
+    $html .= '</div>';
+    
+    $html .= '</form>';
+    $html .= '</div>';
+    
+    $html .= '<div class="modal-footer">';
+    $html .= '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">' . get_string('cancel', 'local_localcustomadmin') . '</button>';
+    $html .= '<button type="button" class="btn btn-primary" id="btn-save-price">' . get_string('save', 'local_localcustomadmin') . '</button>';
+    $html .= '</div>';
+    
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    // Load AMD module for price management
+    $PAGE->requires->js_call_amd('local_localcustomadmin/price_manager', 'init', [$category_id]);
+    
+    return $html;
+}

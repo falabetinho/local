@@ -168,3 +168,18 @@ $string['categorytheme'] = 'Tema da Categoria';
 $string['categorycreated'] = 'Categoria criada com sucesso';
 $string['categoryupdated'] = 'Categoria atualizada com sucesso';
 $string['categoryduplicate'] = 'Uma categoria com este nome já existe neste nível';
+
+// Pricing tab strings
+$string['pricing'] = 'Precificação';
+$string['category_prices'] = 'Preços da Categoria';
+$string['add_price'] = 'Adicionar Preço';
+$string['price'] = 'Preço';
+$string['validity_start'] = 'Data de Início';
+$string['validity_end'] = 'Data de Fim';
+$string['status'] = 'Status';
+$string['actions'] = 'Ações';
+$string['active'] = 'Ativo';
+$string['inactive'] = 'Inativo';
+$string['cancel'] = 'Cancelar';
+$string['save'] = 'Salvar';
+$string['create_category_first'] = 'Por favor, crie a categoria primeiro para gerenciar preços';
