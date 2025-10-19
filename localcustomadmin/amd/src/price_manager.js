@@ -87,15 +87,21 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
             tbody.html('');
 
             if (!prices || prices.length === 0) {
-                tbody.html('<tr><td colspan="5" class="text-center text-muted">No prices found. Click "Add Price" to create one.</td></tr>');
+                tbody.html('<tr><td colspan="9" class="text-center text-muted">No prices found. Click "Add Price" to create one.</td></tr>');
                 return;
             }
 
             prices.forEach(function(price) {
                 var row = '<tr>';
+                row += '<td><strong>' + (price.name || '-') + '</strong></td>';
                 row += '<td>R$ ' + parseFloat(price.price).toFixed(2) + '</td>';
-                row += '<td>' + new Date(price.validity_start * 1000).toLocaleString() + '</td>';
-                row += '<td>' + (price.validity_end ? new Date(price.validity_end * 1000).toLocaleString() : '-') + '</td>';
+                row += '<td>' + new Date(price.startdate * 1000).toLocaleString() + '</td>';
+                row += '<td>' + (price.enddate ? new Date(price.enddate * 1000).toLocaleString() : '-') + '</td>';
+                row += '<td><span class="badge ' + (price.ispromotional == 1 ? 'bg-warning' : 'bg-secondary') + '">' + 
+                    (price.ispromotional == 1 ? 'Yes' : 'No') + '</span></td>';
+                row += '<td><span class="badge ' + (price.isenrollmentfee == 1 ? 'bg-info' : 'bg-secondary') + '">' + 
+                    (price.isenrollmentfee == 1 ? 'Yes' : 'No') + '</span></td>';
+                row += '<td>' + price.installments + '</td>';
                 row += '<td><span class="badge ' + (price.status == 1 ? 'bg-success' : 'bg-danger') + '">' + 
                     (price.status == 1 ? 'Active' : 'Inactive') + '</span></td>';
                 row += '<td>';
@@ -122,9 +128,14 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
             
             if (priceData) {
                 $('#price_id').val(priceData.id);
+                $('#price-name').val(priceData.name || '');
                 $('#price-value').val(priceData.price);
-                $('#validity-start').val(new Date(priceData.validity_start * 1000).toISOString().slice(0, 16));
-                $('#validity-end').val(priceData.validity_end ? new Date(priceData.validity_end * 1000).toISOString().slice(0, 16) : '');
+                $('#validity-start').val(new Date(priceData.startdate * 1000).toISOString().slice(0, 16));
+                $('#validity-end').val(priceData.enddate ? new Date(priceData.enddate * 1000).toISOString().slice(0, 16) : '');
+                $('#is-promotional').prop('checked', priceData.ispromotional == 1);
+                $('#is-enrollment-fee').prop('checked', priceData.isenrollmentfee == 1);
+                $('#scheduled-task').prop('checked', priceData.scheduledtask == 1);
+                $('#installments').val(priceData.installments || 0);
                 $('#price-status').val(priceData.status);
             } else {
                 self.resetPriceForm();
@@ -169,12 +180,22 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
         savePrice: function() {
             var self = this;
             var priceId = $('#price_id').val();
+            var priceName = $('#price-name').val();
             var price = $('#price-value').val();
             var validityStart = new Date($('#validity-start').val()).getTime() / 1000;
             var validityEnd = $('#validity-end').val() ? new Date($('#validity-end').val()).getTime() / 1000 : null;
+            var isPromotional = $('#is-promotional').is(':checked') ? 1 : 0;
+            var isEnrollmentFee = $('#is-enrollment-fee').is(':checked') ? 1 : 0;
+            var scheduledTask = $('#scheduled-task').is(':checked') ? 1 : 0;
+            var installments = parseInt($('#installments').val()) || 0;
             var status = $('#price-status').val();
 
             // Validation
+            if (!priceName || priceName.trim() === '') {
+                notification.alert('Please enter a price name', 'Validation Error');
+                return;
+            }
+
             if (!price || price <= 0) {
                 notification.alert('Please enter a valid price', 'Validation Error');
                 return;
@@ -185,12 +206,22 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                 return;
             }
 
+            if (installments < 0 || installments > 12) {
+                notification.alert('Installments must be between 0 and 12', 'Validation Error');
+                return;
+            }
+
             var wsFunction = priceId ? 'local_localcustomadmin_update_category_price' : 'local_localcustomadmin_create_category_price';
             var postData = {
                 wsfunction: wsFunction,
                 categoryid: self.categoryId,
+                name: priceName,
                 price: price,
-                validity_start: validityStart,
+                startdate: validityStart,
+                ispromotional: isPromotional,
+                isenrollmentfee: isEnrollmentFee,
+                scheduledtask: scheduledTask,
+                installments: installments,
                 status: status,
                 moodlewsrestformat: 'json'
             };
@@ -200,7 +231,7 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
             }
 
             if (validityEnd) {
-                postData.validity_end = validityEnd;
+                postData.enddate = validityEnd;
             }
 
             $.ajax({

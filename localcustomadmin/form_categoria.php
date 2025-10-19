@@ -492,12 +492,16 @@ function render_pricing_tab($category_id) {
     
     // Pricing List Table
     $html .= '<div class="table-responsive">';
-    $html .= '<table class="table table-striped table-hover" id="prices-table">';
+    $html .= '<table class="table table-striped table-hover table-sm" id="prices-table">';
     $html .= '<thead class="table-light">';
     $html .= '<tr>';
+    $html .= '<th>' . get_string('price_name', 'local_localcustomadmin') . '</th>';
     $html .= '<th>' . get_string('price', 'local_localcustomadmin') . '</th>';
     $html .= '<th>' . get_string('validity_start', 'local_localcustomadmin') . '</th>';
     $html .= '<th>' . get_string('validity_end', 'local_localcustomadmin') . '</th>';
+    $html .= '<th>' . get_string('promotional', 'local_localcustomadmin') . '</th>';
+    $html .= '<th>' . get_string('enrollment_fee', 'local_localcustomadmin') . '</th>';
+    $html .= '<th>' . get_string('installments', 'local_localcustomadmin') . '</th>';
     $html .= '<th>' . get_string('status', 'local_localcustomadmin') . '</th>';
     $html .= '<th>' . get_string('actions', 'local_localcustomadmin') . '</th>';
     $html .= '</tr>';
@@ -527,7 +531,7 @@ function get_price_modal_html($category_id) {
     $html = '';
     
     $html .= '<div class="modal fade" id="priceModal" tabindex="-1" aria-labelledby="priceModalLabel" aria-hidden="true">';
-    $html .= '<div class="modal-dialog">';
+    $html .= '<div class="modal-dialog modal-lg">';
     $html .= '<div class="modal-content">';
     
     $html .= '<div class="modal-header">';
@@ -541,27 +545,70 @@ function get_price_modal_html($category_id) {
     $html .= '<input type="hidden" id="category_id" value="' . $category_id . '">';
     $html .= '<input type="hidden" id="price_id" value="">';
     
+    // Price Name
     $html .= '<div class="mb-3">';
-    $html .= '<label for="price-value" class="form-label">' . get_string('price', 'local_localcustomadmin') . ' *</label>';
+    $html .= '<label for="price-name" class="form-label">' . get_string('price_name', 'local_localcustomadmin') . ' *</label>';
+    $html .= '<input type="text" class="form-control" id="price-name" name="name" maxlength="255" required>';
+    $html .= '<small class="form-text text-muted">Ex: Regular Price, Summer Promotion, etc.</small>';
+    $html .= '</div>';
+    
+    // Price Value
+    $html .= '<div class="mb-3">';
+    $html .= '<label for="price-value" class="form-label">' . get_string('price', 'local_localcustomadmin') . ' (R$) *</label>';
     $html .= '<input type="number" class="form-control" id="price-value" name="price" step="0.01" min="0" required>';
     $html .= '</div>';
     
+    // Start Date
     $html .= '<div class="mb-3">';
     $html .= '<label for="validity-start" class="form-label">' . get_string('validity_start', 'local_localcustomadmin') . ' *</label>';
-    $html .= '<input type="datetime-local" class="form-control" id="validity-start" name="validity_start" required>';
+    $html .= '<input type="datetime-local" class="form-control" id="validity-start" name="startdate" required>';
     $html .= '</div>';
     
+    // End Date
     $html .= '<div class="mb-3">';
     $html .= '<label for="validity-end" class="form-label">' . get_string('validity_end', 'local_localcustomadmin') . '</label>';
-    $html .= '<input type="datetime-local" class="form-control" id="validity-end" name="validity_end">';
+    $html .= '<input type="datetime-local" class="form-control" id="validity-end" name="enddate">';
+    $html .= '<small class="form-text text-muted">Leave empty for indefinite duration</small>';
     $html .= '</div>';
     
-    $html .= '<div class="mb-3">';
+    // Row 1: Promotional, Enrollment Fee
+    $html .= '<div class="row">';
+    $html .= '<div class="col-md-6 mb-3">';
+    $html .= '<div class="form-check">';
+    $html .= '<input type="checkbox" class="form-check-input" id="is-promotional" name="ispromotional" value="1">';
+    $html .= '<label class="form-check-label" for="is-promotional">' . get_string('promotional', 'local_localcustomadmin') . '</label>';
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    $html .= '<div class="col-md-6 mb-3">';
+    $html .= '<div class="form-check">';
+    $html .= '<input type="checkbox" class="form-check-input" id="is-enrollment-fee" name="isenrollmentfee" value="1">';
+    $html .= '<label class="form-check-label" for="is-enrollment-fee">' . get_string('enrollment_fee', 'local_localcustomadmin') . '</label>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    // Row 2: Scheduled Task, Installments, Status
+    $html .= '<div class="row">';
+    $html .= '<div class="col-md-4 mb-3">';
+    $html .= '<div class="form-check">';
+    $html .= '<input type="checkbox" class="form-check-input" id="scheduled-task" name="scheduledtask" value="1">';
+    $html .= '<label class="form-check-label" for="scheduled-task">' . get_string('scheduled_task', 'local_localcustomadmin') . '</label>';
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    $html .= '<div class="col-md-4 mb-3">';
+    $html .= '<label for="installments" class="form-label">' . get_string('installments', 'local_localcustomadmin') . '</label>';
+    $html .= '<input type="number" class="form-control" id="installments" name="installments" min="0" max="12" value="0">';
+    $html .= '</div>';
+    
+    $html .= '<div class="col-md-4 mb-3">';
     $html .= '<label for="price-status" class="form-label">' . get_string('status', 'local_localcustomadmin') . '</label>';
     $html .= '<select class="form-select" id="price-status" name="status">';
     $html .= '<option value="1">' . get_string('active', 'local_localcustomadmin') . '</option>';
     $html .= '<option value="0">' . get_string('inactive', 'local_localcustomadmin') . '</option>';
     $html .= '</select>';
+    $html .= '</div>';
     $html .= '</div>';
     
     $html .= '</form>';
