@@ -254,24 +254,32 @@ To test the feature:
 
 ## Authentication & Security
 
-### WebService Token (wstoken)
-All AJAX calls to the Moodle webservice API include the `wstoken` parameter obtained from `M.cfg.token`. This ensures:
-- Proper authentication with the webservice endpoint
-- Prevention of 403 Forbidden errors
-- Secure validation of user permissions
+### AJAX Endpoint Approach
+Instead of using the Moodle webservice REST API (which requires additional configuration), we use a dedicated AJAX endpoint at `/local/localcustomadmin/ajax/price_action.php`. This approach:
 
-**Affected Functions:**
-- `loadPrices()` - Fetches prices
-- `savePrice()` - Creates/updates prices
-- `editPrice()` - Loads price for editing
-- `deletePrice()` - Deletes a price
+1. **Simplifies Authentication** - Uses standard Moodle `require_login()` and capability checks
+2. **Avoids CORS Issues** - Direct server-to-server communication
+3. **Better Performance** - No webservice overhead
+4. **Easier Debugging** - Standard PHP error handling
 
-### Required Capability
-User must have `local/localcustomadmin:manage` capability to perform CRUD operations on prices. This is defined in `db/access.php` and restricted to managers by default.
+### AJAX Endpoint Actions
+The `price_action.php` file handles these actions:
+- **getprices** - Fetch all prices for a category
+- **createprice** - Create a new price
+- **updateprice** - Update an existing price
+- **deleteprice** - Delete a price
+
+### Security Features
+- User must have `local/localcustomadmin:manage` capability
+- Session authentication via `require_login()`
+- All parameters sanitized using `required_param()` and `optional_param()`
+- Exception handling with proper error responses
 
 ## Git Commits
 
 **Latest Commits:**
+- **bb4480a** - fix: Replace webservice REST calls with direct AJAX endpoint to fix 403 error
+- **c10f63d** - docs: Add authentication and wstoken documentation
 - **eb03924** - fix: Add wstoken to all AJAX calls for webservice authentication
 - **353f6c3** - feat: Auto-initialize date fields and remove installments limit
 - **737a3a2** - feat: Expand price form with all database table fields
