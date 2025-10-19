@@ -371,6 +371,7 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                 dataType: 'json',
                 data: {
                     action: 'deleteprice',
+                    categoryid: self.categoryId,
                     id: priceId
                 },
                 success: function(response) {
