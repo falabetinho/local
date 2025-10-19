@@ -77,8 +77,7 @@ try {
             $pricedata->installments = $installments;
             $pricedata->status = $status;
 
-            $manager = new \local_localcustomadmin\category_price_manager();
-            $result = $manager->create_price($pricedata);
+            $result = \local_localcustomadmin\category_price_manager::create($pricedata);
             
             $response->data = $result;
             $response->success = true;
@@ -109,17 +108,14 @@ try {
             $pricedata->installments = $installments;
             $pricedata->status = $status;
 
-            $manager = new \local_localcustomadmin\category_price_manager();
-            $result = $manager->update_price($pricedata);
+            \local_localcustomadmin\category_price_manager::update($id, $pricedata);
             
-            $response->data = $result;
             $response->success = true;
             break;
 
         case 'deleteprice':
             $id = required_param('id', PARAM_INT);
-            $manager = new \local_localcustomadmin\category_price_manager();
-            $manager->delete_price($id);
+            \local_localcustomadmin\category_price_manager::delete($id);
             
             $response->success = true;
             break;
