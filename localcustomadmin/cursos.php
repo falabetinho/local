@@ -110,7 +110,7 @@ $templatecontext['actions'] = [
     [
         'title' => get_string('create_course', 'local_localcustomadmin'),
         'description' => get_string('create_course_desc', 'local_localcustomadmin'),
-        'url' => (new moodle_url('/course/edit.php', ['category' => 1]))->out(),
+        'url' => (new moodle_url('/local/localcustomadmin/edit_curso.php'))->out(),
         'icon' => 'fa-plus-circle',
         'variant' => 'primary'
     ],

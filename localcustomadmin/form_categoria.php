@@ -380,18 +380,18 @@ if ($editing) {
 }
 
 // Tab Navigation
-echo '<ul class="nav nav-tabs mb-3" role="tablist">';
+echo '<ul class="nav nav-tabs" role="tablist">';
 
 echo '<li class="nav-item" role="presentation">';
-echo '<button class="nav-link ' . ($tab !== 'pricing' ? 'active' : '') . '" id="general-tab" data-bs-toggle="tab" data-bs-target="#general-tab-content" type="button" role="tab" aria-controls="general-tab-content" ' . ($tab !== 'pricing' ? 'aria-selected="true"' : 'aria-selected="false"') . '>';
-echo '<i class="fas fa-info-circle me-2"></i>' . get_string('general') . '</button>';
+echo '<a class="nav-link ' . ($tab !== 'pricing' ? 'active' : '') . '" id="general-tab" data-bs-toggle="tab" data-bs-target="#general-tab-content" role="tab" aria-controls="general-tab-content" ' . ($tab !== 'pricing' ? 'aria-selected="true"' : 'aria-selected="false"') . '>';
+echo '<i class="fas fa-info-circle me-2"></i>' . get_string('general') . '</a>';
 echo '</li>';
 
 echo '<li class="nav-item" role="presentation">';
 $pricing_disabled = !$editing ? 'disabled' : '';
 $pricing_class = !$editing ? 'text-muted' : '';
-echo '<button class="nav-link ' . ($tab === 'pricing' ? 'active' : '') . ' ' . $pricing_class . '" id="pricing-tab" data-bs-toggle="tab" data-bs-target="#pricing-tab-content" type="button" role="tab" aria-controls="pricing-tab-content" ' . $pricing_disabled . ' ' . ($tab === 'pricing' ? 'aria-selected="true"' : 'aria-selected="false"') . '>';
-echo '<i class="fas fa-tag me-2"></i>' . get_string('pricing', 'local_localcustomadmin') . '</button>';
+echo '<a class="nav-link ' . ($tab === 'pricing' ? 'active' : '') . ' ' . $pricing_class . '" id="pricing-tab" data-bs-toggle="tab" data-bs-target="#pricing-tab-content" role="tab" aria-controls="pricing-tab-content" ' . $pricing_disabled . ' ' . ($tab === 'pricing' ? 'aria-selected="true"' : 'aria-selected="false"') . '>';
+echo '<i class="fas fa-tag me-2"></i>' . get_string('pricing', 'local_localcustomadmin') . '</a>';
 echo '</li>';
 
 echo '</ul>';

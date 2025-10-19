@@ -169,6 +169,20 @@ $string['categorycreated'] = 'Categoria criada com sucesso';
 $string['categoryupdated'] = 'Categoria atualizada com sucesso';
 $string['categoryduplicate'] = 'Uma categoria com este nome já existe neste nível';
 
+// Course form strings
+$string['addcourse'] = 'Adicionar Curso';
+$string['editcourse'] = 'Editar Curso';
+$string['coursecreated'] = 'Curso criado com sucesso';
+$string['courseupdated'] = 'Curso atualizado com sucesso';
+$string['shortnametaken'] = 'Nome abreviado já existe';
+$string['general'] = 'Geral';
+$string['course_enrolments_info'] = 'Veja e gerencie os métodos de inscrição para este curso. Os métodos de inscrição são inicializados automaticamente com base na precificação da categoria.';
+$string['save_course_first'] = 'Por favor, salve o curso primeiro para gerenciar inscrições.';
+$string['enrolled_methods'] = 'Métodos de Inscrição';
+$string['no_enrolment_methods'] = 'Nenhum método de inscrição configurado para este curso.';
+$string['enrolment_method'] = 'Método de Inscrição';
+$string['edit'] = 'Editar';
+
 // Pricing tab strings
 $string['pricing'] = 'Precificação';
 $string['category_prices'] = 'Preços da Categoria';

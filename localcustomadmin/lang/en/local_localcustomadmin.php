@@ -169,6 +169,20 @@ $string['categorycreated'] = 'Category created successfully';
 $string['categoryupdated'] = 'Category updated successfully';
 $string['categoryduplicate'] = 'A category with this name already exists at this level';
 
+// Course form strings
+$string['addcourse'] = 'Add Course';
+$string['editcourse'] = 'Edit Course';
+$string['coursecreated'] = 'Course created successfully';
+$string['courseupdated'] = 'Course updated successfully';
+$string['shortnametaken'] = 'Short name already exists';
+$string['general'] = 'General';
+$string['course_enrolments_info'] = 'View and manage enrollment methods for this course. Enrollment methods are automatically initialized based on category pricing.';
+$string['save_course_first'] = 'Please save the course first to manage enrollments.';
+$string['enrolled_methods'] = 'Enrollment Methods';
+$string['no_enrolment_methods'] = 'No enrollment methods configured for this course.';
+$string['enrolment_method'] = 'Enrollment Method';
+$string['edit'] = 'Edit';
+
 // Pricing tab strings
 $string['pricing'] = 'Pricing';
 $string['category_prices'] = 'Category Prices';

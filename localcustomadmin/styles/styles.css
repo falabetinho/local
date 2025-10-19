@@ -259,3 +259,218 @@
     background-color: #fbeaea;
     color: #b71c1c;
 }
+
+/* Course Form Styles with Tabs */
+.local-customadmin-course-tabs {
+    margin: 20px 0;
+}
+
+.nav-tabs {
+    border-bottom: 2px solid #e5e9f2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.nav-tabs .nav-item {
+    margin-bottom: -2px;
+}
+
+.nav-tabs .nav-link {
+    border: 1px solid #e5e9f2;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    padding: 12px 24px;
+    font-weight: 500;
+    color: #666;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.nav-tabs .nav-link:hover {
+    color: #0078d4;
+    background-color: #ffffff;
+    border-color: #0078d4;
+}
+
+.nav-tabs .nav-link.active {
+    color: #ffffff;
+    background-color: #0078d4;
+    border-color: #0078d4;
+}
+
+.tab-content {
+    background-color: #ffffff;
+    border: 1px solid #e5e9f2;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 24px;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.show {
+    display: block;
+}
+
+.tab-pane.fade {
+    opacity: 0;
+    transition: opacity 0.15s linear;
+}
+
+.tab-pane.show.fade {
+    opacity: 1;
+}
+
+/* General Tab Styles */
+#general-content .form-group,
+#general-content .fitem {
+    margin-bottom: 18px;
+}
+
+#general-content label {
+    font-weight: 500;
+    color: #222;
+    margin-bottom: 6px;
+}
+
+#general-content input[type="text"],
+#general-content input[type="date"],
+#general-content select,
+#general-content textarea {
+    border: 1px solid #d0d6de;
+    border-radius: 6px;
+    padding: 10px 12px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#general-content input[type="text"]:focus,
+#general-content input[type="date"]:focus,
+#general-content select:focus,
+#general-content textarea:focus {
+    border-color: #0078d4;
+    box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+    outline: none;
+}
+
+/* Pricing Tab Styles */
+.course-enrolments-section {
+    margin-top: 15px;
+}
+
+.course-enrolments-section h4 {
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e5e9f2;
+    padding-bottom: 10px;
+}
+
+.course-enrolments-section .table {
+    margin-bottom: 0;
+}
+
+.course-enrolments-section .table thead {
+    background-color: #f8f9fa;
+}
+
+.course-enrolments-section .table thead th {
+    font-weight: 600;
+    color: #222;
+    border-bottom: 2px solid #e5e9f2;
+    padding: 12px 15px;
+}
+
+.course-enrolments-section .table tbody td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e5e9f2;
+    vertical-align: middle;
+}
+
+.course-enrolments-section .table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.course-enrolments-section .badge {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.course-enrolments-section .btn-primary {
+    background-color: #0078d4;
+    border-color: #0078d4;
+    padding: 6px 12px;
+    font-size: 13px;
+    transition: all 0.3s;
+}
+
+.course-enrolments-section .btn-primary:hover {
+    background-color: #005da4;
+    border-color: #005da4;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 120, 212, 0.3);
+}
+
+/* Alert Styles */
+#general-content .alert,
+#pricing-content .alert {
+    border-radius: 6px;
+    border: 1px solid;
+    padding: 12px 15px;
+}
+
+.alert-info {
+    background-color: #e5f1fb;
+    border-color: #0078d4;
+    color: #0078d4;
+}
+
+.alert-warning {
+    background-color: #fff4ce;
+    border-color: #ff9800;
+    color: #856404;
+}
+
+/* Form buttons */
+.fitem.fbuttons {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e9f2;
+}
+
+.fitem.fbuttons input[type="submit"],
+.fitem.fbuttons input[type="button"] {
+    padding: 10px 24px;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.3s;
+    margin-right: 10px;
+}
+
+.fitem.fbuttons input[type="submit"] {
+    background-color: #0078d4;
+    color: white;
+    border: 1px solid #0078d4;
+}
+
+.fitem.fbuttons input[type="submit"]:hover {
+    background-color: #005da4;
+    border-color: #005da4;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 120, 212, 0.3);
+}
+
+.fitem.fbuttons input[type="button"] {
+    background-color: #f3f6fb;
+    color: #0078d4;
+    border: 1px solid #d0d6de;
+}
+
+.fitem.fbuttons input[type="button"]:hover {
+    background-color: #e5e9f2;
+    border-color: #0078d4;
+}
