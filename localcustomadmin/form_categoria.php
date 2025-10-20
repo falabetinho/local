@@ -357,73 +357,361 @@ if ($form->is_cancelled()) {
 // Output the page
 echo $OUTPUT->header();
 
-if ($modal) {
-    echo '<div class="modal-body p-3">';
+// Add elegant form styles
+echo '<style>
+.elegant-form-container {
+    background: linear-gradient(135deg, #f8faff 0%, #ffffff 100%);
+    min-height: 100vh;
+    font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-echo '<div class="category-form-container">';
+.elegant-form-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 32px;
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+}
 
-// Add back button
-if (!$modal) {
+.elegant-form-header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><defs><pattern id=\'grain\' width=\'100\' height=\'100\' patternUnits=\'userSpaceOnUse\'><circle cx=\'25\' cy=\'25\' r=\'1\' fill=\'rgba(255,255,255,0.1)\'/><circle cx=\'75\' cy=\'75\' r=\'1\' fill=\'rgba(255,255,255,0.08)\'/><circle cx=\'50\' cy=\'10\' r=\'0.5\' fill=\'rgba(255,255,255,0.12)\'/></pattern></defs><rect width=\'100\' height=\'100\' fill=\'url(%23grain)\'/></svg>");
+    pointer-events: none;
+}
+
+.elegant-form-content {
+    background: white;
+    border-radius: 20px 20px 0 0;
+    margin-top: -20px;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+    min-height: calc(100vh - 200px);
+}
+
+.elegant-form-inner {
+    padding: 40px;
+}
+
+.elegant-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.2s ease;
+    margin-bottom: 20px;
+}
+
+.elegant-back-btn:hover {
+    background: rgba(255,255,255,0.25);
+    color: white;
+    transform: translateY(-1px);
+}
+
+.elegant-form-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.elegant-form-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 8px 0 0 0;
+    position: relative;
+    z-index: 1;
+}
+</style>';
+
+if ($modal) {
+    echo '<div class="modal-body p-0">';
+    echo '<div class="elegant-form-container">';
+} else {
+    echo '<div class="elegant-form-container">';
+    
+    // Elegant Header
+    echo '<div class="elegant-form-header">';
+    
+    // Back button
     $back_url = new moodle_url('/local/localcustomadmin/categorias.php');
-    echo '<div class="mb-3">';
-    echo '<a href="' . $back_url . '" class="btn btn-secondary">';
-    echo '<i class="fas fa-arrow-left me-2"></i>' . get_string('back') . ' ' . get_string('categories', 'local_localcustomadmin');
+    echo '<a href="' . $back_url . '" class="elegant-back-btn">';
+    echo '<i class="fas fa-arrow-left"></i>';
+    echo '<span>Voltar para Categorias</span>';
     echo '</a>';
+    
+    // Title
+    if ($editing) {
+        echo '<h1 class="elegant-form-title">';
+        echo '<i class="fas fa-edit"></i>';
+        echo 'Editar Categoria';
+        echo '</h1>';
+        echo '<p class="elegant-form-subtitle">Atualize as informações da categoria: ' . format_string($category->name) . '</p>';
+    } else {
+        echo '<h1 class="elegant-form-title">';
+        echo '<i class="fas fa-plus-circle"></i>';
+        echo 'Nova Categoria';
+        echo '</h1>';
+        echo '<p class="elegant-form-subtitle">Crie uma nova categoria para organizar seus cursos</p>';
+    }
+    
     echo '</div>';
 }
 
-if ($editing) {
-    echo '<h3><i class="fas fa-edit me-2"></i>' . get_string('edit_category', 'local_localcustomadmin') . ': ' . format_string($category->name) . '</h3>';
-} else {
-    echo '<h3><i class="fas fa-plus-circle me-2"></i>' . get_string('add_category', 'local_localcustomadmin') . '</h3>';
-}
+echo '<div class="elegant-form-content">';
+echo '<div class="elegant-form-inner">';
 
-// Tab Navigation
-echo '<ul class="nav nav-tabs" role="tablist">';
+// Tab Navigation with elegant design
+echo '<div class="elegant-tabs-container mb-4">';
+echo '<ul class="elegant-tabs" role="tablist">';
 
-echo '<li class="nav-item" role="presentation">';
-echo '<a class="nav-link ' . ($tab !== 'pricing' ? 'active' : '') . '" id="general-tab" data-bs-toggle="tab" data-bs-target="#general-tab-content" role="tab" aria-controls="general-tab-content" ' . ($tab !== 'pricing' ? 'aria-selected="true"' : 'aria-selected="false"') . '>';
-echo '<i class="fas fa-info-circle me-2"></i>' . get_string('general') . '</a>';
+echo '<li class="elegant-tab-item" role="presentation">';
+echo '<a class="elegant-tab-link ' . ($tab !== 'pricing' ? 'active' : '') . '" id="general-tab" data-bs-toggle="tab" data-bs-target="#general-tab-content" role="tab" aria-controls="general-tab-content" ' . ($tab !== 'pricing' ? 'aria-selected="true"' : 'aria-selected="false"') . '>';
+echo '<div class="tab-icon"><i class="fas fa-info-circle"></i></div>';
+echo '<div class="tab-content-wrapper">';
+echo '<div class="tab-title">Informações Gerais</div>';
+echo '<div class="tab-subtitle">Nome, descrição e configurações básicas</div>';
+echo '</div>';
+echo '</a>';
 echo '</li>';
 
-echo '<li class="nav-item" role="presentation">';
+echo '<li class="elegant-tab-item" role="presentation">';
 $pricing_disabled = !$editing ? 'disabled' : '';
-$pricing_class = !$editing ? 'text-muted' : '';
-echo '<a class="nav-link ' . ($tab === 'pricing' ? 'active' : '') . ' ' . $pricing_class . '" id="pricing-tab" data-bs-toggle="tab" data-bs-target="#pricing-tab-content" role="tab" aria-controls="pricing-tab-content" ' . $pricing_disabled . ' ' . ($tab === 'pricing' ? 'aria-selected="true"' : 'aria-selected="false"') . '>';
-echo '<i class="fas fa-tag me-2"></i>' . get_string('pricing', 'local_localcustomadmin') . '</a>';
+$pricing_class = !$editing ? 'disabled' : '';
+echo '<a class="elegant-tab-link ' . ($tab === 'pricing' ? 'active' : '') . ' ' . $pricing_class . '" id="pricing-tab" data-bs-toggle="tab" data-bs-target="#pricing-tab-content" role="tab" aria-controls="pricing-tab-content" ' . $pricing_disabled . ' ' . ($tab === 'pricing' ? 'aria-selected="true"' : 'aria-selected="false"') . '>';
+echo '<div class="tab-icon"><i class="fas fa-tag"></i></div>';
+echo '<div class="tab-content-wrapper">';
+echo '<div class="tab-title">Gestão de Preços</div>';
+echo '<div class="tab-subtitle">Configure preços e promoções</div>';
+echo '</div>';
+echo '</a>';
 echo '</li>';
 
 echo '</ul>';
+echo '</div>';
 
-// Tab Content
-echo '<div class="tab-content">';
+// Tab Content with elegant styling
+echo '<div class="elegant-tab-content">';
 
 // General Tab
-echo '<div class="tab-pane fade ' . ($tab !== 'pricing' ? 'show active' : '') . '" id="general-tab-content" role="tabpanel" aria-labelledby="general-tab">';
+echo '<div class="elegant-tab-pane ' . ($tab !== 'pricing' ? 'active' : '') . '" id="general-tab-content" role="tabpanel" aria-labelledby="general-tab">';
+echo '<div class="elegant-form-section">';
+echo '<div class="form-section-header">';
+echo '<h4><i class="fas fa-cog me-2"></i>Configurações da Categoria</h4>';
+echo '<p class="form-section-subtitle">Configure as informações básicas desta categoria</p>';
+echo '</div>';
 $form->display();
+echo '</div>';
 echo '</div>';
 
 // Pricing Tab
-echo '<div class="tab-pane fade ' . ($tab === 'pricing' ? 'show active' : '') . '" id="pricing-tab-content" role="tabpanel" aria-labelledby="pricing-tab">';
+echo '<div class="elegant-tab-pane ' . ($tab === 'pricing' ? 'active' : '') . '" id="pricing-tab-content" role="tabpanel" aria-labelledby="pricing-tab">';
 
 if ($editing) {
-    // Pricing content will be loaded here
+    echo '<div class="elegant-form-section">';
+    echo '<div class="form-section-header">';
+    echo '<h4><i class="fas fa-chart-line me-2"></i>Gestão de Preços</h4>';
+    echo '<p class="form-section-subtitle">Configure preços, promoções e condições de pagamento</p>';
+    echo '</div>';
     echo render_pricing_tab($category->id);
+    echo '</div>';
 } else {
-    echo '<div class="alert alert-info">';
-    echo '<i class="fas fa-info-circle me-2"></i>' . get_string('create_category_first', 'local_localcustomadmin');
+    echo '<div class="elegant-info-card">';
+    echo '<div class="info-card-icon">';
+    echo '<i class="fas fa-info-circle"></i>';
+    echo '</div>';
+    echo '<div class="info-card-content">';
+    echo '<h5>Primeiro, crie a categoria</h5>';
+    echo '<p>A gestão de preços estará disponível após salvar as informações gerais da categoria.</p>';
+    echo '</div>';
     echo '</div>';
 }
 
 echo '</div>';
 
-echo '</div>'; // End tab-content
+echo '</div>'; // End elegant-tab-content
 
-echo '</div>';
+echo '</div>'; // End elegant-form-inner
+echo '</div>'; // End elegant-form-content
+
+// Add JavaScript for enhanced interactions
+echo '<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Initialize elegant form interactions
+    initElegantForm();
+});
+
+function initElegantForm() {
+    // Enhanced tab functionality
+    initElegantTabs();
+    
+    // Form field enhancements
+    enhanceFormFields();
+    
+    // Add loading states for form submission
+    enhanceFormSubmission();
+}
+
+function initElegantTabs() {
+    const tabLinks = document.querySelectorAll(".elegant-tab-link");
+    const tabPanes = document.querySelectorAll(".elegant-tab-pane");
+    
+    tabLinks.forEach(link => {
+        link.addEventListener("click", function(e) {
+            e.preventDefault();
+            
+            if (this.classList.contains("disabled")) {
+                return;
+            }
+            
+            // Remove active class from all tabs
+            tabLinks.forEach(tab => tab.classList.remove("active"));
+            tabPanes.forEach(pane => pane.classList.remove("active"));
+            
+            // Add active class to clicked tab
+            this.classList.add("active");
+            
+            // Show corresponding pane
+            const targetId = this.getAttribute("data-bs-target");
+            const targetPane = document.querySelector(targetId);
+            if (targetPane) {
+                targetPane.classList.add("active");
+            }
+            
+            // Add ripple effect
+            addRippleEffect(this, e);
+        });
+    });
+}
+
+function enhanceFormFields() {
+    // Add focus effects to form fields
+    const formFields = document.querySelectorAll("input[type=\"text\"], select, textarea");
+    
+    formFields.forEach(field => {
+        field.addEventListener("focus", function() {
+            this.closest(".fitem").classList.add("focused");
+        });
+        
+        field.addEventListener("blur", function() {
+            this.closest(".fitem").classList.remove("focused");
+        });
+        
+        // Add validation visual feedback
+        field.addEventListener("input", function() {
+            if (this.checkValidity()) {
+                this.classList.remove("error");
+                this.classList.add("valid");
+            } else {
+                this.classList.remove("valid");
+                if (this.value.length > 0) {
+                    this.classList.add("error");
+                }
+            }
+        });
+    });
+}
+
+function enhanceFormSubmission() {
+    const forms = document.querySelectorAll("form");
+    
+    forms.forEach(form => {
+        form.addEventListener("submit", function() {
+            const submitBtn = this.querySelector("input[type=\"submit\"]");
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.value = "Salvando...";
+                submitBtn.style.background = "#9ca3af";
+                
+                // Add loading spinner
+                const spinner = document.createElement("i");
+                spinner.className = "fas fa-spinner fa-spin";
+                spinner.style.marginRight = "8px";
+                submitBtn.parentNode.insertBefore(spinner, submitBtn);
+            }
+        });
+    });
+}
+
+function addRippleEffect(element, event) {
+    const ripple = document.createElement("span");
+    const rect = element.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = event.clientX - rect.left - size / 2;
+    const y = event.clientY - rect.top - size / 2;
+    
+    ripple.className = "elegant-ripple";
+    ripple.style.cssText = `
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(99, 102, 241, 0.2);
+        transform: scale(0);
+        animation: ripple-animation 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+        pointer-events: none;
+        width: ${size}px;
+        height: ${size}px;
+        left: ${x}px;
+        top: ${y}px;
+    `;
+    
+    element.appendChild(ripple);
+    
+    setTimeout(() => {
+        ripple.remove();
+    }, 600);
+}
+
+// Add CSS for ripple animation
+const style = document.createElement("style");
+style.textContent = `
+    @keyframes ripple-animation {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    .fitem.focused {
+        border-color: #6366f1 !important;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+    }
+    
+    .fitem input.valid,
+    .fitem select.valid,
+    .fitem textarea.valid {
+        border-color: #10b981 !important;
+    }
+    
+    .fitem input.error,
+    .fitem select.error,
+    .fitem textarea.error {
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+    }
+`;
+document.head.appendChild(style);
+</script>';
+
+echo '</div>'; // End elegant-form-container
 
 if ($modal) {
-    echo '</div>';
+    echo '</div>'; // End modal-body
     // Add JavaScript to initialize file managers and other Moodle components
     echo '<script>
     // Initialize file managers after modal content is loaded

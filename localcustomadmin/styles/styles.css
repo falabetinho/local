@@ -485,7 +485,6 @@
     margin: 0 auto;
     padding: 0;
     font-family: 'Inter', 'Segoe UI', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: linear-gradient(135deg, #f8faff 0%, #ffffff 100%);
     min-height: 100vh;
     position: relative;
 }
@@ -675,7 +674,7 @@
 /* Elegant Tree Container */
 .elegant-tree-container {
     background: white;
-    margin: 0 32px;
+    margin: 10px 32px;
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.08);
     overflow: hidden;
@@ -1192,17 +1191,314 @@
     }
 }
 
-/* Reduced Motion Support */
-@media (prefers-reduced-motion: reduce) {
-    .tree-node,
-    .node-header,
-    .node-children,
-    .fluent-btn,
-    .action-btn {
-        transition: none;
+/* ========================================
+   ELEGANT FORM STYLING
+   ======================================== */
+
+/* Elegant Tabs */
+.elegant-tabs-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+    border: 1px solid rgba(0,0,0,0.06);
+}
+
+.elegant-tabs {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.elegant-tab-item {
+    flex: 1;
+}
+
+.elegant-tab-link {
+    display: flex;
+    align-items: center;
+    padding: 20px 24px;
+    text-decoration: none;
+    color: #64748b;
+    border: none;
+    background: none;
+    width: 100%;
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+.elegant-tab-link:hover {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+    color: #6366f1;
+}
+
+.elegant-tab-link.active {
+    background: white;
+    color: #6366f1;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.elegant-tab-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+.elegant-tab-link.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.tab-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(99, 102, 241, 0.1);
+    margin-right: 16px;
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+}
+
+.elegant-tab-link.active .tab-icon {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+}
+
+.tab-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.tab-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.tab-subtitle {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    line-height: 1.3;
+}
+
+/* Tab Content */
+.elegant-tab-content {
+    background: white;
+    border-radius: 0 0 16px 16px;
+    min-height: 400px;
+}
+
+.elegant-tab-pane {
+    display: none;
+    padding: 32px;
+}
+
+.elegant-tab-pane.active {
+    display: block;
+}
+
+/* Form Sections */
+.elegant-form-section {
+    margin-bottom: 32px;
+}
+
+.form-section-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.form-section-header h4 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+}
+
+.form-section-subtitle {
+    color: #64748b;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Enhanced Moodle Form Elements */
+.elegant-form-section .fitem {
+    margin-bottom: 20px;
+    background: #fafbfc;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.elegant-form-section .fitem:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.elegant-form-section .fitem.fitem_ftext input[type="text"],
+.elegant-form-section .fitem.fitem_fselect select,
+.elegant-form-section .fitem.fitem_feditor textarea {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.elegant-form-section .fitem.fitem_ftext input[type="text"]:focus,
+.elegant-form-section .fitem.fitem_fselect select:focus,
+.elegant-form-section .fitem.fitem_feditor textarea:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    outline: none;
+}
+
+.elegant-form-section .fitemtitle {
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.elegant-form-section .fitemtitle label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+
+.elegant-form-section .fitemtitle .req {
+    color: #ef4444;
+    font-weight: 700;
+}
+
+.elegant-form-section .felement {
+    margin-top: 8px;
+}
+
+.elegant-form-section .fdescription {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    line-height: 1.4;
+}
+
+/* Form Buttons */
+.elegant-form-section .fitem.fitem_actionbuttons {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 2px solid #e2e8f0;
+    text-align: center;
+    padding: 24px;
+}
+
+.elegant-form-section .fitem.fitem_actionbuttons input[type="submit"],
+.elegant-form-section .fitem.fitem_actionbuttons input[type="button"] {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0 8px;
+    min-width: 120px;
+}
+
+.elegant-form-section .fitem.fitem_actionbuttons input[type="submit"]:hover,
+.elegant-form-section .fitem.fitem_actionbuttons input[type="button"]:hover {
+    background: linear-gradient(135deg, #5b5ff5 0%, #7c3aed 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.elegant-form-section .fitem.fitem_actionbuttons input[type="button"] {
+    background: #6b7280;
+}
+
+.elegant-form-section .fitem.fitem_actionbuttons input[type="button"]:hover {
+    background: #4b5563;
+    box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+}
+
+/* File Manager Enhancement */
+.elegant-form-section .fitem.fitem_ffilemanager {
+    background: linear-gradient(135deg, #fef7ff 0%, #fae8ff 100%);
+    border: 2px dashed #d946ef;
+}
+
+.elegant-form-section .fitem.fitem_ffilemanager .fitemtitle {
+    color: #a21caf;
+}
+
+/* Editor Enhancement */
+.elegant-form-section .fitem.fitem_feditor {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 2px solid #bbf7d0;
+}
+
+.elegant-form-section .fitem.fitem_feditor .fitemtitle {
+    color: #166534;
+}
+
+/* Responsive Design for Forms */
+@media (max-width: 768px) {
+    .elegant-form-inner {
+        padding: 24px 20px;
     }
     
-    .fluent-ripple {
-        display: none;
+    .elegant-tab-pane {
+        padding: 24px 20px;
+    }
+    
+    .elegant-tabs {
+        flex-direction: column;
+    }
+    
+    .elegant-tab-link {
+        padding: 16px 20px;
+    }
+    
+    .tab-content-wrapper {
+        margin-left: 0;
+        margin-top: 8px;
+    }
+    
+    .tab-icon {
+        width: 35px;
+        height: 35px;
+        margin-right: 12px;
+    }
+    
+    .elegant-form-section .fitem {
+        padding: 16px;
+    }
+}
+
+/* Reduced Motion Support for Forms */
+@media (prefers-reduced-motion: reduce) {
+    .elegant-tab-link,
+    .elegant-form-section .fitem,
+    .elegant-form-section .fitem input,
+    .elegant-form-section .fitem select,
+    .elegant-form-section .fitem textarea {
+        transition: none;
     }
 }
