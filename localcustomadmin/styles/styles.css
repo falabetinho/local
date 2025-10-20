@@ -738,7 +738,8 @@
 /* Elegant Tree Nodes */
 .elegant-node {
     position: relative;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .elegant-node:not(:last-child) {
@@ -959,19 +960,24 @@
 
 /* Node Children */
 .node-children {
-    max-height: 0;
+    display: grid;
+    grid-template-rows: 0fr;
     overflow: hidden;
     background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-    border-top: 1px solid #f1f5f9;
-    transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+    border-top: 1px solid transparent;
+    transition: grid-template-rows 0.35s cubic-bezier(0.4, 0.0, 0.2, 1),
+                border-top-color 0.25s ease,
+                padding 0.35s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
 .node-children.expanded {
-    max-height: 2000px;
+    grid-template-rows: 1fr;
     padding-bottom: 16px;
+    border-top-color: #f1f5f9;
 }
 
 .children-wrapper {
+    min-height: 0;
     margin-left: 60px;
     position: relative;
     padding-top: 8px;
