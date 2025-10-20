@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Categories management page for Local Custom Admin plugin
+ * Categories management with Fluent Design System tree structure
  *
  * @package   local_localcustomadmin
  * @copyright 2025 Heber
@@ -32,112 +32,118 @@ require_capability('local/localcustomadmin:manage', $context);
 $PAGE->set_url(new moodle_url('/local/localcustomadmin/categorias.php'));
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('base');
-$PAGE->set_title(get_string('categories_management', 'local_localcustomadmin'));
+$PAGE->set_title('Gerenciamento de Categorias - Fluent Design');
+
+// Include JavaScript for tree functionality
+$PAGE->requires->js_call_amd('local_localcustomadmin/categories_accordion', 'init');
 
 // Breadcrumb navigation
-$PAGE->navbar->add(get_string('courses', 'local_localcustomadmin'), new moodle_url('/local/localcustomadmin/cursos.php'));
-$PAGE->navbar->add(get_string('categories', 'local_localcustomadmin'));
+$PAGE->navbar->add('Cursos', new moodle_url('/local/localcustomadmin/cursos.php'));
+$PAGE->navbar->add('Categorias');
 
 echo $OUTPUT->header();
 
-// Get all course categories with counts
-$sql = "SELECT cc.id, cc.name, cc.description, cc.parent, cc.coursecount, cc.depth, cc.path,
-               (SELECT COUNT(*) FROM {course_categories} sub WHERE sub.parent = cc.id) as subcategories_count,
-               (SELECT COUNT(*) FROM {course} c WHERE c.category = cc.id) as courses_count
+/**
+ * Build category tree structure recursively
+ */
+function build_category_tree($categories, $parent = 0, $level = 0) {
+    $tree = [];
+    foreach ($categories as $category) {
+        if ($category->parent == $parent) {
+            // Get statistics for this category
+            $stats = get_category_statistics($category->id);
+            
+            $category_data = [
+                'id' => $category->id,
+                'name' => format_string($category->name),
+                'description' => format_text($category->description, FORMAT_HTML, ['noclean' => true]),
+                'parent' => $category->parent,
+                'level' => $level,
+                'direct_courses' => $stats['direct_courses'],
+                'total_courses' => $stats['total_courses'],
+                'subcategories_count' => $stats['subcategories_count'],
+                'edit_url' => (new moodle_url('/local/localcustomadmin/form_categoria.php', ['id' => $category->id]))->out(),
+                'is_root' => ($level === 0),
+                'children' => []
+            ];
+            
+            // Recursively get children
+            $children = build_category_tree($categories, $category->id, $level + 1);
+            if (!empty($children)) {
+                $category_data['children'] = $children;
+                $category_data['has_children'] = true;
+            } else {
+                $category_data['has_children'] = false;
+            }
+            
+            $tree[] = $category_data;
+        }
+    }
+    return $tree;
+}
+
+/**
+ * Get comprehensive statistics for a category
+ */
+function get_category_statistics($categoryid) {
+    global $DB;
+    
+    // Direct courses in this category
+    $direct_courses = $DB->count_records('course', ['category' => $categoryid]);
+    
+    // Direct subcategories
+    $subcategories_count = $DB->count_records('course_categories', ['parent' => $categoryid]);
+    
+    // Total courses including all subcategories (recursive)
+    $category = $DB->get_record('course_categories', ['id' => $categoryid], 'path');
+    $total_courses = 0;
+    
+    if ($category && $category->path) {
+        $sql = "SELECT COUNT(c.id) 
+                FROM {course} c 
+                JOIN {course_categories} cc ON c.category = cc.id 
+                WHERE cc.path LIKE :path";
+        $total_courses = $DB->count_records_sql($sql, ['path' => $category->path . '%']);
+    } else {
+        $total_courses = $direct_courses;
+    }
+    
+    return [
+        'direct_courses' => $direct_courses,
+        'total_courses' => $total_courses,
+        'subcategories_count' => $subcategories_count
+    ];
+}
+
+// Get all course categories
+$sql = "SELECT cc.id, cc.name, cc.description, cc.parent, cc.sortorder, cc.coursecount, cc.depth, cc.path
         FROM {course_categories} cc
         ORDER BY cc.sortorder ASC";
 
-$categories = $DB->get_records_sql($sql);
+$all_categories = $DB->get_records_sql($sql);
 
-/**
- * Build hierarchical category structure for dropdown
- */
-function build_category_hierarchy($categories) {
-    $hierarchy = [];
-    $indexed = [];
-    
-    // First, index all categories by ID
-    foreach ($categories as $category) {
-        $indexed[$category->id] = (object)[
-            'id' => $category->id,
-            'name' => $category->name,
-            'parent' => $category->parent,
-            'depth' => $category->depth,
-            'courses_count' => $category->courses_count,
-            'subcategories_count' => $category->subcategories_count,
-            'children' => []
-        ];
-    }
-    
-    // Build hierarchy
-    foreach ($indexed as $category) {
-        if ($category->parent == 0) {
-            $hierarchy[] = $category;
-        } else {
-            if (isset($indexed[$category->parent])) {
-                $indexed[$category->parent]->children[] = $category;
-            }
-        }
-    }
-    
-    return $hierarchy;
-}
+// Build the hierarchical tree
+$category_tree = build_category_tree($all_categories);
 
-/**
- * Flatten hierarchy for dropdown display
- */
-function flatten_hierarchy($hierarchy, $level = 0) {
-    $flat = [];
-    foreach ($hierarchy as $category) {
-        $category->display_name = str_repeat('└ ', $level) . $category->name;
-        $category->level = $level;
-        $flat[] = $category;
-        
-        if (!empty($category->children)) {
-            $flat = array_merge($flat, flatten_hierarchy($category->children, $level + 1));
-        }
-    }
-    return $flat;
-}
+// Calculate summary statistics
+$total_categories = count($all_categories);
+$root_categories = count($category_tree);
+$total_courses = $DB->count_records('course', ['category' => 0], 'id != 1'); // Exclude site course
 
-// Build hierarchical structure
-$category_hierarchy = build_category_hierarchy($categories);
-$flat_categories = flatten_hierarchy($category_hierarchy);
-
-// Prepare template context
+// Prepare template context with Fluent Design principles
 $templatecontext = [
-    'page_description' => get_string('categories_management_desc', 'local_localcustomadmin'),
+    'page_title' => 'Gerenciamento de Categorias',
+    'page_description' => 'Organize e gerencie as categorias de cursos em uma estrutura hierárquica intuitiva',
     'add_category_url' => (new moodle_url('/local/localcustomadmin/form_categoria.php'))->out(),
-    'add_category_text' => get_string('add_category', 'local_localcustomadmin'),
     'back_to_courses_url' => (new moodle_url('/local/localcustomadmin/cursos.php'))->out(),
-    'back_to_courses_text' => 'Voltar para Cursos',
-    'categories' => [],
-    'flat_categories' => [],
-    'has_categories' => !empty($categories)
+    'categories' => $category_tree,
+    'has_categories' => !empty($category_tree),
+    'stats' => [
+        'total_categories' => $total_categories,
+        'root_categories' => $root_categories,
+        'total_courses' => $total_courses
+    ]
 ];
-
-// Use flat categories for both table and accordion
-$category_count = count($flat_categories);
-foreach ($flat_categories as $index => $category) {
-    $edit_url = new moodle_url('/local/localcustomadmin/form_categoria.php', ['id' => $category->id]);
-    
-    // Get original category data for parent info
-    $original_category = $categories[$category->id];
-    
-    $templatecontext['categories'][] = [
-        'id' => $category->id,
-        'name' => format_string($category->name),
-        'display_name' => $category->display_name,
-        'courses_count' => $category->courses_count,
-        'subcategories_count' => $category->subcategories_count,
-        'depth' => $category->level + 1, // Adjust for template compatibility
-        'edit_url' => $edit_url->out(),
-        'parent_id' => $original_category->parent,
-        'is_root' => $category->level == 0,
-        'level' => $category->level,
-        'is_last' => ($index === $category_count - 1)
-    ];
-}
 
 // Render the template
 echo $OUTPUT->render_from_template('local_localcustomadmin/categorias', $templatecontext);

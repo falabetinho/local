@@ -1,208 +1,313 @@
-<div class="local-customadmin-categories">
-    <div class="mb-4">
-        <p class="lead text-muted">{{page_description}}</p>
-    </div>
+<!-- Elegant Categories Management Interface -->
+<div class="elegant-categories-container">
     
-    <!-- Add Category Button -->
-    <div class="mb-4">
-        <a href="{{add_category_url}}" class="btn btn-primary">
-            <i class="fas fa-plus-circle me-2"></i>{{add_category_text}}
-        </a>
-    </div>
-    
-    {{#has_categories}}
-    <!-- Categories Accordion -->
-    <div class="mb-4">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h6 class="mb-0">
-                    <i class="fas fa-sitemap me-2"></i>Navegação Hierárquica
-                </h6>
-                <div>
-                    <button class="btn btn-sm btn-outline-primary" type="button" id="expandAllBtn">
-                        <i class="fas fa-expand-arrows-alt"></i> Expandir Tudo
-                    </button>
-                    <button class="btn btn-sm btn-outline-secondary" type="button" id="collapseAllBtn">
-                        <i class="fas fa-compress-arrows-alt"></i> Colapsar Tudo
-                    </button>
-                </div>
+    <!-- Hero Header with Gradient -->
+    <div class="hero-header">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <i class="fas fa-sitemap hero-icon"></i>
+                    Gerenciamento de Categorias
+                </h1>
+                <p class="hero-subtitle">
+                    Organize e estruture seus cursos de forma intuitiva
+                </p>
             </div>
-            <div class="accordion accordion-flush" id="categoriesAccordion">
-                {{#categories}}
-                {{#is_root}}
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="heading{{id}}">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
-                                data-bs-target="#collapse{{id}}" aria-expanded="false" aria-controls="collapse{{id}}">
-                            <div class="d-flex justify-content-between w-100 me-3">
-                                <span class="fw-bold text-primary">
-                                    <i class="fas fa-folder me-2"></i>
-                                    <span class="badge bg-secondary me-2">ID: {{id}}</span>
-                                    {{name}}
-                                </span>
-                                <div class="text-muted small">
-                                    <span class="badge bg-info me-1">{{courses_count}} cursos</span>
-                                    <span class="badge bg-warning">{{subcategories_count}} subcategorias</span>
-                                </div>
-                            </div>
-                        </button>
-                    </h2>
-                    <div id="collapse{{id}}" class="accordion-collapse collapse" 
-                         aria-labelledby="heading{{id}}" data-bs-parent="#categoriesAccordion">
-                        <div class="accordion-body p-3">
-                            <div class="row mb-3">
-                                <div class="col-md-8">
-                                    <h6 class="text-primary mb-1">
-                                        <i class="fas fa-folder-open me-2"></i>{{name}}
-                                    </h6>
-                                    <p class="text-muted small mb-2">ID da Categoria: <span class="badge bg-secondary">{{id}}</span></p>
-                                    <div class="d-flex gap-2">
-                                        <span class="badge bg-info">
-                                            <i class="fas fa-book me-1"></i>{{courses_count}} Curso(s)
-                                        </span>
-                                        <span class="badge bg-warning">
-                                            <i class="fas fa-sitemap me-1"></i>{{subcategories_count}} Subcategoria(s)
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 text-end">
-                                    <a href="{{edit_url}}" class="btn btn-outline-primary btn-sm">
-                                        <i class="fas fa-edit me-1"></i>Editar Categoria
-                                    </a>
-                                </div>
-                            </div>
-                            
-                            {{#subcategories_count}}
-                            <hr class="my-3">
-                            <h6 class="text-muted mb-2">
-                                <i class="fas fa-layer-group me-2"></i>Subcategorias
-                            </h6>
-                            <!-- Subcategorias aqui serão listadas pelo JavaScript -->
-                            <div id="subcategories{{id}}" class="subcategories-list"></div>
-                            {{/subcategories_count}}
-                        </div>
+            
+            {{#stats}}
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number">{{total_categories}}</span>
+                        <span class="stat-label">Categorias</span>
                     </div>
                 </div>
-                {{/is_root}}
-                {{/categories}}
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number">{{total_courses}}</span>
+                        <span class="stat-label">Cursos</span>
+                    </div>
+                </div>
             </div>
+            {{/stats}}
+        </div>
+    </div>
+
+    <!-- Elegant Action Bar -->
+    <div class="elegant-action-bar">
+        <div class="action-left">
+            <a href="{{add_category_url}}" class="btn-elegant btn-primary">
+                <span class="btn-icon">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span class="btn-text">Nova Categoria</span>
+            </a>
+        </div>
+        
+        {{#has_categories}}
+        <div class="action-right">
+            <div class="control-group">
+                <button class="btn-elegant btn-ghost" type="button" id="expandAllBtn">
+                    <span class="btn-icon">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </span>
+                    <span class="btn-text">Expandir</span>
+                </button>
+                <button class="btn-elegant btn-ghost" type="button" id="collapseAllBtn">
+                    <span class="btn-icon">
+                        <i class="fas fa-compress-arrows-alt"></i>
+                    </span>
+                    <span class="btn-text">Colapsar</span>
+                </button>
+            </div>
+        </div>
+        {{/has_categories}}
+    </div>
+
+    {{#has_categories}}
+    <!-- Elegant Tree Container -->
+    <div class="elegant-tree-container">
+        <div class="tree-header">
+            <div class="tree-title">
+                <i class="fas fa-stream"></i>
+                <span>Estrutura Hierárquica</span>
+            </div>
+            <div class="tree-search">
+                <input type="text" class="search-input" placeholder="Buscar categoria..." id="categorySearch">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+        </div>
+        
+        <div class="tree-content" id="categoriesTree">
+            {{#categories}}
+            {{>local_localcustomadmin/elegant_category_node}}
+            {{/categories}}
         </div>
     </div>
     {{/has_categories}}
-    
 
-    
     {{^has_categories}}
-    <div class="alert alert-info text-center">
-        <i class="fas fa-info-circle me-2"></i>
-        Nenhuma categoria de curso foi encontrada. 
-        <a href="{{add_category_url}}" class="alert-link">Criar primeira categoria</a>
+    <!-- Elegant Empty State -->
+    <div class="elegant-empty-state">
+        <div class="empty-animation">
+            <div class="empty-circle"></div>
+            <div class="empty-icon">
+                <i class="fas fa-folder-plus"></i>
+            </div>
+        </div>
+        <div class="empty-content">
+            <h3>Pronto para começar?</h3>
+            <p>Crie sua primeira categoria e organize seus cursos de forma inteligente</p>
+            <a href="{{add_category_url}}" class="btn-elegant btn-primary btn-large">
+                <span class="btn-icon">
+                    <i class="fas fa-rocket"></i>
+                </span>
+                <span class="btn-text">Começar Agora</span>
+            </a>
+        </div>
     </div>
     {{/has_categories}}
-    
-    <!-- Back to Courses Button -->
-    <div class="mt-4">
-        <a href="{{back_to_courses_url}}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-2"></i>{{back_to_courses_text}}
-        </a>
+
+    <!-- Elegant Footer -->
+    <div class="elegant-footer">
+        <div class="footer-actions">
+            <a href="{{back_to_courses_url}}" class="btn-elegant btn-ghost">
+                <span class="btn-icon">
+                    <i class="fas fa-arrow-left"></i>
+                </span>
+                <span class="btn-text">Voltar para Cursos</span>
+            </a>
+        </div>
+        <div class="footer-info">
+            <span class="footer-text">Organizando conhecimento com elegância</span>
+        </div>
     </div>
 </div>
 
 {{#has_categories}}
+<!-- Elegant Tree JavaScript -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Accordion functionality
-    const expandAllBtn = document.getElementById('expandAllBtn');
-    const collapseAllBtn = document.getElementById('collapseAllBtn');
-    const accordionItems = document.querySelectorAll('.accordion-collapse');
+    initElegantTree();
+});
+
+function initElegantTree() {
+    // Initialize search functionality
+    initCategorySearch();
     
-    // Build categories hierarchy for accordion
-    const categories = {
-        {{#categories}}
-        {{id}}: {
-            id: {{id}},
-            name: "{{name}}",
-            parent: {{parent_id}},
-            isRoot: {{#is_root}}true{{/is_root}}{{^is_root}}false{{/is_root}},
-            courses: {{courses_count}},
-            subcategories: {{subcategories_count}},
-            editUrl: "{{edit_url}}"
-        }{{^is_last}},{{/is_last}}
-        {{/categories}}
-    };
+    // Initialize tree interactions
+    initTreeInteractions();
     
-    // Populate subcategories in accordion
-    Object.values(categories).forEach(category => {
-        if (category.isRoot && category.subcategories > 0) {
-            const subcategoriesDiv = document.getElementById('subcategories' + category.id);
-            if (subcategoriesDiv) {
-                let subcategoriesHtml = '<div class="ms-3">';
+    // Add elegant entrance animations
+    addEntranceAnimations();
+}
+
+function initCategorySearch() {
+    const searchInput = document.getElementById('categorySearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const nodes = document.querySelectorAll('.elegant-node');
+            
+            nodes.forEach(node => {
+                const categoryName = node.dataset.categoryName.toLowerCase();
+                const matches = categoryName.includes(searchTerm);
                 
-                Object.values(categories).forEach(subcat => {
-                    if (subcat.parent === category.id) {
-                        subcategoriesHtml += `
-                            <div class="card border-0 bg-light mb-2">
-                                <div class="card-body p-2">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div class="flex-grow-1">
-                                            <h6 class="mb-1 text-dark">
-                                                <i class="fas fa-folder me-2 text-muted"></i>
-                                                <span class="badge bg-secondary me-2">ID: ${subcat.id}</span>
-                                                ${subcat.name}
-                                            </h6>
-                                            <div class="small text-muted">
-                                                <span class="badge bg-info me-1">
-                                                    <i class="fas fa-book me-1"></i>${subcat.courses} curso(s)
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <a href="${subcat.editUrl}" class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-edit me-1"></i>Editar
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
+                if (matches || searchTerm === '') {
+                    node.style.display = 'block';
+                    node.classList.add('search-highlight');
+                    setTimeout(() => node.classList.remove('search-highlight'), 300);
+                } else {
+                    node.style.display = 'none';
+                }
+            });
+        });
+    }
+}
+
+function initTreeInteractions() {
+    // Node expansion
+    document.querySelectorAll('.node-header[data-toggle="expand"]').forEach(header => {
+        header.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            if (e.target.closest('.action-btn')) return;
+            
+            const targetId = this.getAttribute('data-target');
+            const target = document.querySelector(targetId);
+            const expandBtn = this.querySelector('.expand-btn i');
+            const nodeIcon = this.querySelector('.node-icon i');
+            
+            if (target) {
+                const isExpanded = target.classList.contains('expanded');
                 
-                subcategoriesHtml += '</div>';
-                subcategoriesDiv.innerHTML = subcategoriesHtml;
+                if (isExpanded) {
+                    // Collapse
+                    target.classList.remove('expanded');
+                    expandBtn.style.transform = 'rotate(0deg)';
+                    nodeIcon.className = 'fas fa-folder';
+                    this.setAttribute('aria-expanded', 'false');
+                } else {
+                    // Expand
+                    target.classList.add('expanded');
+                    expandBtn.style.transform = 'rotate(90deg)';
+                    nodeIcon.className = 'fas fa-folder-open';
+                    this.setAttribute('aria-expanded', 'true');
+                }
+                
+                // Add ripple effect
+                addRippleEffect(this, e);
             }
-        }
+        });
     });
     
-    // Expand all functionality
+    // Control buttons
+    const expandAllBtn = document.getElementById('expandAllBtn');
+    const collapseAllBtn = document.getElementById('collapseAllBtn');
+    
     if (expandAllBtn) {
-        expandAllBtn.addEventListener('click', function() {
-            accordionItems.forEach(item => {
-                if (!item.classList.contains('show')) {
-                    const button = document.querySelector(`[data-bs-target="#${item.id}"]`);
-                    if (button) {
-                        button.click();
-                    }
-                }
-            });
+        expandAllBtn.addEventListener('click', function(e) {
+            expandAllNodes();
+            addRippleEffect(this, e);
         });
     }
     
-    // Collapse all functionality
     if (collapseAllBtn) {
-        collapseAllBtn.addEventListener('click', function() {
-            accordionItems.forEach(item => {
-                if (item.classList.contains('show')) {
-                    const button = document.querySelector(`[data-bs-target="#${item.id}"]`);
-                    if (button) {
-                        button.click();
-                    }
-                }
-            });
+        collapseAllBtn.addEventListener('click', function(e) {
+            collapseAllNodes();
+            addRippleEffect(this, e);
         });
     }
-    
+}
 
+function expandAllNodes() {
+    document.querySelectorAll('.node-children').forEach((node, index) => {
+        setTimeout(() => {
+            node.classList.add('expanded');
+        }, index * 50); // Staggered animation
+    });
+    
+    document.querySelectorAll('.expand-btn i').forEach(icon => {
+        icon.style.transform = 'rotate(90deg)';
+    });
+    
+    document.querySelectorAll('.node-icon i').forEach(icon => {
+        if (icon.classList.contains('fa-folder')) {
+            icon.className = 'fas fa-folder-open';
+        }
+    });
+}
+
+function collapseAllNodes() {
+    document.querySelectorAll('.node-children').forEach((node, index) => {
+        setTimeout(() => {
+            node.classList.remove('expanded');
+        }, index * 30);
+    });
+    
+    document.querySelectorAll('.expand-btn i').forEach(icon => {
+        icon.style.transform = 'rotate(0deg)';
+    });
+    
+    document.querySelectorAll('.node-icon i').forEach(icon => {
+        if (icon.classList.contains('fa-folder-open')) {
+            icon.className = 'fas fa-folder';
+        }
+    });
+}
+
+function addEntranceAnimations() {
+    // Staggered entrance animation for nodes
+    document.querySelectorAll('.elegant-node').forEach((node, index) => {
+        node.style.opacity = '0';
+        node.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            node.style.transition = 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            node.style.opacity = '1';
+            node.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+}
+
+function addRippleEffect(element, event) {
+    const ripple = document.createElement('span');
+    const rect = element.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const x = event.clientX - rect.left - size / 2;
+    const y = event.clientY - rect.top - size / 2;
+    
+    ripple.className = 'elegant-ripple';
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = x + 'px';
+    ripple.style.top = y + 'px';
+    
+    element.appendChild(ripple);
+    
+    setTimeout(() => {
+        ripple.remove();
+    }, 600);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const searchInput = document.getElementById('categorySearch');
+        if (searchInput && document.activeElement === searchInput) {
+            searchInput.value = '';
+            searchInput.blur();
+            // Reset search
+            document.querySelectorAll('.elegant-node').forEach(node => {
+                node.style.display = 'block';
+            });
+        }
+    }
 });
 </script>
 {{/has_categories}}

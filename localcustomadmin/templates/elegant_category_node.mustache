@@ -1,0 +1,74 @@
+<!-- Elegant Category Tree Node -->
+<div class="elegant-node {{#is_root}}root-node{{/is_root}}" data-category-id="{{id}}" data-category-name="{{name}}">
+    <div class="node-card">
+        <div class="node-header" {{#has_children}}data-toggle="expand" data-target="#children-{{id}}"{{/has_children}}>
+            
+            <!-- Expand/Collapse Button -->
+            <div class="node-expand">
+                {{#has_children}}
+                <button class="expand-btn" type="button">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                {{/has_children}}
+                {{^has_children}}
+                <div class="expand-spacer"></div>
+                {{/has_children}}
+            </div>
+            
+            <!-- Category Icon -->
+            <div class="node-icon-wrapper">
+                <div class="node-icon {{#has_children}}has-children{{/has_children}}">
+                    {{#has_children}}
+                    <i class="fas fa-folder"></i>
+                    {{/has_children}}
+                    {{^has_children}}
+                    <i class="fas fa-file-alt"></i>
+                    {{/has_children}}
+                </div>
+                {{#has_children}}
+                <div class="children-indicator">{{subcategories_count}}</div>
+                {{/has_children}}
+            </div>
+            
+            <!-- Category Information -->
+            <div class="node-info">
+                <div class="node-main">
+                    <h4 class="node-title">{{name}}</h4>
+                    <div class="node-stats">
+                        <span class="stat-chip stat-courses">
+                            <i class="fas fa-book-open"></i>
+                            {{direct_courses}} curso(s)
+                        </span>
+                        {{#total_courses}}
+                        <span class="stat-chip stat-total">
+                            <i class="fas fa-chart-line"></i>
+                            {{total_courses}} total
+                        </span>
+                        {{/total_courses}}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="node-actions">
+                <a href="{{edit_url}}" class="action-btn edit-btn" title="Editar categoria">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <button class="action-btn menu-btn" title="Mais opções">
+                    <i class="fas fa-ellipsis-v"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Children Container -->
+        {{#has_children}}
+        <div class="node-children" id="children-{{id}}">
+            <div class="children-wrapper">
+                {{#children}}
+                {{>local_localcustomadmin/elegant_category_node}}
+                {{/children}}
+            </div>
+        </div>
+        {{/has_children}}
+    </div>
+</div>

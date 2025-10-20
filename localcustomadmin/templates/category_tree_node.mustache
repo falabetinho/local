@@ -1,0 +1,64 @@
+<!-- Category Tree Node -->
+<div class="tree-node {{#is_root}}root-node{{/is_root}}" data-category-id="{{id}}">
+    <div class="node-content">
+        <div class="node-header" {{#has_children}}data-bs-toggle="collapse" data-bs-target="#children-{{id}}" aria-expanded="false"{{/has_children}}>
+            <div class="node-info">
+                {{#has_children}}
+                <button class="expand-toggle" type="button">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                {{/has_children}}
+                {{^has_children}}
+                <span class="node-spacer"></span>
+                {{/has_children}}
+                
+                <div class="node-icon">
+                    {{#has_children}}
+                    <i class="fas fa-folder text-primary"></i>
+                    {{/has_children}}
+                    {{^has_children}}
+                    <i class="fas fa-folder-open text-muted"></i>
+                    {{/has_children}}
+                </div>
+                
+                <div class="node-details">
+                    <div class="node-title">{{name}}</div>
+                    <div class="node-meta">
+                        <span class="meta-item">
+                            <i class="fas fa-book"></i>
+                            {{direct_courses}} curso(s)
+                        </span>
+                        {{#subcategories_count}}
+                        <span class="meta-item">
+                            <i class="fas fa-sitemap"></i>
+                            {{subcategories_count}} subcategoria(s)
+                        </span>
+                        {{/subcategories_count}}
+                        {{#total_courses}}
+                        <span class="meta-item total">
+                            <i class="fas fa-chart-bar"></i>
+                            {{total_courses}} total
+                        </span>
+                        {{/total_courses}}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="node-actions">
+                <a href="{{edit_url}}" class="action-btn" title="Editar categoria">
+                    <i class="fas fa-edit"></i>
+                </a>
+            </div>
+        </div>
+        
+        {{#has_children}}
+        <div class="collapse node-children" id="children-{{id}}">
+            <div class="children-container">
+                {{#children}}
+                {{>local_localcustomadmin/category_tree_node}}
+                {{/children}}
+            </div>
+        </div>
+        {{/has_children}}
+    </div>
+</div>
