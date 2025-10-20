@@ -770,33 +770,45 @@ echo $OUTPUT->footer();
 function render_pricing_tab($category_id) {
     $html = '';
     
-    // Pricing Section Header
-    $html .= '<div class="pricing-section">';
-    $html .= '<div class="d-flex justify-content-between align-items-center mb-3">';
-    $html .= '<h4><i class="fas fa-list me-2"></i>' . get_string('category_prices', 'local_localcustomadmin') . '</h4>';
-    $html .= '<button type="button" class="btn btn-primary btn-sm" id="btn-add-price" data-bs-toggle="modal" data-bs-target="#priceModal">';
-    $html .= '<i class="fas fa-plus me-2"></i>' . get_string('add_price', 'local_localcustomadmin') . '</button>';
+    // Elegant Pricing Section
+    $html .= '<div class="elegant-pricing-section">';
+    
+    // Pricing Header with gradient
+    $html .= '<div class="pricing-header">';
+    $html .= '<div class="pricing-header-content">';
+    $html .= '<div class="pricing-title">';
+    $html .= '<i class="fas fa-tags mr-2"></i>';
+    $html .= '<h3>' . get_string('category_prices', 'local_localcustomadmin') . '</h3>';
+    $html .= '</div>';
+    $html .= '<button type="button" class="btn-elegant btn-primary" id="btn-add-price" data-bs-toggle="modal" data-bs-target="#priceModal">';
+    $html .= '<span class="btn-icon"><i class="fas fa-plus"></i></span>';
+    $html .= '<span class="btn-text">' . get_string('add_price', 'local_localcustomadmin') . '</span>';
+    $html .= '</button>';
+    $html .= '</div>';
     $html .= '</div>';
     
-    // Pricing List Table
-    $html .= '<div class="table-responsive">';
-    $html .= '<table class="table table-striped table-hover table-sm" id="prices-table">';
-    $html .= '<thead class="table-light">';
+    // Elegant Table Container
+    $html .= '<div class="elegant-table-wrapper">';
+    $html .= '<div class="elegant-table-container">';
+    $html .= '<table class="elegant-prices-table" id="prices-table">';
+    $html .= '<thead>';
     $html .= '<tr>';
-    $html .= '<th>' . get_string('price_name', 'local_localcustomadmin') . '</th>';
-    $html .= '<th>' . get_string('price', 'local_localcustomadmin') . '</th>';
-    $html .= '<th>' . get_string('validity_start', 'local_localcustomadmin') . '</th>';
-    $html .= '<th>' . get_string('validity_end', 'local_localcustomadmin') . '</th>';
-    $html .= '<th>' . get_string('promotional', 'local_localcustomadmin') . '</th>';
-    $html .= '<th>' . get_string('enrollment_fee', 'local_localcustomadmin') . '</th>';
-    $html .= '<th>' . get_string('installments', 'local_localcustomadmin') . '</th>';
-    $html .= '<th>' . get_string('status', 'local_localcustomadmin') . '</th>';
-    $html .= '<th>' . get_string('actions', 'local_localcustomadmin') . '</th>';
+    $html .= '<th><i class="fas fa-tag mr-2"></i>' . get_string('price_name', 'local_localcustomadmin') . '</th>';
+    $html .= '<th><i class="fas fa-dollar-sign mr-2"></i>' . get_string('price', 'local_localcustomadmin') . '</th>';
+    $html .= '<th><i class="fas fa-calendar-plus mr-2"></i>' . get_string('validity_start', 'local_localcustomadmin') . '</th>';
+    $html .= '<th><i class="fas fa-calendar-times mr-2"></i>' . get_string('validity_end', 'local_localcustomadmin') . '</th>';
+    $html .= '<th><i class="fas fa-percentage mr-2"></i>' . get_string('promotional', 'local_localcustomadmin') . '</th>';
+    $html .= '<th><i class="fas fa-graduation-cap mr-2"></i>' . get_string('enrollment_fee', 'local_localcustomadmin') . '</th>';
+    $html .= '<th><i class="fas fa-credit-card mr-2"></i>' . get_string('installments', 'local_localcustomadmin') . '</th>';
+    $html .= '<th><i class="fas fa-toggle-on mr-2"></i>' . get_string('status', 'local_localcustomadmin') . '</th>';
+    $html .= '<th class="actions-col"><i class="fas fa-cog mr-2"></i>' . get_string('actions', 'local_localcustomadmin') . '</th>';
     $html .= '</tr>';
     $html .= '</thead>';
     $html .= '<tbody id="prices-tbody">';
+    $html .= '<tr><td colspan="9" class="loading-row"><i class="fas fa-spinner fa-spin mr-2"></i>Loading prices...</td></tr>';
     $html .= '</tbody>';
     $html .= '</table>';
+    $html .= '</div>';
     $html .= '</div>';
     
     $html .= '</div>';
@@ -824,7 +836,9 @@ function get_price_modal_html($category_id) {
     
     $html .= '<div class="modal-header">';
     $html .= '<h5 class="modal-title" id="priceModalLabel">' . get_string('add_price', 'local_localcustomadmin') . '</h5>';
-    $html .= '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
+    $html .= '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">';
+    $html .= '<i class="fa fa-times" aria-hidden="true"></i>';
+    $html .= '</button>';
     $html .= '</div>';
     
     $html .= '<div class="modal-body">';
@@ -917,6 +931,31 @@ function get_price_modal_html($category_id) {
     $html .= '</div>';
     $html .= '</div>';
     $html .= '</div>';
+    
+    // Add inline script to fix z-index and ensure modal is in correct position
+    $html .= '<script>';
+    $html .= 'document.addEventListener("DOMContentLoaded", function() {';
+    $html .= '    var priceModal = document.getElementById("priceModal");';
+    $html .= '    if (priceModal && !priceModal.dataset.moved) {';
+    $html .= '        document.body.appendChild(priceModal);';
+    $html .= '        priceModal.dataset.moved = "true";';
+    $html .= '        priceModal.style.zIndex = "1060";';
+    $html .= '    }';
+    $html .= '    priceModal.addEventListener("show.bs.modal", function() {';
+    $html .= '        var backdrop = document.querySelector(".modal-backdrop");';
+    $html .= '        if (backdrop) {';
+    $html .= '            backdrop.style.zIndex = "1050";';
+    $html .= '        }';
+    $html .= '        setTimeout(function() {';
+    $html .= '            priceModal.style.zIndex = "1060";';
+    $html .= '            var dialog = priceModal.querySelector(".modal-dialog");';
+    $html .= '            if (dialog) dialog.style.zIndex = "1061";';
+    $html .= '            backdrop = document.querySelector(".modal-backdrop");';
+    $html .= '            if (backdrop) backdrop.style.zIndex = "1050";';
+    $html .= '        }, 50);';
+    $html .= '    });';
+    $html .= '});';
+    $html .= '</script>';
     
     // Load AMD module for price management
     $PAGE->requires->js_call_amd('local_localcustomadmin/price_manager', 'init', [$category_id]);

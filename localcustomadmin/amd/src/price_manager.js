@@ -64,6 +64,32 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                 var priceId = $(this).data('price-id');
                 self.deletePrice(priceId);
             });
+
+            // Close button (X) in modal header
+            $(document).on('click', '#priceModal .btn-close', function(e) {
+                e.preventDefault();
+                self.closeModal();
+            });
+
+            // Cancel button in modal footer
+            $(document).on('click', '#priceModal .btn-secondary[data-bs-dismiss="modal"]', function(e) {
+                e.preventDefault();
+                self.closeModal();
+            });
+
+            // Close modal when clicking on backdrop
+            $(document).on('click', '#priceModal', function(e) {
+                if (e.target.id === 'priceModal') {
+                    self.closeModal();
+                }
+            });
+
+            // Close modal with ESC key
+            $(document).on('keydown', function(e) {
+                if (e.key === 'Escape' && $('#priceModal').hasClass('show')) {
+                    self.closeModal();
+                }
+            });
         },
 
         /**
@@ -110,29 +136,92 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
 
             // Ensure prices is an array
             if (!Array.isArray(prices) || prices.length === 0) {
-                tbody.html('<tr><td colspan="9" class="text-center text-muted">No prices found. Click "Add Price" to create one.</td></tr>');
+                tbody.html('<tr class="empty-state-row"><td colspan="9" class="empty-state-cell">' +
+                    '<div class="empty-state-content">' +
+                    '<i class="fas fa-inbox empty-icon"></i>' +
+                    '<p class="empty-message">Nenhum preço encontrado</p>' +
+                    '<p class="empty-hint">Clique em "Adicionar Preço" para criar um novo</p>' +
+                    '</div></td></tr>');
                 return;
             }
 
-            prices.forEach(function(price) {
-                var row = '<tr>';
-                row += '<td><strong>' + (price.name || '-') + '</strong></td>';
-                row += '<td>R$ ' + parseFloat(price.price).toFixed(2) + '</td>';
-                row += '<td>' + new Date(price.startdate * 1000).toLocaleString() + '</td>';
-                row += '<td>' + (price.enddate ? new Date(price.enddate * 1000).toLocaleString() : '-') + '</td>';
-                row += '<td><span class="badge ' + (price.ispromotional == 1 ? 'bg-warning' : 'bg-secondary') + '">' + 
-                    (price.ispromotional == 1 ? 'Yes' : 'No') + '</span></td>';
-                row += '<td><span class="badge ' + (price.isenrollmentfee == 1 ? 'bg-info' : 'bg-secondary') + '">' + 
-                    (price.isenrollmentfee == 1 ? 'Yes' : 'No') + '</span></td>';
-                row += '<td>' + price.installments + '</td>';
-                row += '<td><span class="badge ' + (price.status == 1 ? 'bg-success' : 'bg-danger') + '">' + 
-                    (price.status == 1 ? 'Active' : 'Inactive') + '</span></td>';
-                row += '<td>';
-                row += '<button type="button" class="btn btn-sm btn-warning me-2 btn-edit-price" data-price-id="' + price.id + '">' +
-                    '<i class="fas fa-edit"></i></button>';
-                row += '<button type="button" class="btn btn-sm btn-danger btn-delete-price" data-price-id="' + price.id + '">' +
-                    '<i class="fas fa-trash"></i></button>';
+            prices.forEach(function(price, index) {
+                var row = '<tr class="price-row" style="animation-delay: ' + (index * 0.05) + 's">';
+                
+                // Price Name with icon
+                row += '<td class="price-name-cell">';
+                row += '<div class="price-name-wrapper">';
+                row += '<i class="fas fa-tag price-icon mr-2"></i>';
+                row += '<strong class="price-name">' + (price.name || '-') + '</strong>';
+                row += '</div>';
                 row += '</td>';
+                
+                // Price Value with currency
+                row += '<td class="price-value-cell">';
+                row += '<span class="price-amount">R$ ' + parseFloat(price.price).toFixed(2) + '</span>';
+                row += '</td>';
+                
+                // Start Date with icon
+                row += '<td class="date-cell">';
+                row += '<i class="fas fa-calendar-check mr-2 date-icon"></i>';
+                row += '<span class="date-text">' + new Date(price.startdate * 1000).toLocaleDateString('pt-BR') + '</span>';
+                row += '</td>';
+                
+                // End Date with icon
+                row += '<td class="date-cell">';
+                if (price.enddate) {
+                    row += '<i class="fas fa-calendar-times mr-2 date-icon"></i>';
+                    row += '<span class="date-text">' + new Date(price.enddate * 1000).toLocaleDateString('pt-BR') + '</span>';
+                } else {
+                    row += '<span class="text-muted"><i class="fas fa-infinity mr-2"></i>Indefinido</span>';
+                }
+                row += '</td>';
+                
+                // Promotional Badge
+                row += '<td class="badge-cell">';
+                if (price.ispromotional == 1) {
+                    row += '<span class="elegant-badge badge-promotional"><i class="fas fa-percentage mr-2"></i>Sim</span>';
+                } else {
+                    row += '<span class="elegant-badge badge-default"><i class="fas fa-minus mr-2"></i>Não</span>';
+                }
+                row += '</td>';
+                
+                // Enrollment Fee Badge
+                row += '<td class="badge-cell">';
+                if (price.isenrollmentfee == 1) {
+                    row += '<span class="elegant-badge badge-enrollment"><i class="fas fa-graduation-cap mr-2"></i>Sim</span>';
+                } else {
+                    row += '<span class="elegant-badge badge-default"><i class="fas fa-minus mr-2"></i>Não</span>';
+                }
+                row += '</td>';
+                
+                // Installments
+                row += '<td class="installments-cell">';
+                row += '<span class="installments-value">';
+                row += '<i class="fas fa-credit-card mr-2"></i>';
+                row += price.installments + 'x';
+                row += '</span>';
+                row += '</td>';
+                
+                // Status Badge
+                row += '<td class="badge-cell">';
+                if (price.status == 1) {
+                    row += '<span class="elegant-badge badge-active"><i class="fas fa-check-circle mr-2"></i>Ativo</span>';
+                } else {
+                    row += '<span class="elegant-badge badge-inactive"><i class="fas fa-times-circle mr-2"></i>Inativo</span>';
+                }
+                row += '</td>';
+                
+                // Actions
+                row += '<td class="actions-cell">';
+                row += '<div class="action-buttons">';
+                row += '<button type="button" class="btn-action btn-action-edit btn-edit-price" data-price-id="' + price.id + '" title="Editar">' +
+                    '<i class="fas fa-edit"></i></button>';
+                row += '<button type="button" class="btn-action btn-action-delete btn-delete-price" data-price-id="' + price.id + '" title="Excluir">' +
+                    '<i class="fas fa-trash-alt"></i></button>';
+                row += '</div>';
+                row += '</td>';
+                
                 row += '</tr>';
                 tbody.append(row);
             });
@@ -433,6 +522,38 @@ define(['jquery', 'core/notification', 'core/modal', 'core/modal_factory'], func
                     notification.exception(new Error('Failed to delete price'));
                 }
             });
+        },
+
+        /**
+         * Close modal
+         */
+        closeModal: function() {
+            var self = this;
+            var bootstrap = self.getBootstrap();
+            
+            if (bootstrap) {
+                try {
+                    var modalElement = document.getElementById('priceModal');
+                    var priceModal = bootstrap.Modal.getInstance(modalElement);
+                    if (priceModal) {
+                        priceModal.hide();
+                    } else {
+                        // If no instance exists, try to create one and hide it
+                        priceModal = new bootstrap.Modal(modalElement);
+                        priceModal.hide();
+                    }
+                } catch (e) {
+                    console.log('Bootstrap hide failed, using jQuery', e);
+                    $('#priceModal').modal('hide');
+                }
+            } else {
+                // Fallback to jQuery
+                $('#priceModal').modal('hide');
+            }
+            
+            // Reset form and hide alerts
+            self.resetPriceForm();
+            self.hideErrorAlert();
         },
 
         /**

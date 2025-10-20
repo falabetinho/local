@@ -601,7 +601,7 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 10; /* Reduced from 100 to avoid modal conflicts */
 }
 
 /* Elegant Buttons */
@@ -1502,3 +1502,590 @@
         transition: none;
     }
 }
+
+/* ========================================
+   PRICE MODAL FIX - Z-INDEX & BACKDROP
+   ======================================== */
+
+/* Ensure modal and backdrop have proper z-index hierarchy */
+#priceModal {
+    z-index: 1060 !important;
+}
+
+#priceModal.modal {
+    z-index: 1060 !important;
+}
+
+/* Modal backdrop should be below the modal but above everything else */
+.modal-backdrop {
+    z-index: 1050 !important;
+}
+
+.modal-backdrop.show {
+    z-index: 1050 !important;
+    opacity: 0.5;
+}
+
+/* Ensure modal dialog is above backdrop */
+#priceModal .modal-dialog {
+    z-index: 1061 !important;
+    position: relative;
+}
+
+/* Ensure modal content is clickable and above backdrop */
+#priceModal .modal-content {
+    z-index: 1062 !important;
+    position: relative;
+    pointer-events: auto;
+}
+
+/* Make sure all form elements are interactive */
+#priceModal .modal-body,
+#priceModal .modal-body * {
+    pointer-events: auto;
+}
+
+#priceModal .modal-header,
+#priceModal .modal-footer {
+    pointer-events: auto;
+}
+
+/* Ensure form controls are fully interactive */
+#priceModal input,
+#priceModal select,
+#priceModal textarea,
+#priceModal button,
+#priceModal .form-control,
+#priceModal .form-check-input {
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 1;
+}
+
+/* Fix for Bootstrap 5 modal backdrop interference */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* Ensure the modal is properly layered */
+.modal.show {
+    display: block !important;
+    z-index: 1060 !important;
+}
+
+/* Price modal specific styling */
+#priceModal .modal-lg {
+    max-width: 800px;
+}
+
+#priceModal .modal-body {
+    padding: 1.5rem;
+    background: white;
+    position: relative;
+    z-index: 1;
+}
+
+#priceModal .modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+#priceModal .modal-header .modal-title {
+    color: white;
+    font-weight: 600;
+}
+
+#priceModal .modal-header .btn-close {
+    background: transparent;
+    border: 0;
+    padding: 0.5rem;
+    margin: -0.5rem -0.5rem -0.5rem auto;
+    opacity: 0.8;
+    transition: opacity 0.15s ease-in-out;
+    cursor: pointer;
+}
+
+#priceModal .modal-header .btn-close i {
+    color: white;
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+#priceModal .modal-header .btn-close:hover {
+    opacity: 1;
+}
+
+#priceModal .modal-header .btn-close:hover i {
+    color: white;
+}
+
+#priceModal .modal-header .btn-close:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
+}
+
+#priceModal .modal-footer {
+    border-top: 1px solid #e5e9f2;
+    padding: 1rem 1.5rem;
+    background: #f8f9fa;
+}
+
+#priceModal .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+#priceModal .form-control,
+#priceModal .form-select {
+    border-radius: 8px;
+    border: 1px solid #e5e9f2;
+    padding: 0.6rem 0.75rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#priceModal .form-control:focus,
+#priceModal .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+#priceModal .form-check-input {
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#priceModal .form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+#priceModal .btn {
+    border-radius: 8px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+#priceModal .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+#priceModal .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Fix for any conflicting z-index from parent containers */
+.elegant-categories-container .modal,
+.elegant-tree-container .modal {
+    position: fixed !important;
+    z-index: 1060 !important;
+}
+
+/* ========================================
+   ELEGANT PRICING TABLE
+   ======================================== */
+
+/* Pricing Section Container */
+.elegant-pricing-section {
+    margin: 2rem 0;
+    font-family: 'Inter', 'Segoe UI', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Pricing Header with Gradient */
+.pricing-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem 2.5rem;
+    border-radius: 16px 16px 0 0;
+    color: white;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.pricing-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="pricing-grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.08)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.06)"/></pattern></defs><rect width="100" height="100" fill="url(%23pricing-grain)"/></svg>');
+    pointer-events: none;
+}
+
+.pricing-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.pricing-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pricing-title i {
+    font-size: 2rem;
+    opacity: 0.9;
+}
+
+.pricing-title h3 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+/* Elegant Table Wrapper */
+.elegant-table-wrapper {
+    background: white;
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.elegant-table-container {
+    overflow-x: auto;
+    padding: 1.5rem;
+}
+
+/* Elegant Prices Table */
+.elegant-prices-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 0;
+}
+
+.elegant-prices-table thead {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.elegant-prices-table thead tr th {
+    padding: 1rem 1.25rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #495057;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.elegant-prices-table thead tr th:first-child {
+    border-radius: 8px 0 0 0;
+}
+
+.elegant-prices-table thead tr th:last-child {
+    border-radius: 0 8px 0 0;
+}
+
+.elegant-prices-table thead tr th i {
+    color: #667eea;
+    opacity: 0.8;
+}
+
+/* Table Body Rows */
+.elegant-prices-table tbody tr {
+    border-bottom: 1px solid #f1f3f5;
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    animation: fadeInUp 0.4s ease-out backwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.elegant-prices-table tbody tr:hover {
+    background: linear-gradient(135deg, #f8f9ff 0%, #f3f4ff 100%);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.elegant-prices-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.elegant-prices-table tbody td {
+    padding: 1.25rem 1.25rem;
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+/* Price Name Cell */
+.price-name-cell {
+    font-weight: 500;
+}
+
+.price-name-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.price-icon {
+    color: #667eea;
+    font-size: 1rem;
+}
+
+.price-name {
+    color: #2d3748;
+    font-size: 0.95rem;
+}
+
+/* Price Value Cell */
+.price-value-cell {
+    font-weight: 600;
+}
+
+.price-amount {
+    color: #10b981;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+/* Date Cells */
+.date-cell {
+    color: #6b7280;
+}
+
+.date-icon {
+    color: #9ca3af;
+    font-size: 0.875rem;
+}
+
+.date-text {
+    font-size: 0.875rem;
+}
+
+/* Badge Cell */
+.badge-cell {
+    text-align: center;
+}
+
+.elegant-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    transition: all 0.2s;
+}
+
+.elegant-badge i {
+    font-size: 0.75rem;
+}
+
+.badge-promotional {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+}
+
+.badge-enrollment {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.badge-active {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.badge-inactive {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.badge-default {
+    background: #e5e7eb;
+    color: #6b7280;
+}
+
+.elegant-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Installments Cell */
+.installments-cell {
+    text-align: center;
+}
+
+.installments-value {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.9rem;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    border-radius: 20px;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.installments-value i {
+    color: #667eea;
+}
+
+/* Actions Cell */
+.actions-cell {
+    text-align: right;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    font-size: 0.9rem;
+}
+
+.btn-action-edit {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba(251, 191, 36, 0.2);
+}
+
+.btn-action-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+}
+
+.btn-action-delete {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+}
+
+.btn-action-delete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Empty State */
+.empty-state-row {
+    background: transparent !important;
+}
+
+.empty-state-cell {
+    padding: 4rem 2rem !important;
+}
+
+.empty-state-content {
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #d1d5db;
+    margin-bottom: 1.5rem;
+}
+
+.empty-message {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin: 0 0 0.5rem 0;
+}
+
+.empty-hint {
+    font-size: 0.95rem;
+    color: #9ca3af;
+    margin: 0;
+}
+
+/* Loading Row */
+.loading-row {
+    text-align: center;
+    padding: 3rem 2rem !important;
+    font-size: 1rem;
+    color: #6b7280;
+}
+
+.loading-row i {
+    color: #667eea;
+    font-size: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .elegant-prices-table {
+        font-size: 0.85rem;
+    }
+    
+    .elegant-prices-table thead tr th,
+    .elegant-prices-table tbody td {
+        padding: 0.875rem 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .pricing-header {
+        padding: 1.5rem;
+    }
+    
+    .pricing-header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .pricing-title {
+        flex-direction: column;
+    }
+    
+    .pricing-title h3 {
+        font-size: 1.5rem;
+    }
+    
+    .elegant-table-container {
+        padding: 1rem;
+    }
+    
+    .elegant-prices-table thead tr th,
+    .elegant-prices-table tbody td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+}
+
+/* Utility class for margin-right (replacing me-2) */
+.mr-2 {
+    margin-right: 0.5rem !important;
+}
+
