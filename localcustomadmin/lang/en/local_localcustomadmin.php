@@ -51,6 +51,24 @@ $string['dashboard'] = 'Dashboard';
 $string['settings'] = 'Settings';
 $string['users'] = 'Users';
 $string['courses'] = 'Courses';
+$string['manage'] = 'Manage';
+$string['view_report'] = 'View Report';
+
+// Enrolment Management
+$string['enrolment_management'] = 'Enrolment Management';
+$string['enrolment_management_desc'] = 'Manage enrolments, category prices, and payment status reports.';
+$string['enrolment_methods'] = 'Enrolment Methods';
+$string['enrolment_methods_desc'] = 'Configure and manage available enrolment methods in the system.';
+$string['statusreport_desc'] = 'View detailed reports of student payment status and overdue payments.';
+
+// CustomStatus Plugin Operations
+$string['customstatus_operations'] = 'CustomStatus Plugin Operations';
+$string['customstatus_matricula'] = 'Enrolment';
+$string['customstatus_manage'] = 'Manage Statuses';
+$string['customstatus_assign'] = 'Assign Status';
+$string['customstatus_edit'] = 'Edit Status';
+$string['customstatus_report'] = 'Reports';
+$string['customstatus_blocked'] = 'Blocked Users';
 
 // Users management strings
 $string['users_management'] = 'Users Management';
@@ -283,3 +301,8 @@ $string['open_statusreport'] = 'Open Report';
 $string['totalenrolled'] = 'Total Enrolled';
 $string['paidstudents_count'] = 'Paid Students';
 $string['paymentdue_count'] = 'Payment Due';
+
+// Enrolment Data Management
+$string['enrolmentdata'] = 'Enrolment Data';
+$string['enrolmentdata_desc'] = 'Complete student enrolment records with personal, address and payment data';
+$string['manage_enrolmentdata'] = 'Manage Data';

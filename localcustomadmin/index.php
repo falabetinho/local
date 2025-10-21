@@ -87,34 +87,26 @@ if (has_capability('local/localcustomadmin:manage', $context)) {
     ];
 }
 
-// Status Report card - only for managers and if Custom Status is available
+// Enrolment Management card - only for managers
 if (has_capability('local/localcustomadmin:manage', $context)) {
-    require_once($CFG->dirroot . '/local/localcustomadmin/classes/api/customstatus_integration.php');
-    if (\local_localcustomadmin\api\customstatus_integration::is_available()) {
-        $templatecontext['cards'][] = [
-            'title' => get_string('statusreport', 'local_localcustomadmin'),
-            'description' => get_string('statusreport_desc', 'local_localcustomadmin'),
-            'url' => (new moodle_url('/local/localcustomadmin/status_report.php'))->out(),
-            'btntext' => get_string('open_statusreport', 'local_localcustomadmin'),
-            'icon' => 'fa-chart-bar'
-        ];
-    }
+    $templatecontext['cards'][] = [
+        'title' => get_string('enrolment_management', 'local_localcustomadmin'),
+        'description' => get_string('enrolment_management_desc', 'local_localcustomadmin'),
+        'url' => (new moodle_url('/local/localcustomadmin/enrolment_management.php'))->out(),
+        'btntext' => get_string('manage', 'local_localcustomadmin'),
+        'icon' => 'fa-user-graduate'
+    ];
 }
 
-// Enrolment card - only for managers and if Custom Status is available
-if (has_capability('local/localcustomadmin:manage', $context)) {
-    if (!isset($CFG->dirroot)) {
-        require_once($CFG->dirroot . '/local/localcustomadmin/classes/api/customstatus_integration.php');
-    }
-    if (\local_localcustomadmin\api\customstatus_integration::is_available()) {
-        $templatecontext['cards'][] = [
-            'title' => get_string('enrolment', 'local_localcustomadmin'),
-            'description' => get_string('enrolment_desc', 'local_localcustomadmin'),
-            'url' => (new moodle_url('/local/localcustomadmin/matricula.php'))->out(),
-            'btntext' => get_string('open_enrolment', 'local_localcustomadmin'),
-            'icon' => 'fa-user-plus'
-        ];
-    }
+// Enrolment Data card (Custom Status) - only for managers with Custom Status available
+if (has_capability('local/localcustomadmin:manage', $context) && customstatus_integration::is_available()) {
+    $templatecontext['cards'][] = [
+        'title' => get_string('enrolmentdata', 'local_localcustomadmin'),
+        'description' => get_string('enrolmentdata_desc', 'local_localcustomadmin'),
+        'url' => (new moodle_url('/enrol/customstatus/enrolment_data.php'))->out(),
+        'btntext' => get_string('manage_enrolmentdata', 'local_localcustomadmin'),
+        'icon' => 'fa-database'
+    ];
 }
 
 // Check if no cards are available

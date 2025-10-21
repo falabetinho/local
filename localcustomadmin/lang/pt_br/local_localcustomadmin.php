@@ -51,6 +51,24 @@ $string['dashboard'] = 'Painel';
 $string['settings'] = 'Configurações';
 $string['users'] = 'Usuários';
 $string['courses'] = 'Cursos';
+$string['manage'] = 'Gerenciar';
+$string['view_report'] = 'Ver Relatório';
+
+// Enrolment Management
+$string['enrolment_management'] = 'Gerenciamento de Matrículas';
+$string['enrolment_management_desc'] = 'Gerencie matrículas, preços de categorias e relatórios de status de pagamento.';
+$string['enrolment_methods'] = 'Métodos de Matrícula';
+$string['enrolment_methods_desc'] = 'Configure e gerencie os métodos de matrícula disponíveis no sistema.';
+$string['statusreport_desc'] = 'Visualize relatórios detalhados de status de pagamento e inadimplência dos alunos.';
+
+// CustomStatus Plugin Operations
+$string['customstatus_operations'] = 'Operações do Plugin CustomStatus';
+$string['customstatus_matricula'] = 'Matrícula';
+$string['customstatus_manage'] = 'Gerenciar Status';
+$string['customstatus_assign'] = 'Atribuir Status';
+$string['customstatus_edit'] = 'Editar Status';
+$string['customstatus_report'] = 'Relatórios';
+$string['customstatus_blocked'] = 'Usuários Bloqueados';
 
 // Users management strings
 $string['users_management'] = 'Gerenciamento de Usuários';
@@ -281,3 +299,8 @@ $string['open_statusreport'] = 'Abrir Relatório';
 $string['totalenrolled'] = 'Total Matriculados';
 $string['paidstudents_count'] = 'Alunos Quitados';
 $string['paymentdue_count'] = 'Pagamento Pendente';
+
+// Enrolment Data Management
+$string['enrolmentdata'] = 'Dados de Matrícula';
+$string['enrolmentdata_desc'] = 'Registros completos de matrícula com dados pessoais, endereço e pagamento';
+$string['manage_enrolmentdata'] = 'Gerenciar Dados';
