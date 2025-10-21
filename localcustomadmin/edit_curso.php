@@ -52,6 +52,15 @@ if ($editing) {
     $PAGE->set_title(get_string('addcourse', 'local_localcustomadmin'));
 }
 
+// Add navigation breadcrumb
+$PAGE->navbar->add(get_string('localcustomadmin', 'local_localcustomadmin'), new moodle_url('/local/localcustomadmin/index.php'));
+$PAGE->navbar->add(get_string('courses', 'local_localcustomadmin'), new moodle_url('/local/localcustomadmin/cursos.php'));
+if ($editing) {
+    $PAGE->navbar->add(get_string('editcourse', 'local_localcustomadmin'));
+} else {
+    $PAGE->navbar->add(get_string('addcourse', 'local_localcustomadmin'));
+}
+
 /**
  * Course form class
  */

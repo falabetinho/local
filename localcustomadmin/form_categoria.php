@@ -63,6 +63,17 @@ if ($editing) {
     $PAGE->set_title(get_string('add_category', 'local_localcustomadmin'));
 }
 
+// Add navigation breadcrumb (only if not in modal mode)
+if (!$modal) {
+    $PAGE->navbar->add(get_string('localcustomadmin', 'local_localcustomadmin'), new moodle_url('/local/localcustomadmin/index.php'));
+    $PAGE->navbar->add(get_string('categories', 'local_localcustomadmin'), new moodle_url('/local/localcustomadmin/categorias.php'));
+    if ($editing) {
+        $PAGE->navbar->add(get_string('edit_category', 'local_localcustomadmin'));
+    } else {
+        $PAGE->navbar->add(get_string('add_category', 'local_localcustomadmin'));
+    }
+}
+
 /**
  * Category form class
  */

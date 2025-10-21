@@ -1,289 +1,189 @@
-<div class="local-customadmin-users">
-    <div class="mb-4">
-        <h2 class="text-primary">
-            <i class="fas fa-users me-2"></i>{{page_title}}
-        </h2>
-        <p class="lead text-muted">{{page_description}}</p>
-    </div>
+<!-- Elegant Users Management Interface -->
+<div class="elegant-users-container">
     
-    <!-- Filter Button and Summary -->
-    <div class="mb-4">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <button class="btn btn-outline-primary" type="button" id="toggleFilters">
-                    <i class="fas fa-filter me-2"></i>Filtros
-                    <i class="fas fa-chevron-right ms-1" id="filterToggleIcon"></i>
-                </button>
-                <span class="ms-3 text-muted">
-                    <i class="fas fa-info-circle me-1"></i>
-                    Exibindo {{total_users}} usuário(s)
-                </span>
+    <!-- Hero Header with Gradient -->
+    <div class="hero-header">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <i class="fas fa-users hero-icon"></i>
+                    {{page_title}}
+                </h1>
+                <p class="hero-subtitle">
+                    {{page_description}}
+                </p>
             </div>
-            <div class="col-md-6 text-end">
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="exportUsers()">
-                        <i class="fas fa-download me-1"></i>Exportar
-                    </button>
-                    <button type="button" class="btn btn-outline-info btn-sm" onclick="refreshUsers()">
-                        <i class="fas fa-sync-alt me-1"></i>Atualizar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="row">
-        <!-- Sidebar Filters -->
-        <div class="col-md-3 d-none" id="filtersSidebar">
-            <div class="card border-primary">
-                <div class="card-header bg-primary text-white">
-                    <h6 class="mb-0">
-                        <i class="fas fa-sliders-h me-2"></i>Filtros de Busca
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <form method="GET" action="" id="filtersForm">
-                        <!-- Email Filter -->
-                        <div class="mb-3">
-                            <label for="emailFilter" class="form-label">
-                                <i class="fas fa-envelope me-1"></i>E-mail
-                            </label>
-                            <input type="text" class="form-control" id="emailFilter" name="email" 
-                                   value="{{filters.email}}" placeholder="Digite o e-mail...">
+            
+            <div class="hero-actions">
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
                         </div>
-                        
-                        <!-- Username Filter -->
-                        <div class="mb-3">
-                            <label for="usernameFilter" class="form-label">
-                                <i class="fas fa-user me-1"></i>Username (Matrícula)
-                            </label>
-                            <input type="text" class="form-control" id="usernameFilter" name="username" 
-                                   value="{{filters.username}}" placeholder="Digite o username...">
+                        <div class="stat-content">
+                            <span class="stat-number">{{total_users}}</span>
+                            <span class="stat-label">Total de Usuários</span>
                         </div>
-                        
-                        <!-- Course Filter -->
-                        <div class="mb-3">
-                            <label for="courseFilter" class="form-label">
-                                <i class="fas fa-graduation-cap me-1"></i>Curso
-                            </label>
-                            <select class="form-select" id="courseFilter" name="course">
-                                <option value="0">Todos os cursos</option>
-                                {{#courses}}
-                                <option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}}</option>
-                                {{/courses}}
-                            </select>
-                        </div>
-                        
-                        <!-- Filter Actions -->
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                <i class="fas fa-search me-1"></i>Aplicar Filtros
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearFilters()">
-                                <i class="fas fa-times me-1"></i>Limpar Filtros
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Main Content -->
-        <div class="col-md-12" id="mainContent">
-            {{#has_users}}
-            <!-- Users Table -->
-            <div class="card">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nome Completo</th>
-                                    <th>E-mail</th>
-                                    <th>Username</th>
-                                    <th class="text-center">Cursos</th>
-                                    <th class="text-center">Último Login</th>
-                                    <th class="text-center">Status</th>
-                                    <th class="text-center">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{#users}}
-                                <tr>
-                                    <td>
-                                        <span class="badge bg-secondary">{{id}}</span>
-                                    </td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <div class="user-avatar me-2">
-                                                <i class="fas fa-user-circle fa-2x text-muted"></i>
-                                            </div>
-                                            <div>
-                                                <strong>{{fullname}}</strong>
-                                                <br><small class="text-muted">{{firstname}} {{lastname}}</small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <a href="mailto:{{email}}" class="text-decoration-none">
-                                            <i class="fas fa-envelope me-1"></i>{{email}}
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <code>{{username}}</code>
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge bg-info">{{enrolled_courses}}</span>
-                                    </td>
-                                    <td class="text-center">
-                                        {{#lastlogin_timestamp}}
-                                        <span class="text-muted small" title="{{lastlogin}}">{{lastlogin}}</span>
-                                        {{/lastlogin_timestamp}}
-                                        {{^lastlogin_timestamp}}
-                                        <span class="text-muted">Nunca</span>
-                                        {{/lastlogin_timestamp}}
-                                    </td>
-                                    <td class="text-center">
-                                        <span class="badge {{status_class}}">{{status_text}}</span>
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="btn-group btn-group-sm" role="group">
-                                            <a href="{{profile_url}}" class="btn btn-outline-info btn-sm" 
-                                               title="Ver Perfil" target="_blank">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a href="{{edit_url}}" class="btn btn-outline-primary btn-sm" 
-                                               title="Editar Usuário" target="_blank">
-                                                <i class="fas fa-edit"></i>
-                                            </a>
-                                            <button type="button" class="btn btn-outline-warning btn-sm" 
-                                                    title="Cursos do Usuário" onclick="showUserCourses({{id}})">
-                                                <i class="fas fa-graduation-cap"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-outline-danger btn-sm" 
-                                                    title="Resetar Senha" data-userid="{{id}}">
-                                                <i class="fas fa-key"></i>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {{/users}}
-                            </tbody>
-                        </table>
                     </div>
                 </div>
+                <a href="{{back_to_index_url}}" class="btn-manage btn-manage-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Voltar
+                </a>
             </div>
-            
-            <!-- Pagination -->
-            {{#pagination.has_pagination}}
-            <nav aria-label="Paginação de usuários" class="mt-4">
-                <ul class="pagination justify-content-center">
-                    {{#pagination.prev_url}}
-                    <li class="page-item">
-                        <a class="page-link" href="{{pagination.prev_url}}">
-                            <i class="fas fa-chevron-left"></i> Anterior
-                        </a>
-                    </li>
-                    {{/pagination.prev_url}}
-                    
-                    <li class="page-item active">
-                        <span class="page-link">
-                            Página {{pagination.current_page}} de {{pagination.total_pages}}
-                        </span>
-                    </li>
-                    
-                    {{#pagination.next_url}}
-                    <li class="page-item">
-                        <a class="page-link" href="{{pagination.next_url}}">
-                            Próxima <i class="fas fa-chevron-right"></i>
-                        </a>
-                    </li>
-                    {{/pagination.next_url}}
-                </ul>
-            </nav>
-            {{/pagination.has_pagination}}
-            {{/has_users}}
-            
-            {{^has_users}}
-            <div class="alert alert-info text-center">
-                <i class="fas fa-info-circle me-2"></i>
-                Nenhum usuário foi encontrado com os filtros aplicados.
-                <br><small class="text-muted">Tente ajustar os filtros ou limpar a busca.</small>
-            </div>
-            {{/has_users}}
         </div>
     </div>
     
-    <!-- Back to Index Button -->
-    <div class="mt-4">
-        <a href="{{back_to_index_url}}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left me-2"></i>Voltar ao Início
-        </a>
+    <!-- Filters Section -->
+    <div class="filters-section">
+        <div class="filters-header">
+            <h3>
+                <i class="fas fa-filter mr-2"></i>
+                Filtros
+            </h3>
+        </div>
+        <form method="GET" action="" id="filtersForm">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label>E-mail</label>
+                    <input type="text" name="email" class="filter-input" 
+                           placeholder="Digite o e-mail..." value="{{filters.email}}">
+                </div>
+                <div class="filter-group">
+                    <label>Username (Matrícula)</label>
+                    <input type="text" name="username" class="filter-input" 
+                           placeholder="Digite o username..." value="{{filters.username}}">
+                </div>
+                <div class="filter-group">
+                    <label>Curso</label>
+                    <select name="course" class="filter-input">
+                        <option value="0">Todos os cursos</option>
+                        {{#courses}}
+                        <option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                        {{/courses}}
+                    </select>
+                </div>
+                <div class="filter-group" style="align-self: end;">
+                    <button type="submit" class="btn-manage btn-manage-primary" style="width: 100%;">
+                        <i class="fas fa-search"></i>
+                        Filtrar
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
+
+    <!-- Users Table -->
+    {{#has_users}}
+    <div class="users-table-container">
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th><i class="fas fa-user mr-2"></i>Nome</th>
+                    <th><i class="fas fa-envelope mr-2"></i>E-mail</th>
+                    <th><i class="fas fa-id-card mr-2"></i>Username</th>
+                    <th><i class="fas fa-graduation-cap mr-2"></i>Cursos</th>
+                    <th><i class="fas fa-clock mr-2"></i>Último Acesso</th>
+                    <th><i class="fas fa-shield-alt mr-2"></i>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#users}}
+                <tr class="user-row">
+                    <td>
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="user-details">
+                                <div class="user-name">{{fullname}}</div>
+                                <div class="user-meta">{{firstname}} {{lastname}}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="mailto:{{email}}" class="user-email">
+                            <i class="fas fa-envelope mr-2"></i>{{email}}
+                        </a>
+                    </td>
+                    <td>
+                        <span class="user-username">{{username}}</span>
+                    </td>
+                    <td>
+                        <span class="badge-courses">{{enrolled_courses}}</span>
+                    </td>
+                    <td>
+                        {{#lastlogin_timestamp}}
+                        <span class="user-lastlogin">{{lastlogin}}</span>
+                        {{/lastlogin_timestamp}}
+                        {{^lastlogin_timestamp}}
+                        <span class="text-muted">Nunca</span>
+                        {{/lastlogin_timestamp}}
+                    </td>
+                    <td>
+                        <span class="badge-status {{status_class}}">
+                            <i class="fas fa-circle mr-2"></i>{{status_text}}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="user-actions">
+                            <a href="{{profile_url}}" class="btn-icon view" title="Ver Perfil" target="_blank">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{edit_url}}" class="btn-icon edit" title="Editar" target="_blank">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button type="button" class="btn-icon courses" title="Cursos" onclick="showUserCourses({{id}})">
+                                <i class="fas fa-graduation-cap"></i>
+                            </button>
+                            <button type="button" class="btn-icon reset" title="Resetar Senha" data-userid="{{id}}">
+                                <i class="fas fa-key"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {{/users}}
+            </tbody>
+        </table>
+        
+        <!-- Pagination -->
+        {{#pagination.has_pagination}}
+        <div class="pagination-container">
+            {{#pagination.prev_url}}
+            <a href="{{pagination.prev_url}}" class="pagination-btn">
+                <i class="fas fa-chevron-left"></i> Anterior
+            </a>
+            {{/pagination.prev_url}}
+            
+            <span class="pagination-info">
+                Página {{pagination.current_page}} de {{pagination.total_pages}}
+            </span>
+            
+            {{#pagination.next_url}}
+            <a href="{{pagination.next_url}}" class="pagination-btn">
+                Próxima <i class="fas fa-chevron-right"></i>
+            </a>
+            {{/pagination.next_url}}
+        </div>
+        {{/pagination.has_pagination}}
+    </div>
+    {{/has_users}}
+    
+    {{^has_users}}
+    <div class="empty-state">
+        <h3>Nenhum usuário encontrado</h3>
+        <p>Tente ajustar seus filtros ou limpar a busca</p>
+    </div>
+    {{/has_users}}
 </div>
 
-<!-- JavaScript -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const toggleButton = document.getElementById('toggleFilters');
-    const sidebar = document.getElementById('filtersSidebar');
-    const mainContent = document.getElementById('mainContent');
-    const toggleIcon = document.getElementById('filterToggleIcon');
-    
-    let filtersVisible = false;
-    
-    // Toggle filters sidebar
-    toggleButton.addEventListener('click', function() {
-        filtersVisible = !filtersVisible;
-        
-        if (filtersVisible) {
-            sidebar.classList.remove('d-none');
-            mainContent.classList.remove('col-md-12');
-            mainContent.classList.add('col-md-9');
-            toggleIcon.classList.remove('fa-chevron-right');
-            toggleIcon.classList.add('fa-chevron-left');
-        } else {
-            sidebar.classList.add('d-none');
-            mainContent.classList.remove('col-md-9');
-            mainContent.classList.add('col-md-12');
-            toggleIcon.classList.remove('fa-chevron-left');
-            toggleIcon.classList.add('fa-chevron-right');
-        }
-    });
-    
-    // Course filter with search functionality
-    const courseSelect = document.getElementById('courseFilter');
-    if (courseSelect) {
-        // Add search functionality to select (could be enhanced with Select2 or similar)
-        courseSelect.addEventListener('focus', function() {
-            // Future enhancement: add searchable dropdown
-        });
-    }
-});
-
-// Action functions
-function clearFilters() {
-    document.getElementById('emailFilter').value = '';
-    document.getElementById('usernameFilter').value = '';
-    document.getElementById('courseFilter').value = '0';
-    document.getElementById('filtersForm').submit();
-}
-
-function refreshUsers() {
-    location.reload();
-}
-
-function exportUsers() {
-    // Future enhancement: implement CSV/Excel export
-    alert('Funcionalidade de exportação será implementada em breve.');
-}
-
 function showUserCourses(userId) {
-    // Future enhancement: show modal with user's courses
     alert('Visualização de cursos do usuário ID: ' + userId);
 }
 </script>
+
 {{#js}}
 require(['local_localcustomadmin/usuarios'], function(Usuarios) {
     Usuarios.init();
