@@ -6,6 +6,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/* Reset page spacing */
+#page {
+    padding-top: 0px !important;
+    margin-top: 0px !important;
+}
+
 /* Main container styling */
 .local-customadmin-index {
     padding: 24px 0;
@@ -2109,6 +2115,44 @@ body.modal-open {
    ELEGANT COURSES MANAGEMENT
    ======================================== */
 
+/* Back Button Container */
+.back-button-container {
+    padding: 1.5rem 2rem 0 2rem;
+    margin-bottom: 1rem;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: rgba(43, 83, 160, 0.1);
+    color: #2b53a0;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(43, 83, 160, 0.2);
+}
+
+.btn-back:hover {
+    background: rgba(43, 83, 160, 0.15);
+    transform: translateX(-4px);
+    text-decoration: none;
+    color: #2b53a0;
+    border-color: rgba(43, 83, 160, 0.3);
+}
+
+.btn-back i {
+    font-size: 0.875rem;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-back:hover i {
+    transform: translateX(-2px);
+}
+
 /* Courses Container */
 .elegant-courses-container {
     max-width: 1400px;
@@ -2616,9 +2660,10 @@ body.modal-open {
 
 .hero-actions {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 1rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
 }
 
 .btn-manage {

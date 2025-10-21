@@ -1,6 +1,14 @@
 <!-- Elegant Users Management Interface -->
 <div class="elegant-users-container">
     
+    <!-- Back Button -->
+    <div class="back-button-container">
+        <a href="{{back_to_index_url}}" class="btn-back">
+            <i class="fas fa-arrow-left"></i>
+            Voltar
+        </a>
+    </div>
+    
     <!-- Hero Header with Gradient -->
     <div class="hero-header">
         <div class="hero-content">
@@ -14,22 +22,16 @@
                 </p>
             </div>
             
-            <div class="hero-actions">
-                <div class="hero-stats">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-number">{{total_users}}</span>
-                            <span class="stat-label">Total de Usuários</span>
-                        </div>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-content">
+                        <span class="stat-number">{{total_users}}</span>
+                        <span class="stat-label">Total de Usuários</span>
                     </div>
                 </div>
-                <a href="{{back_to_index_url}}" class="btn-manage btn-manage-secondary">
-                    <i class="fas fa-arrow-left"></i>
-                    Voltar
-                </a>
             </div>
         </div>
     </div>
@@ -176,6 +178,13 @@
         <p>Tente ajustar seus filtros ou limpar a busca</p>
     </div>
     {{/has_users}}
+    
+    <!-- Elegant Footer -->
+    <div class="elegant-footer">
+        <div class="footer-info">
+            <span class="footer-text">Gerenciando usuários com elegância</span>
+        </div>
+    </div>
 </div>
 
 <script>

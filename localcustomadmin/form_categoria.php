@@ -459,6 +459,15 @@ if ($modal) {
     echo '<div class="modal-body p-0">';
     echo '<div class="elegant-form-container">';
 } else {
+    // Back button - First element
+    echo '<div class="back-button-container">';
+    $back_url = new moodle_url('/local/localcustomadmin/categorias.php');
+    echo '<a href="' . $back_url . '" class="btn-back">';
+    echo '<i class="fas fa-arrow-left"></i>';
+    echo 'Voltar';
+    echo '</a>';
+    echo '</div>';
+    
     echo '<div class="elegant-form-container">';
     
     // Elegant Header
@@ -480,15 +489,6 @@ if ($modal) {
         echo '</h1>';
         echo '<p class="elegant-form-subtitle">Crie uma nova categoria para organizar seus cursos</p>';
     }
-    echo '</div>';
-    
-    // Back button
-    echo '<div class="elegant-form-header-actions">';
-    $back_url = new moodle_url('/local/localcustomadmin/categorias.php');
-    echo '<a href="' . $back_url . '" class="elegant-back-btn">';
-    echo '<i class="fas fa-arrow-left"></i>';
-    echo '<span>Voltar</span>';
-    echo '</a>';
     echo '</div>';
     
     echo '</div>'; // End elegant-form-header-content

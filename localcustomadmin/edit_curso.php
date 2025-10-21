@@ -408,6 +408,42 @@ echo '<style>
 }
 </style>';
 
+// Back button - First element
+echo '<div class="back-button-container">';
+$back_url = new moodle_url('/local/localcustomadmin/cursos.php');
+echo '<a href="' . $back_url . '" class="btn-back">';
+echo '<i class="fas fa-arrow-left"></i>';
+echo 'Voltar';
+echo '</a>';
+echo '</div>';
+
+echo '<div class="elegant-form-container">';
+
+// Elegant Form Header
+echo '<div class="elegant-form-header">';
+echo '<div class="elegant-form-header-content">';
+
+// Title section
+echo '<div class="elegant-form-header-text">';
+if ($courseid) {
+    echo '<h1 class="elegant-form-title">';
+    echo '<i class="fas fa-edit"></i>';
+    echo 'Editar Curso';
+    echo '</h1>';
+    echo '<p class="elegant-form-subtitle">Atualize as informações do curso: ' . format_string($course->fullname) . '</p>';
+} else {
+    echo '<h1 class="elegant-form-title">';
+    echo '<i class="fas fa-plus-circle"></i>';
+    echo 'Novo Curso';
+    echo '</h1>';
+    echo '<p class="elegant-form-subtitle">Crie um novo curso no sistema</p>';
+}
+echo '</div>';
+
+echo '</div>'; // End elegant-form-header-content
+echo '</div>'; // End elegant-form-header
+</style>';
+
 echo '<div class="elegant-form-container">';
 
 // Elegant Form Header

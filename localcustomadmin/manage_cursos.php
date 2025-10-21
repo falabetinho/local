@@ -480,6 +480,14 @@ $totalenrollments = $DB->count_records_sql(
 }
 </style>
 
+<!-- Back button - First element -->
+<div class="back-button-container">
+    <a href="<?php echo new moodle_url('/local/localcustomadmin/cursos.php'); ?>" class="btn-back">
+        <i class="fas fa-arrow-left"></i>
+        Voltar
+    </a>
+</div>
+
 <div class="manage-courses-container">
     <!-- Elegant Header -->
     <div class="manage-header">
@@ -492,10 +500,6 @@ $totalenrollments = $DB->count_records_sql(
                 <p>Gerencie todos os cursos da plataforma em um só lugar</p>
             </div>
             <div class="manage-header-actions">
-                <a href="<?php echo new moodle_url('/local/localcustomadmin/cursos.php'); ?>" class="btn-manage btn-manage-secondary">
-                    <i class="fas fa-arrow-left"></i>
-                    Voltar
-                </a>
                 <a href="<?php echo new moodle_url('/local/localcustomadmin/edit_curso.php'); ?>" class="btn-manage btn-manage-primary">
                     <i class="fas fa-plus"></i>
                     Novo Curso
