@@ -23,11 +23,15 @@
  */
 
 require_once('../../config.php');
+require_once($CFG->dirroot . '/local/localcustomadmin/lib.php');
 
 require_login();
 
 $context = context_system::instance();
 require_capability('local/localcustomadmin:view', $context);
+
+// Get custom display name
+$displayname = local_localcustomadmin_get_display_name();
 
 // Set up the page
 $PAGE->set_url(new moodle_url('/local/localcustomadmin/cursos.php'));
@@ -36,7 +40,7 @@ $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('courses_management', 'local_localcustomadmin'));
 
 // Add navigation breadcrumb
-$PAGE->navbar->add(get_string('localcustomadmin', 'local_localcustomadmin'), '/local/localcustomadmin/index.php');
+$PAGE->navbar->add($displayname, '/local/localcustomadmin/index.php');
 $PAGE->navbar->add(get_string('courses', 'local_localcustomadmin'));
 
 echo $OUTPUT->header();

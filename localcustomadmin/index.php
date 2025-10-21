@@ -23,16 +23,21 @@
  */
 
 require_once('../../config.php');
+require_once($CFG->dirroot . '/local/localcustomadmin/lib.php');
 
 require_login();
 
 $context = context_system::instance();
 require_capability('local/localcustomadmin:view', $context);
 
+// Get custom display name
+$displayname = local_localcustomadmin_get_display_name();
+
 $PAGE->set_url(new moodle_url('/local/localcustomadmin/index.php'));
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('base');
-$PAGE->set_title(get_string('localcustomadmin', 'local_localcustomadmin'));
+$PAGE->set_title($displayname);
+$PAGE->set_heading($displayname);
 
 echo $OUTPUT->header();
 
@@ -71,12 +76,12 @@ if (has_capability('local/localcustomadmin:manage', $context)) {
     ];
 }
 
-// Settings card - only for managers
+// Settings card - only for managers, redirects to Moodle settings page
 if (has_capability('local/localcustomadmin:manage', $context)) {
     $templatecontext['cards'][] = [
         'title' => get_string('settings', 'local_localcustomadmin'),
         'description' => get_string('settings_desc', 'local_localcustomadmin'),
-        'url' => (new moodle_url('/local/localcustomadmin/settings.php'))->out(),
+        'url' => (new moodle_url('/admin/settings.php', ['section' => 'local_localcustomadmin']))->out(),
         'btntext' => get_string('open_settings', 'local_localcustomadmin'),
         'icon' => 'fa-cog'
     ];

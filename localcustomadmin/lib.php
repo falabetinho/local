@@ -25,6 +25,21 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Get the display name for the plugin
+ *
+ * @return string The custom display name or the default plugin name
+ */
+function local_localcustomadmin_get_display_name() {
+    $displayname = get_config('local_localcustomadmin', 'displayname');
+    
+    if (empty($displayname)) {
+        $displayname = get_string('pluginname', 'local_localcustomadmin');
+    }
+    
+    return $displayname;
+}
+
+/**
  * Serves the plugin files.
  *
  * @param stdClass $course The course object

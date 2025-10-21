@@ -29,6 +29,10 @@ $string['localcustomadmin'] = 'Admin Personalizado Local';
 $string['localcustomadmin:view'] = 'Visualizar Admin Personalizado Local';
 $string['localcustomadmin:manage'] = 'Gerenciar Admin Personalizado Local';
 
+// Settings
+$string['displayname'] = 'Nome de Exibição';
+$string['displayname_desc'] = 'Nome personalizado que será exibido no lugar do nome padrão do plugin em toda a interface';
+
 // Modal form strings
 $string['addcategory'] = 'Adicionar Categoria';
 $string['editcategory'] = 'Editar Categoria';
