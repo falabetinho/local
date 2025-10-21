@@ -53,6 +53,9 @@ function build_category_tree($categories, $parent = 0, $level = 0) {
             // Get statistics for this category
             $stats = get_category_statistics($category->id);
             
+            // Create edit URL
+            $edit_url = new moodle_url('/local/localcustomadmin/form_categoria.php', ['id' => $category->id]);
+            
             $category_data = [
                 'id' => $category->id,
                 'name' => format_string($category->name),
@@ -62,7 +65,7 @@ function build_category_tree($categories, $parent = 0, $level = 0) {
                 'direct_courses' => $stats['direct_courses'],
                 'total_courses' => $stats['total_courses'],
                 'subcategories_count' => $stats['subcategories_count'],
-                'edit_url' => (new moodle_url('/local/localcustomadmin/form_categoria.php', ['id' => $category->id]))->out(),
+                'edit_url' => $edit_url->out(false), // Force string output
                 'is_root' => ($level === 0),
                 'children' => []
             ];

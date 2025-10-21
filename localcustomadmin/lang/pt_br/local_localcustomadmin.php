@@ -204,3 +204,17 @@ $string['promotional'] = 'Preço Promocional';
 $string['enrollment_fee'] = 'Taxa de Inscrição';
 $string['scheduled_task'] = 'Agendado';
 $string['installments'] = 'Número de Parcelas';
+
+// Enrollment prices management
+$string['manage_enrol_prices'] = 'Gerenciar Preços de Matrícula';
+$string['import_category_prices'] = 'Importar Preços da Categoria';
+$string['imported_prices'] = 'Preços Importados';
+$string['available_prices'] = 'Preços Disponíveis para Importação';
+$string['no_prices_imported'] = 'Nenhum preço foi importado ainda';
+$string['no_prices_available'] = 'Não há preços disponíveis na categoria deste curso';
+$string['price_already_imported'] = 'Este preço já foi importado';
+$string['unlink_price'] = 'Desvincular Preço';
+$string['confirm_unlink'] = 'Deseja realmente desvincular este preço?';
+$string['prices_imported_success'] = '{$a} preço(s) importado(s) com sucesso!';
+$string['price_unlinked_success'] = 'Vínculo removido com sucesso!';
+$string['import_selected_prices'] = 'Importar Preços Selecionados';

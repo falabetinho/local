@@ -406,6 +406,22 @@ echo '<style>
 .elegant-form-inner {
     padding: 0;
 }
+
+/* Tab panes visibility */
+.elegant-tab-pane {
+    display: none;
+}
+
+.elegant-tab-pane.active {
+    display: block;
+}
+
+/* Disabled tab */
+.elegant-tab-link.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
 </style>';
 
 // Back button - First element
@@ -438,42 +454,6 @@ if ($courseid) {
     echo '</h1>';
     echo '<p class="elegant-form-subtitle">Crie um novo curso no sistema</p>';
 }
-echo '</div>';
-
-echo '</div>'; // End elegant-form-header-content
-echo '</div>'; // End elegant-form-header
-</style>';
-
-echo '<div class="elegant-form-container">';
-
-// Elegant Form Header
-echo '<div class="elegant-form-header">';
-echo '<div class="elegant-form-header-content">';
-
-// Title section
-echo '<div class="elegant-form-header-text">';
-if ($editing) {
-    echo '<h1 class="elegant-form-title">';
-    echo '<i class="fas fa-edit"></i>';
-    echo 'Editar Curso';
-    echo '</h1>';
-    echo '<p class="elegant-form-subtitle">Atualize as informações do curso: ' . format_string($course->fullname) . '</p>';
-} else {
-    echo '<h1 class="elegant-form-title">';
-    echo '<i class="fas fa-plus-circle"></i>';
-    echo 'Novo Curso';
-    echo '</h1>';
-    echo '<p class="elegant-form-subtitle">Crie um novo curso no sistema</p>';
-}
-echo '</div>';
-
-// Back button
-echo '<div class="elegant-form-header-actions">';
-$back_url = new moodle_url('/local/localcustomadmin/cursos.php');
-echo '<a href="' . $back_url . '" class="elegant-back-btn">';
-echo '<i class="fas fa-arrow-left"></i>';
-echo '<span>Voltar</span>';
-echo '</a>';
 echo '</div>';
 
 echo '</div>'; // End elegant-form-header-content
@@ -534,6 +514,16 @@ if ($editing) {
     echo '<h4><i class="fas fa-dollar-sign me-2"></i>Gestão de Matrículas</h4>';
     echo '<p class="form-section-subtitle">Visualize e gerencie os métodos de inscrição do curso</p>';
     echo '</div>';
+    
+    // Link to manage enrollment prices
+    echo '<div class="mb-3">';
+    echo '<a href="' . new moodle_url('/local/localcustomadmin/manage_enrol_prices.php', ['id' => $id]) . '" class="btn btn-primary">';
+    echo '<i class="fas fa-tags"></i> ';
+    echo 'Gerenciar Preços de Matrícula';
+    echo '</a>';
+    echo '<p class="text-muted mt-2"><small>Importe preços da categoria para criar métodos de matrícula</small></p>';
+    echo '</div>';
+    
     echo render_pricing_tab($id);
     echo '</div>';
 } else {
@@ -554,5 +544,52 @@ echo '</div>'; // End elegant-tab-content
 echo '</div>'; // End elegant-form-inner
 echo '</div>'; // End elegant-form-content
 echo '</div>'; // End elegant-form-container
+
+// Add JavaScript for tab functionality
+echo '<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Get all tab links
+    const tabLinks = document.querySelectorAll(".elegant-tab-link");
+    const tabPanes = document.querySelectorAll(".elegant-tab-pane");
+    
+    tabLinks.forEach(function(tabLink) {
+        tabLink.addEventListener("click", function(e) {
+            e.preventDefault();
+            
+            // Check if tab is disabled
+            if (this.classList.contains("disabled")) {
+                return false;
+            }
+            
+            // Get target tab
+            const targetId = this.getAttribute("data-bs-target");
+            
+            if (!targetId) {
+                return;
+            }
+            
+            // Remove active class from all tabs and panes
+            tabLinks.forEach(function(link) {
+                link.classList.remove("active");
+                link.setAttribute("aria-selected", "false");
+            });
+            
+            tabPanes.forEach(function(pane) {
+                pane.classList.remove("active");
+            });
+            
+            // Add active class to clicked tab
+            this.classList.add("active");
+            this.setAttribute("aria-selected", "true");
+            
+            // Show target pane
+            const targetPane = document.querySelector(targetId);
+            if (targetPane) {
+                targetPane.classList.add("active");
+            }
+        });
+    });
+});
+</script>';
 
 echo $OUTPUT->footer();
