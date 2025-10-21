@@ -491,7 +491,7 @@
 
 /* Hero Header */
 .hero-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     padding: 3rem 2rem;
     margin: 0 0 2rem 0;
     border-radius: 20px;
@@ -626,7 +626,7 @@
 }
 
 .btn-elegant.btn-primary {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     color: white;
     box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.25);
 }
@@ -718,7 +718,7 @@
 
 .search-input:focus {
     outline: none;
-    border-color: #6366f1;
+    border-color: #2b53a0;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
@@ -750,7 +750,7 @@
 
 .elegant-node.search-highlight .node-card {
     background: linear-gradient(90deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%);
-    border-left: 3px solid #6366f1;
+    border-left: 3px solid #2b53a0;
 }
 
 .node-card {
@@ -803,7 +803,7 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: #6366f1;
+    color: #2b53a0;
 }
 
 .expand-btn:hover {
@@ -852,7 +852,7 @@
     position: absolute;
     top: -6px;
     right: -6px;
-    background: #6366f1;
+    background: #2b53a0;
     color: white;
     border-radius: 10px;
     width: 20px;
@@ -1248,12 +1248,12 @@
 
 .elegant-tab-link:hover {
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
-    color: #6366f1;
+    color: #2b53a0;
 }
 
 .elegant-tab-link.active {
     background: white;
-    color: #6366f1;
+    color: #2b53a0;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
@@ -1264,7 +1264,7 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+    background: linear-gradient(90deg, #2b53a0 0%, #4a90e2 100%);
 }
 
 .elegant-tab-link.disabled {
@@ -1287,7 +1287,7 @@
 }
 
 .elegant-tab-link.active .tab-icon {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     color: white;
 }
 
@@ -1380,7 +1380,7 @@
 .elegant-form-section .fitem.fitem_ftext input[type="text"]:focus,
 .elegant-form-section .fitem.fitem_fselect select:focus,
 .elegant-form-section .fitem.fitem_feditor textarea:focus {
-    border-color: #6366f1;
+    border-color: #2b53a0;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
     outline: none;
 }
@@ -1425,7 +1425,7 @@
 
 .elegant-form-section .fitem.fitem_actionbuttons input[type="submit"],
 .elegant-form-section .fitem.fitem_actionbuttons input[type="button"] {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     color: white;
     border: none;
     border-radius: 10px;
@@ -1602,7 +1602,7 @@ body.modal-open {
 }
 
 #priceModal .modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     color: white;
     border-bottom: none;
     padding: 1.5rem;
@@ -1664,7 +1664,7 @@ body.modal-open {
 
 #priceModal .form-control:focus,
 #priceModal .form-select:focus {
-    border-color: #667eea;
+    border-color: #2b53a0;
     box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
 }
 
@@ -1674,8 +1674,8 @@ body.modal-open {
 }
 
 #priceModal .form-check-input:checked {
-    background-color: #667eea;
-    border-color: #667eea;
+    background-color: #2b53a0;
+    border-color: #2b53a0;
 }
 
 #priceModal .btn {
@@ -1686,7 +1686,7 @@ body.modal-open {
 }
 
 #priceModal .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     border: none;
 }
 
@@ -1714,7 +1714,7 @@ body.modal-open {
 
 /* Pricing Header with Gradient */
 .pricing-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     padding: 2rem 2.5rem;
     border-radius: 16px 16px 0 0;
     color: white;
@@ -1806,7 +1806,7 @@ body.modal-open {
 }
 
 .elegant-prices-table thead tr th i {
-    color: #667eea;
+    color: #2b53a0;
     opacity: 0.8;
 }
 
@@ -1855,7 +1855,7 @@ body.modal-open {
 }
 
 .price-icon {
-    color: #667eea;
+    color: #2b53a0;
     font-size: 1rem;
 }
 
@@ -1960,7 +1960,7 @@ body.modal-open {
 }
 
 .installments-value i {
-    color: #667eea;
+    color: #2b53a0;
 }
 
 /* Actions Cell */
@@ -2050,7 +2050,7 @@ body.modal-open {
 }
 
 .loading-row i {
-    color: #667eea;
+    color: #2b53a0;
     font-size: 1.5rem;
 }
 
@@ -2152,7 +2152,7 @@ body.modal-open {
     left: 0;
     width: 4px;
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     transform: scaleY(0);
     transition: transform 0.3s ease;
 }
@@ -2160,7 +2160,7 @@ body.modal-open {
 .action-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
-    border-color: #667eea;
+    border-color: #2b53a0;
 }
 
 .action-card:hover::before {
@@ -2184,7 +2184,7 @@ body.modal-open {
 }
 
 .action-card-icon.icon-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     color: white;
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
@@ -2233,14 +2233,14 @@ body.modal-open {
     justify-content: center;
     background: #f3f4f6;
     border-radius: 8px;
-    color: #667eea;
+    color: #2b53a0;
     font-size: 1rem;
     transition: all 0.2s;
     flex-shrink: 0;
 }
 
 .action-card:hover .action-card-link {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     color: white;
     transform: translateX(4px);
 }
@@ -2285,7 +2285,7 @@ body.modal-open {
     top: 0;
     bottom: 0;
     width: 4px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     transform: scaleY(0);
     transition: transform 0.3s ease;
 }
@@ -2321,7 +2321,7 @@ body.modal-open {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     border-radius: 12px;
     color: white;
     font-size: 1.75rem;
@@ -2353,7 +2353,7 @@ body.modal-open {
 }
 
 .course-name a:hover {
-    color: #667eea;
+    color: #2b53a0;
 }
 
 .course-shortname {
@@ -2517,7 +2517,7 @@ body.modal-open {
 }
 
 .footer-section-title i {
-    color: #667eea;
+    color: #2b53a0;
 }
 
 .footer-list {
@@ -2549,11 +2549,11 @@ body.modal-open {
 }
 
 .footer-list li a:hover {
-    color: #667eea;
+    color: #2b53a0;
 }
 
 .footer-list li a i {
-    color: #667eea;
+    color: #2b53a0;
     font-size: 0.75rem;
 }
 

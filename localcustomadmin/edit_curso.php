@@ -321,7 +321,7 @@ echo '<style>
 }
 
 .elegant-form-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     padding: 3rem 2rem;
     border-radius: 20px;
     color: white;

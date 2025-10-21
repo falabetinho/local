@@ -366,7 +366,7 @@ echo '<style>
 }
 
 .elegant-form-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     padding: 3rem 2rem;
     border-radius: 20px;
     color: white;
@@ -698,7 +698,7 @@ style.textContent = `
     }
     
     .fitem.focused {
-        border-color: #6366f1 !important;
+        border-color: #2b53a0 !important;
         box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
     }
     

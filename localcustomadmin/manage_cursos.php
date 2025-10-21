@@ -113,7 +113,7 @@ $totalenrollments = $DB->count_records_sql(
 }
 
 .manage-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
     padding: 3rem 2rem;
     border-radius: 20px;
     color: white;
@@ -177,14 +177,14 @@ $totalenrollments = $DB->count_records_sql(
 
 .btn-manage-primary {
     background: white;
-    color: #667eea;
+    color: #2b53a0;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .btn-manage-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
-    color: #667eea;
+    color: #2b53a0;
 }
 
 .btn-manage-secondary {
@@ -233,7 +233,7 @@ $totalenrollments = $DB->count_records_sql(
     font-size: 1.5rem;
 }
 
-.stat-card-icon.primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+.stat-card-icon.primary { background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%); color: white; }
 .stat-card-icon.success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; }
 .stat-card-icon.warning { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
 .stat-card-icon.info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
@@ -304,7 +304,7 @@ $totalenrollments = $DB->count_records_sql(
 
 .filter-input:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #2b53a0;
 }
 
 .courses-table-container {
@@ -402,11 +402,11 @@ $totalenrollments = $DB->count_records_sql(
 
 .btn-icon.edit {
     background: #edf2f7;
-    color: #667eea;
+    color: #2b53a0;
 }
 
 .btn-icon.edit:hover {
-    background: #667eea;
+    background: #2b53a0;
     color: white;
 }
 
@@ -447,13 +447,13 @@ $totalenrollments = $DB->count_records_sql(
 }
 
 .pagination-btn:hover {
-    border-color: #667eea;
-    color: #667eea;
+    border-color: #2b53a0;
+    color: #2b53a0;
 }
 
 .pagination-btn.active {
-    background: #667eea;
-    border-color: #667eea;
+    background: #2b53a0;
+    border-color: #2b53a0;
     color: white;
 }
 
