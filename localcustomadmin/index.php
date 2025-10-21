@@ -89,17 +89,6 @@ if (has_capability('local/localcustomadmin:manage', $context)) {
     ];
 }
 
-// Enrolment Management card - only for managers
-if (has_capability('local/localcustomadmin:manage', $context)) {
-    $templatecontext['cards'][] = [
-        'title' => get_string('enrolment_management', 'local_localcustomadmin'),
-        'description' => get_string('enrolment_management_desc', 'local_localcustomadmin'),
-        'url' => (new moodle_url('/local/localcustomadmin/enrolment_management.php'))->out(),
-        'btntext' => get_string('manage', 'local_localcustomadmin'),
-        'icon' => 'fa-user-graduate'
-    ];
-}
-
 // Enrolment Data card (Custom Status) - only for managers with Custom Status available
 if (has_capability('local/localcustomadmin:manage', $context) && customstatus_integration::is_available()) {
     $templatecontext['cards'][] = [
@@ -107,7 +96,7 @@ if (has_capability('local/localcustomadmin:manage', $context) && customstatus_in
         'description' => get_string('enrolmentdata_desc', 'local_localcustomadmin'),
         'url' => (new moodle_url('/enrol/customstatus/enrolment_data.php'))->out(),
         'btntext' => get_string('manage_enrolmentdata', 'local_localcustomadmin'),
-        'icon' => 'fa-database'
+        'icon' => 'fa-user-graduate'
     ];
 }
 

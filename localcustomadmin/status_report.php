@@ -43,7 +43,6 @@ $PAGE->set_heading('Relatório de Status de Alunos');
 
 // Add navigation breadcrumb
 $PAGE->navbar->add('LocalCustomAdmin', new moodle_url('/local/localcustomadmin/index.php'));
-$PAGE->navbar->add(get_string('enrolment_management', 'local_localcustomadmin'), new moodle_url('/local/localcustomadmin/enrolment_management.php'));
 $PAGE->navbar->add('Relatório de Status');
 
 // Handle actions
@@ -57,7 +56,7 @@ echo $OUTPUT->header();
 
 // Back button
 echo '<div class="back-button-container">';
-$back_url = new moodle_url('/local/localcustomadmin/enrolment_management.php');
+$back_url = new moodle_url('/local/localcustomadmin/index.php');
 echo '<a href="' . $back_url . '" class="btn-back">';
 echo '<i class="fas fa-arrow-left"></i> ';
 echo get_string('back', 'local_localcustomadmin');

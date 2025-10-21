@@ -303,6 +303,6 @@ $string['paidstudents_count'] = 'Paid Students';
 $string['paymentdue_count'] = 'Payment Due';
 
 // Enrolment Data Management
-$string['enrolmentdata'] = 'Enrolment Data';
+$string['enrolmentdata'] = 'Enrolment Management';
 $string['enrolmentdata_desc'] = 'Complete student enrolment records with personal, address and payment data';
-$string['manage_enrolmentdata'] = 'Manage Data';
+$string['manage_enrolmentdata'] = 'Manage';

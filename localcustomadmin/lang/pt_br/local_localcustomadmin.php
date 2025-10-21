@@ -301,6 +301,6 @@ $string['paidstudents_count'] = 'Alunos Quitados';
 $string['paymentdue_count'] = 'Pagamento Pendente';
 
 // Enrolment Data Management
-$string['enrolmentdata'] = 'Dados de Matrícula';
+$string['enrolmentdata'] = 'Gerenciamento de Matrícula';
 $string['enrolmentdata_desc'] = 'Registros completos de matrícula com dados pessoais, endereço e pagamento';
-$string['manage_enrolmentdata'] = 'Gerenciar Dados';
+$string['manage_enrolmentdata'] = 'Gerenciar';
