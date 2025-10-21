@@ -93,10 +93,26 @@ if (has_capability('local/localcustomadmin:manage', $context)) {
     if (\local_localcustomadmin\api\customstatus_integration::is_available()) {
         $templatecontext['cards'][] = [
             'title' => get_string('statusreport', 'local_localcustomadmin'),
-            'description' => 'Relatório integrado de status de pagamento dos alunos',
+            'description' => get_string('statusreport_desc', 'local_localcustomadmin'),
             'url' => (new moodle_url('/local/localcustomadmin/status_report.php'))->out(),
-            'btntext' => 'Abrir Relatório',
+            'btntext' => get_string('open_statusreport', 'local_localcustomadmin'),
             'icon' => 'fa-chart-bar'
+        ];
+    }
+}
+
+// Enrolment card - only for managers and if Custom Status is available
+if (has_capability('local/localcustomadmin:manage', $context)) {
+    if (!isset($CFG->dirroot)) {
+        require_once($CFG->dirroot . '/local/localcustomadmin/classes/api/customstatus_integration.php');
+    }
+    if (\local_localcustomadmin\api\customstatus_integration::is_available()) {
+        $templatecontext['cards'][] = [
+            'title' => get_string('enrolment', 'local_localcustomadmin'),
+            'description' => get_string('enrolment_desc', 'local_localcustomadmin'),
+            'url' => (new moodle_url('/local/localcustomadmin/matricula.php'))->out(),
+            'btntext' => get_string('open_enrolment', 'local_localcustomadmin'),
+            'icon' => 'fa-user-plus'
         ];
     }
 }
