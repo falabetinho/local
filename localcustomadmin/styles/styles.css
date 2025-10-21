@@ -1201,6 +1201,13 @@
    ELEGANT FORM STYLING
    ======================================== */
 
+/* Form Container */
+.elegant-form-container {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 /* Elegant Tabs */
 .elegant-tabs-container {
     background: white;
