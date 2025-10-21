@@ -25,6 +25,8 @@
 require_once('../../config.php');
 require_once($CFG->dirroot . '/local/localcustomadmin/lib.php');
 
+use local_localcustomadmin\api\customstatus_integration;
+
 require_login();
 
 $context = context_system::instance();
