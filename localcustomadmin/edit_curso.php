@@ -185,9 +185,6 @@ if ($form->is_cancelled()) {
             } catch (Exception $e) {
                 debugging('Error handling category change: ' . $e->getMessage());
             }
-        } else {
-            // Category didn't change, just ensure enrollments are up to date
-            \local_localcustomadmin\course_manager::initialize_course_enrolments($id);
         }
 
         redirect(
@@ -202,9 +199,6 @@ if ($form->is_cancelled()) {
         // Use native Moodle function to create course
         $course = create_course($formdata);
         $courseid = $course->id;
-
-        // Initialize enrollment fees based on category pricing
-        \local_localcustomadmin\course_manager::initialize_course_enrolments($courseid);
 
         redirect(
             new moodle_url('/local/localcustomadmin/cursos.php'),
@@ -229,17 +223,97 @@ function render_pricing_tab($courseid) {
     
     $html .= '<div class="alert alert-info">';
     $html .= '<i class="fas fa-info-circle mr-2"></i>';
-    $html .= 'View and manage enrollment methods for this course. Enrollment methods are automatically initialized based on category pricing.';
+    $html .= get_string('course_enrolments_info', 'local_localcustomadmin');
+    $html .= '</div>';
+    
+    // Statistics Cards
+    $enrolments = enrol_get_instances($courseid, true);
+    $totalenrolments = count($enrolments);
+    $activeenrolments = 0;
+    $totalrevenue = 0;
+    
+    // Count total students
+    $totalstudents = 0;
+    $enrolids = [];
+    foreach ($enrolments as $enrol) {
+        $enrolids[] = $enrol->id;
+    }
+    
+    if (!empty($enrolids)) {
+        list($insql, $params) = $DB->get_in_or_equal($enrolids);
+        $totalstudents = $DB->count_records_select('user_enrolments', "enrolid $insql", $params);
+    }
+    
+    foreach ($enrolments as $enrol) {
+        if ($enrol->status == ENROL_INSTANCE_ENABLED) {
+            $activeenrolments++;
+            if (isset($enrol->cost) && $enrol->cost > 0) {
+                $totalrevenue += $enrol->cost;
+            }
+        }
+    }
+    
+    $html .= '<div class="row mb-4">';
+    
+    // Card 1: Total Methods
+    $html .= '<div class="col-md-3">';
+    $html .= '<div class="elegant-stat-card">';
+    $html .= '<div class="stat-icon bg-primary"><i class="fas fa-key"></i></div>';
+    $html .= '<div class="stat-content">';
+    $html .= '<div class="stat-value">' . $totalenrolments . '</div>';
+    $html .= '<div class="stat-label">Métodos de Matrícula</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    // Card 2: Active Methods
+    $html .= '<div class="col-md-3">';
+    $html .= '<div class="elegant-stat-card">';
+    $html .= '<div class="stat-icon bg-success"><i class="fas fa-check-circle"></i></div>';
+    $html .= '<div class="stat-content">';
+    $html .= '<div class="stat-value">' . $activeenrolments . '</div>';
+    $html .= '<div class="stat-label">Métodos Ativos</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    // Card 3: Total Students
+    $html .= '<div class="col-md-3">';
+    $html .= '<div class="elegant-stat-card">';
+    $html .= '<div class="stat-icon bg-info"><i class="fas fa-users"></i></div>';
+    $html .= '<div class="stat-content">';
+    $html .= '<div class="stat-value">' . $totalstudents . '</div>';
+    $html .= '<div class="stat-label">Alunos Matriculados</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    // Card 4: Expected Revenue
+    $html .= '<div class="col-md-3">';
+    $html .= '<div class="elegant-stat-card">';
+    $html .= '<div class="stat-icon bg-warning"><i class="fas fa-dollar-sign"></i></div>';
+    $html .= '<div class="stat-content">';
+    $html .= '<div class="stat-value">R$ ' . number_format($totalrevenue, 2, ',', '.') . '</div>';
+    $html .= '<div class="stat-label">Receita Esperada</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    $html .= '</div>';
+    
+    $html .= '</div>';
+    
+    // Link to manage enrollment prices
+    $html .= '<div class="mb-3">';
+    $html .= '<a href="' . new moodle_url('/local/localcustomadmin/manage_enrol_prices.php', ['id' => $courseid]) . '" class="btn btn-primary">';
+    $html .= '<i class="fas fa-dollar-sign"></i> ' . get_string('manage_enrol_prices', 'local_localcustomadmin');
+    $html .= '</a>';
     $html .= '</div>';
     
     // Get all enrolment methods for this course
-    $enrolments = enrol_get_instances($courseid, true);
-    
     if (empty($enrolments)) {
         $html .= '<div class="elegant-empty-state">';
         $html .= '<div class="empty-icon"><i class="fas fa-user-slash"></i></div>';
         $html .= '<h4 class="empty-title">Nenhum método de matrícula</h4>';
-        $html .= '<p class="empty-description">Nenhum método de matrícula configurado para este curso</p>';
+        $html .= '<p class="empty-description">Use o botão acima para importar preços da categoria e criar métodos de matrícula</p>';
         $html .= '</div>';
         return $html;
     }
@@ -251,6 +325,8 @@ function render_pricing_tab($courseid) {
     $html .= '<th><i class="fas fa-key mr-2"></i>Método de Matrícula</th>';
     $html .= '<th><i class="fas fa-toggle-on mr-2"></i>Status</th>';
     $html .= '<th><i class="fas fa-dollar-sign mr-2"></i>Preço</th>';
+    $html .= '<th><i class="fas fa-users mr-2"></i>Alunos</th>';
+    $html .= '<th><i class="fas fa-calendar mr-2"></i>Vigência</th>';
     $html .= '<th class="actions-col"><i class="fas fa-cog mr-2"></i>Ações</th>';
     $html .= '</tr>';
     $html .= '</thead>';
@@ -264,12 +340,36 @@ function render_pricing_tab($courseid) {
             }
             
             $methodname = $enrolmethod->get_instance_name($enrolment);
-            $price = isset($enrolment->cost) && $enrolment->cost > 0 ? 'R$ ' . number_format($enrolment->cost, 2, ',', '.') : '-';
+            
+            // Price with installments info
+            $price = '-';
+            if (isset($enrolment->cost) && $enrolment->cost > 0) {
+                $price = 'R$ ' . number_format($enrolment->cost, 2, ',', '.');
+                if (isset($enrolment->customint4) && $enrolment->customint4 > 1) {
+                    $price .= ' <small class="text-muted">(' . $enrolment->customint4 . 'x)</small>';
+                }
+            }
             
             $isactive = $enrolment->status == ENROL_INSTANCE_ENABLED;
             $statusclass = $isactive ? 'status-active' : 'status-inactive';
             $statustext = $isactive ? get_string('active') : get_string('inactive');
             $statusicon = $isactive ? 'fa-check-circle' : 'fa-times-circle';
+            
+            // Count enrolled students for this method
+            $enrolledcount = $DB->count_records('user_enrolments', ['enrolid' => $enrolment->id]);
+            
+            // Validity period
+            $validity = '';
+            if ($enrolment->enrolstartdate > 0) {
+                $validity = userdate($enrolment->enrolstartdate, '%d/%m/%Y');
+                if ($enrolment->enrolenddate > 0) {
+                    $validity .= ' - ' . userdate($enrolment->enrolenddate, '%d/%m/%Y');
+                } else {
+                    $validity .= ' - ∞';
+                }
+            } else {
+                $validity = '<span class="text-muted">Sem limite</span>';
+            }
             
             $html .= '<tr class="enrolment-row">';
             
@@ -292,17 +392,36 @@ function render_pricing_tab($courseid) {
             // Price
             $html .= '<td class="price-cell">';
             if ($price !== '-') {
-                $html .= '<span class="price-value">' . htmlspecialchars($price) . '</span>';
+                $html .= '<span class="price-value">' . $price . '</span>';
             } else {
                 $html .= '<span class="text-muted">-</span>';
             }
             $html .= '</td>';
             
+            // Enrolled students count
+            $html .= '<td class="students-cell">';
+            $html .= '<span class="badge badge-info">' . $enrolledcount . ' aluno(s)</span>';
+            $html .= '</td>';
+            
+            // Validity period
+            $html .= '<td class="validity-cell">';
+            $html .= '<small>' . $validity . '</small>';
+            $html .= '</td>';
+            
             // Actions
             $html .= '<td class="actions-cell">';
-            $html .= '<a href="#" class="btn-action btn-action-edit" data-enrolid="' . $enrolment->id . '" onclick="return false;" title="Editar">';
+            
+            // Link to participants filtered by this enrolment
+            $html .= '<a href="' . new moodle_url('/user/index.php', ['id' => $courseid]) . '" class="btn-action btn-action-users" title="Ver Alunos">';
+            $html .= '<i class="fas fa-users"></i>';
+            $html .= '</a>';
+            
+            // Edit button (could link to Moodle's enrol edit page)
+            $editurl = new moodle_url('/enrol/editinstance.php', ['courseid' => $courseid, 'id' => $enrolment->id, 'type' => $enrolment->enrol]);
+            $html .= '<a href="' . $editurl . '" class="btn-action btn-action-edit" title="Editar">';
             $html .= '<i class="fas fa-edit"></i>';
             $html .= '</a>';
+            
             $html .= '</td>';
             
             $html .= '</tr>';
@@ -422,6 +541,230 @@ echo '<style>
     cursor: not-allowed;
     pointer-events: none;
 }
+
+/* Statistics Cards */
+.elegant-stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+}
+
+.elegant-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.stat-icon.bg-primary {
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
+}
+
+.stat-icon.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, #34ce57 100%);
+}
+
+.stat-icon.bg-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #20c9e3 100%);
+}
+
+.stat-icon.bg-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #ffd54f 100%);
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Enrolment table enhancements */
+.elegant-table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.elegant-enrolments-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.elegant-enrolments-table thead {
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
+    color: white;
+}
+
+.elegant-enrolments-table thead th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.elegant-enrolments-table tbody tr {
+    border-bottom: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.elegant-enrolments-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.elegant-enrolments-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.elegant-enrolments-table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.elegant-enrolments-table .method-cell {
+    font-weight: 500;
+}
+
+.elegant-enrolments-table .method-icon {
+    color: #2b53a0;
+}
+
+.elegant-enrolments-table .status-cell {
+    text-align: center;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.status-badge.status-active {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-badge.status-inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.elegant-enrolments-table .price-cell {
+    font-weight: 600;
+    color: #2b53a0;
+}
+
+.elegant-enrolments-table .students-cell {
+    text-align: center;
+}
+
+.elegant-enrolments-table .validity-cell {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.elegant-enrolments-table .actions-cell {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    margin: 0 0.25rem;
+    transition: all 0.2s ease;
+    color: #6c757d;
+    background: transparent;
+    text-decoration: none;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-action-users {
+    color: #17a2b8;
+}
+
+.btn-action-users:hover {
+    color: #17a2b8;
+    background-color: rgba(23, 162, 184, 0.1);
+}
+
+.btn-action-edit {
+    color: #ffc107;
+}
+
+.btn-action-edit:hover {
+    color: #ffc107;
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+/* Empty state */
+.elegant-empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.elegant-empty-state .empty-icon {
+    font-size: 3rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
+.elegant-empty-state .empty-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.elegant-empty-state .empty-description {
+    color: #6c757d;
+}
 </style>';
 
 // Back button - First element
@@ -513,15 +856,6 @@ if ($editing) {
     echo '<div class="form-section-header">';
     echo '<h4><i class="fas fa-dollar-sign me-2"></i>Gestão de Matrículas</h4>';
     echo '<p class="form-section-subtitle">Visualize e gerencie os métodos de inscrição do curso</p>';
-    echo '</div>';
-    
-    // Link to manage enrollment prices
-    echo '<div class="mb-3">';
-    echo '<a href="' . new moodle_url('/local/localcustomadmin/manage_enrol_prices.php', ['id' => $id]) . '" class="btn btn-primary">';
-    echo '<i class="fas fa-tags"></i> ';
-    echo 'Gerenciar Preços de Matrícula';
-    echo '</a>';
-    echo '<p class="text-muted mt-2"><small>Importe preços da categoria para criar métodos de matrícula</small></p>';
     echo '</div>';
     
     echo render_pricing_tab($id);

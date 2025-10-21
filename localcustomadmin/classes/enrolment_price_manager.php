@@ -92,18 +92,13 @@ class enrolment_price_manager {
     private static function create_enrol_instance_from_price($courseid, $price) {
         global $DB;
 
-        // Determine which enrollment type to use
-        $enroltype = 'manual'; // Default to manual
-        $enrolplugin = enrol_get_plugin('fee');
-        if ($enrolplugin) {
-            $enroltype = 'fee';
-        } else {
-            // Try manual if fee is not available
-            $enrolplugin = enrol_get_plugin('manual');
-            if (!$enrolplugin) {
-                debugging('No suitable enrol plugin found (fee or manual)', DEBUG_DEVELOPER);
-                return false;
-            }
+        // Always use customstatus enrollment type
+        $enroltype = 'customstatus';
+        $enrolplugin = enrol_get_plugin('customstatus');
+        
+        if (!$enrolplugin) {
+            debugging('Custom Status enrol plugin not found or not enabled', DEBUG_DEVELOPER);
+            return false;
         }
 
         // Prepare enrollment data
@@ -144,7 +139,7 @@ class enrolment_price_manager {
         $enrolid = $DB->insert_record('enrol', $enroldata);
         
         // Log for debugging
-        debugging('Created enrol instance: ID=' . $enrolid . ', Type=' . $enroltype . ', customint1=' . $price->id, DEBUG_DEVELOPER);
+        debugging('Created customstatus enrol instance: ID=' . $enrolid . ', customint1=' . $price->id, DEBUG_DEVELOPER);
         
         return $enrolid;
     }

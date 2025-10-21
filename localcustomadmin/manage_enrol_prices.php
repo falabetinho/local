@@ -41,7 +41,6 @@ $PAGE->set_url(new moodle_url('/local/localcustomadmin/manage_enrol_prices.php',
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('manage_enrol_prices', 'local_localcustomadmin') . ' - ' . format_string($course->fullname));
-$PAGE->set_heading(get_string('manage_enrol_prices', 'local_localcustomadmin'));
 
 // Disable secondary navigation
 $PAGE->set_secondary_navigation(false);

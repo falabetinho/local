@@ -37,7 +37,7 @@ require_capability('local/localcustomadmin:manage', $context);
 // Set up the page
 $PAGE->set_url(new moodle_url('/local/localcustomadmin/status_report.php', ['categoryid' => $categoryid]));
 $PAGE->set_context($context);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('base');
 $PAGE->set_title('Relatório de Status de Alunos');
 $PAGE->set_heading('Relatório de Status de Alunos');
 
@@ -53,6 +53,15 @@ if ($action === 'mark_overdue' && $categoryid && confirm_sesskey()) {
 }
 
 echo $OUTPUT->header();
+
+// Back button
+echo '<div class="back-button-container">';
+$back_url = new moodle_url('/local/localcustomadmin/index.php');
+echo '<a href="' . $back_url . '" class="btn-back">';
+echo '<i class="fas fa-arrow-left"></i> ';
+echo get_string('back', 'local_localcustomadmin');
+echo '</a>';
+echo '</div>';
 
 // Check if Custom Status is available
 if (!customstatus_integration::is_available()) {

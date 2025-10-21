@@ -12,6 +12,15 @@
     margin-top: 0px !important;
 }
 
+/* Hide duplicate page context header in plugin pages */
+.page-context-header {
+    display: none !important;
+}
+
+.page-header-headings {
+    display: none !important;
+}
+
 /* Main container styling */
 .local-customadmin-index {
     padding: 24px 0;
