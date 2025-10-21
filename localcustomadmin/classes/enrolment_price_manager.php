@@ -92,21 +92,24 @@ class enrolment_price_manager {
     private static function create_enrol_instance_from_price($courseid, $price) {
         global $DB;
 
-        // Check if enrollment plugin is available (using 'fee' or 'manual' as base)
+        // Determine which enrollment type to use
+        $enroltype = 'manual'; // Default to manual
         $enrolplugin = enrol_get_plugin('fee');
-        if (!$enrolplugin) {
-            // Fallback to manual enrollment
+        if ($enrolplugin) {
+            $enroltype = 'fee';
+        } else {
+            // Try manual if fee is not available
             $enrolplugin = enrol_get_plugin('manual');
-        }
-
-        if (!$enrolplugin) {
-            return false;
+            if (!$enrolplugin) {
+                debugging('No suitable enrol plugin found (fee or manual)', DEBUG_DEVELOPER);
+                return false;
+            }
         }
 
         // Prepare enrollment data
         $enroldata = new \stdClass();
         $enroldata->courseid = $courseid;
-        $enroldata->enrol = 'fee'; // Using fee enrollment type
+        $enroldata->enrol = $enroltype;
         
         // IMPORTANT: Moodle enrol status is inverted
         // status = 0 means ENABLED (ENROL_INSTANCE_ENABLED)
@@ -119,6 +122,7 @@ class enrolment_price_manager {
         $enroldata->cost = $price->price;
         $enroldata->currency = 'BRL'; // Brazilian Real
         $enroldata->roleid = $DB->get_field('role', 'id', ['shortname' => 'student'], IGNORE_MULTIPLE) ?? 5;
+        $enroldata->sortorder = 0;
         
         // Use customint1 to reference the category price ID
         $enroldata->customint1 = $price->id;
@@ -138,7 +142,10 @@ class enrolment_price_manager {
 
         // Insert the enrollment instance
         $enrolid = $DB->insert_record('enrol', $enroldata);
-
+        
+        // Log for debugging
+        debugging('Created enrol instance: ID=' . $enrolid . ', Type=' . $enroltype . ', customint1=' . $price->id, DEBUG_DEVELOPER);
+        
         return $enrolid;
     }
 

@@ -27,14 +27,14 @@ define(['jquery'], function($) {
      * Initialize Fluent tree view functionality
      */
     function initializeFluentTree() {
-        var $treeContainer = $('.fluent-tree-container');
+        var $treeContainer = $('.elegant-tree-container, .fluent-tree-container');
         
         if ($treeContainer.length === 0) {
-            console.warn('Fluent tree container not found');
+            console.log('Tree container not found - page may not have category tree');
             return;
         }
 
-        console.log('Initializing Fluent tree with', $('.tree-node').length, 'nodes');
+        console.log('Initializing Fluent tree with', $('.tree-node, .elegant-node').length, 'nodes');
         
         // Setup node click handlers
         setupNodeHandlers();

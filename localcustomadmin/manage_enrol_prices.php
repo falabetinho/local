@@ -39,15 +39,15 @@ require_capability('local/localcustomadmin:manage', $context);
 // Set up the page
 $PAGE->set_url(new moodle_url('/local/localcustomadmin/manage_enrol_prices.php', ['id' => $courseid]));
 $PAGE->set_context($context);
-$PAGE->set_pagelayout('base');
-$PAGE->set_title(get_string('manage_enrol_prices', 'local_localcustomadmin', format_string($course->fullname)));
-$PAGE->set_heading(get_string('manage_enrol_prices', 'local_localcustomadmin', format_string($course->fullname)));
+$PAGE->set_pagelayout('standard'); // Use standard layout without course tabs
+$PAGE->set_title('Gerenciar Preços de Matrícula - ' . format_string($course->fullname));
+$PAGE->set_heading('Gerenciar Preços de Matrícula');
 
 // Add navigation breadcrumb
 $PAGE->navbar->add(get_string('localcustomadmin', 'local_localcustomadmin'), new moodle_url('/local/localcustomadmin/index.php'));
 $PAGE->navbar->add(get_string('courses', 'local_localcustomadmin'), new moodle_url('/local/localcustomadmin/cursos.php'));
 $PAGE->navbar->add(format_string($course->fullname), new moodle_url('/course/view.php', ['id' => $courseid]));
-$PAGE->navbar->add(get_string('manage_enrol_prices', 'local_localcustomadmin'));
+$PAGE->navbar->add('Gerenciar Preços de Matrícula');
 
 // Handle actions
 if ($action === 'import' && confirm_sesskey()) {
@@ -58,13 +58,13 @@ if ($action === 'import' && confirm_sesskey()) {
             $result = enrolment_price_manager::import_category_prices_to_course($courseid, $priceids);
             
             if ($result['success']) {
-                $message = count($result['created']) . ' preço(s) importado(s) com sucesso!';
-                \core\notification::success($message);
+                $count = count($result['created']);
+                \core\notification::success(get_string('prices_imported_success', 'local_localcustomadmin', $count));
             } else {
-                \core\notification::error('Erro ao importar alguns preços: ' . implode(', ', $result['errors']));
+                \core\notification::error(get_string('error') . ': ' . implode(', ', $result['errors']));
             }
         } catch (Exception $e) {
-            \core\notification::error('Erro: ' . $e->getMessage());
+            \core\notification::error(get_string('error') . ': ' . $e->getMessage());
         }
     }
     redirect($PAGE->url);
@@ -75,12 +75,12 @@ if ($action === 'unlink' && confirm_sesskey()) {
     
     try {
         if (enrolment_price_manager::unlink_enrolment_from_price($enrolid)) {
-            \core\notification::success('Vínculo removido com sucesso!');
+            \core\notification::success(get_string('price_unlinked_success', 'local_localcustomadmin'));
         } else {
-            \core\notification::error('Erro ao remover vínculo.');
+            \core\notification::error(get_string('error'));
         }
     } catch (Exception $e) {
-        \core\notification::error('Erro: ' . $e->getMessage());
+        \core\notification::error(get_string('error') . ': ' . $e->getMessage());
     }
     redirect($PAGE->url);
 }
@@ -89,6 +89,16 @@ echo $OUTPUT->header();
 
 // Get current imported prices
 $imported_enrols = enrolment_price_manager::get_course_price_enrolments($courseid);
+
+// Debug - remove after testing
+if (debugging('', DEBUG_DEVELOPER)) {
+    echo '<div class="alert alert-info">Debug: Found ' . count($imported_enrols) . ' imported enrolments</div>';
+    if (!empty($imported_enrols)) {
+        echo '<pre>';
+        print_r(array_values($imported_enrols)[0]);
+        echo '</pre>';
+    }
+}
 
 // Get available prices for import
 $available_prices = enrolment_price_manager::get_available_prices_for_course($courseid);
@@ -101,7 +111,7 @@ $available_prices = enrolment_price_manager::get_available_prices_for_course($co
     <div class="back-button-container">
         <a href="<?php echo new moodle_url('/local/localcustomadmin/edit_curso.php', ['id' => $courseid]); ?>" class="btn-back">
             <i class="fas fa-arrow-left"></i>
-            Voltar para Edição do Curso
+            <?php echo get_string('back_to_course_edit', 'local_localcustomadmin'); ?>
         </a>
     </div>
 
@@ -109,34 +119,34 @@ $available_prices = enrolment_price_manager::get_available_prices_for_course($co
     <div class="page-header-elegant">
         <h1>
             <i class="fas fa-tags"></i>
-            Gerenciar Preços de Matrícula
+            <?php echo get_string('manage_enrol_prices', 'local_localcustomadmin'); ?>
         </h1>
-        <p class="lead">Curso: <strong><?php echo format_string($course->fullname); ?></strong></p>
+        <p class="lead"><?php echo get_string('course', 'local_localcustomadmin'); ?>: <strong><?php echo format_string($course->fullname); ?></strong></p>
     </div>
 
     <!-- Current Imported Prices -->
     <div class="section-card mb-4">
         <div class="section-header">
-            <h2><i class="fas fa-list-ul"></i> Preços Importados</h2>
+            <h2><i class="fas fa-list-ul"></i> <?php echo get_string('imported_prices', 'local_localcustomadmin'); ?></h2>
         </div>
         <div class="section-body">
             <?php if (empty($imported_enrols)): ?>
                 <div class="alert alert-info">
                     <i class="fas fa-info-circle"></i>
-                    Nenhum preço foi importado ainda. Use o formulário abaixo para importar preços da categoria.
+                    <?php echo get_string('no_prices_imported', 'local_localcustomadmin'); ?>. <?php echo get_string('no_prices_imported_help', 'local_localcustomadmin'); ?>
                 </div>
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Nome do Preço</th>
-                                <th>Valor</th>
-                                <th>Parcelamento</th>
-                                <th>Promocional</th>
-                                <th>Status</th>
-                                <th>Vigência</th>
-                                <th>Ações</th>
+                                <th><?php echo get_string('price_name', 'local_localcustomadmin'); ?></th>
+                                <th><?php echo get_string('price_value', 'local_localcustomadmin'); ?></th>
+                                <th><?php echo get_string('installments_short', 'local_localcustomadmin'); ?></th>
+                                <th><?php echo get_string('promotional', 'local_localcustomadmin'); ?></th>
+                                <th><?php echo get_string('status', 'local_localcustomadmin'); ?></th>
+                                <th><?php echo get_string('validity_period', 'local_localcustomadmin'); ?></th>
+                                <th><?php echo get_string('actions', 'local_localcustomadmin'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -158,17 +168,17 @@ $available_prices = enrolment_price_manager::get_available_prices_for_course($co
                                     <td>
                                         <?php if ($enrol->customint2): ?>
                                             <span class="badge badge-warning">
-                                                <i class="fas fa-percentage"></i> Sim
+                                                <i class="fas fa-percentage"></i> <?php echo get_string('yes', 'local_localcustomadmin'); ?>
                                             </span>
                                         <?php else: ?>
-                                            <span class="badge badge-secondary">Não</span>
+                                            <span class="badge badge-secondary"><?php echo get_string('no', 'local_localcustomadmin'); ?></span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
                                         <?php if ($enrol->status == ENROL_INSTANCE_ENABLED): ?>
-                                            <span class="badge badge-success">Ativo</span>
+                                            <span class="badge badge-success"><?php echo get_string('active', 'local_localcustomadmin'); ?></span>
                                         <?php else: ?>
-                                            <span class="badge badge-danger">Inativo</span>
+                                            <span class="badge badge-danger"><?php echo get_string('inactive', 'local_localcustomadmin'); ?></span>
                                         <?php endif; ?>
                                     </td>
                                     <td>
@@ -176,15 +186,15 @@ $available_prices = enrolment_price_manager::get_available_prices_for_course($co
                                             <?php 
                                             echo userdate($enrol->enrolstartdate, '%d/%m/%Y');
                                             echo ' - ';
-                                            echo $enrol->enrolenddate ? userdate($enrol->enrolenddate, '%d/%m/%Y') : 'Indefinido';
+                                            echo $enrol->enrolenddate ? userdate($enrol->enrolenddate, '%d/%m/%Y') : get_string('undefined', 'local_localcustomadmin');
                                             ?>
                                         </small>
                                     </td>
                                     <td>
                                         <a href="<?php echo new moodle_url($PAGE->url, ['action' => 'unlink', 'enrolid' => $enrol->id, 'sesskey' => sesskey()]); ?>" 
                                            class="btn btn-sm btn-danger"
-                                           onclick="return confirm('Deseja realmente desvincular este preço?');">
-                                            <i class="fas fa-unlink"></i> Desvincular
+                                           onclick="return confirm('<?php echo get_string('confirm_unlink', 'local_localcustomadmin'); ?>');">
+                                            <i class="fas fa-unlink"></i> <?php echo get_string('unlink_price', 'local_localcustomadmin'); ?>
                                         </a>
                                     </td>
                                 </tr>
@@ -199,15 +209,15 @@ $available_prices = enrolment_price_manager::get_available_prices_for_course($co
     <!-- Import Prices Form -->
     <div class="section-card">
         <div class="section-header">
-            <h2><i class="fas fa-download"></i> Importar Preços da Categoria</h2>
+            <h2><i class="fas fa-download"></i> <?php echo get_string('import_category_prices', 'local_localcustomadmin'); ?></h2>
         </div>
         <div class="section-body">
             <?php if (empty($available_prices)): ?>
                 <div class="alert alert-warning">
                     <i class="fas fa-exclamation-triangle"></i>
-                    Não há preços disponíveis na categoria deste curso.
+                    <?php echo get_string('no_prices_available', 'local_localcustomadmin'); ?>.
                     <a href="<?php echo new moodle_url('/local/localcustomadmin/categorias.php'); ?>">
-                        Gerenciar Categorias
+                        <?php echo get_string('manage_categories', 'local_localcustomadmin'); ?>
                     </a>
                 </div>
             <?php else: ?>
@@ -222,12 +232,12 @@ $available_prices = enrolment_price_manager::get_available_prices_for_course($co
                                     <th width="50">
                                         <input type="checkbox" id="selectall">
                                     </th>
-                                    <th>Nome do Preço</th>
-                                    <th>Valor</th>
-                                    <th>Parcelamento</th>
-                                    <th>Tipo</th>
-                                    <th>Vigência</th>
-                                    <th>Status</th>
+                                    <th><?php echo get_string('price_name', 'local_localcustomadmin'); ?></th>
+                                    <th><?php echo get_string('price_value', 'local_localcustomadmin'); ?></th>
+                                    <th><?php echo get_string('installments_short', 'local_localcustomadmin'); ?></th>
+                                    <th><?php echo get_string('type', 'local_localcustomadmin'); ?></th>
+                                    <th><?php echo get_string('validity_period', 'local_localcustomadmin'); ?></th>
+                                    <th><?php echo get_string('status', 'local_localcustomadmin'); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -240,7 +250,7 @@ $available_prices = enrolment_price_manager::get_available_prices_for_course($co
                                             <?php if (!$already_imported): ?>
                                                 <input type="checkbox" name="priceids[]" value="<?php echo $price->id; ?>" class="price-checkbox">
                                             <?php else: ?>
-                                                <span class="text-success" title="Já importado">
+                                                <span class="text-success" title="<?php echo get_string('price_already_imported', 'local_localcustomadmin'); ?>">
                                                     <i class="fas fa-check-circle"></i>
                                                 </span>
                                             <?php endif; ?>
@@ -248,7 +258,7 @@ $available_prices = enrolment_price_manager::get_available_prices_for_course($co
                                         <td>
                                             <strong><?php echo s($price->name); ?></strong>
                                             <?php if ($already_imported): ?>
-                                                <br><small class="text-success">Já importado</small>
+                                                <br><small class="text-success"><?php echo get_string('price_already_imported', 'local_localcustomadmin'); ?></small>
                                             <?php endif; ?>
                                         </td>
                                         <td>
@@ -265,7 +275,7 @@ $available_prices = enrolment_price_manager::get_available_prices_for_course($co
                                             <?php endif; ?>
                                             <?php if ($price->isenrollmentfee): ?>
                                                 <span class="badge badge-info">
-                                                    <i class="fas fa-graduation-cap"></i> Taxa de Matrícula
+                                                    <i class="fas fa-graduation-cap"></i> <?php echo get_string('enrollment_fee', 'local_localcustomadmin'); ?>
                                                 </span>
                                             <?php endif; ?>
                                         </td>
@@ -274,15 +284,15 @@ $available_prices = enrolment_price_manager::get_available_prices_for_course($co
                                                 <?php 
                                                 echo userdate($price->startdate, '%d/%m/%Y');
                                                 echo '<br>';
-                                                echo $price->enddate ? userdate($price->enddate, '%d/%m/%Y') : 'Indefinido';
+                                                echo $price->enddate ? userdate($price->enddate, '%d/%m/%Y') : get_string('undefined', 'local_localcustomadmin');
                                                 ?>
                                             </small>
                                         </td>
                                         <td>
                                             <?php if ($price->status): ?>
-                                                <span class="badge badge-success">Ativo</span>
+                                                <span class="badge badge-success"><?php echo get_string('active', 'local_localcustomadmin'); ?></span>
                                             <?php else: ?>
-                                                <span class="badge badge-secondary">Inativo</span>
+                                                <span class="badge badge-secondary"><?php echo get_string('inactive', 'local_localcustomadmin'); ?></span>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
@@ -294,7 +304,7 @@ $available_prices = enrolment_price_manager::get_available_prices_for_course($co
                     <div class="mt-3">
                         <button type="submit" class="btn btn-primary btn-lg">
                             <i class="fas fa-download"></i>
-                            Importar Preços Selecionados
+                            <?php echo get_string('import_selected_prices', 'local_localcustomadmin'); ?>
                         </button>
                     </div>
                 </form>
