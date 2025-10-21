@@ -1,10 +1,10 @@
 <!-- Elegant Category Tree Node -->
 <div class="elegant-node {{#is_root}}root-node{{/is_root}}" data-category-id="{{id}}" data-category-name="{{name}}">
     <div class="node-card">
-        <div class="node-header" {{#has_children}}data-toggle="expand" data-target="#children-{{id}}"{{/has_children}}>
+        <div class="node-header">
             
             <!-- Expand/Collapse Button -->
-            <div class="node-expand">
+            <div class="node-expand" {{#has_children}}data-toggle="expand" data-target="#children-{{id}}"{{/has_children}}>
                 {{#has_children}}
                 <button class="expand-btn" type="button">
                     <i class="fas fa-chevron-right"></i>
@@ -16,7 +16,7 @@
             </div>
             
             <!-- Category Icon -->
-            <div class="node-icon-wrapper">
+            <div class="node-icon-wrapper" {{#has_children}}data-toggle="expand" data-target="#children-{{id}}"{{/has_children}}>
                 <div class="node-icon {{#has_children}}has-children{{/has_children}}">
                     {{#has_children}}
                     <i class="fas fa-folder"></i>
@@ -31,7 +31,7 @@
             </div>
             
             <!-- Category Information -->
-            <div class="node-info">
+            <div class="node-info" {{#has_children}}data-toggle="expand" data-target="#children-{{id}}"{{/has_children}}>
                 <div class="node-main">
                     <h4 class="node-title">{{name}}</h4>
                     <div class="node-stats">

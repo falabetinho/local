@@ -885,6 +885,13 @@
     min-width: 0;
 }
 
+/* Make clickable areas have pointer cursor */
+.node-expand[data-toggle="expand"],
+.node-icon-wrapper[data-toggle="expand"],
+.node-info[data-toggle="expand"] {
+    cursor: pointer;
+}
+
 .node-main {
     display: flex;
     flex-direction: column;

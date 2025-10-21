@@ -47,16 +47,17 @@ define(['jquery'], function($) {
      * Setup individual node click handlers
      */
     function setupNodeHandlers() {
-        // Handle node header clicks for expansion
-        $(document).off('click', '.node-header[data-bs-toggle="collapse"]')
-                  .on('click', '.node-header[data-bs-toggle="collapse"]', function(e) {
+        // Handle clicks on expandable elements (button, icon, info area)
+        $(document).off('click', '[data-toggle="expand"]')
+                  .on('click', '[data-toggle="expand"]', function(e) {
             e.preventDefault();
             e.stopPropagation();
             
-            var $header = $(this);
-            var targetId = $header.attr('data-bs-target');
+            var $trigger = $(this);
+            var targetId = $trigger.attr('data-target');
             var $target = $(targetId);
-            var $toggle = $header.find('.expand-toggle i');
+            var $header = $trigger.closest('.node-header');
+            var $toggle = $header.find('.expand-btn i');
             
             if ($target.length) {
                 toggleNode($target, $toggle, $header);
@@ -67,6 +68,14 @@ define(['jquery'], function($) {
         $(document).off('click', '.action-btn')
                   .on('click', '.action-btn', function(e) {
             e.stopPropagation();
+            // Allow default action (link navigation) to proceed
+        });
+        
+        // Ensure edit links work properly
+        $(document).off('click', '.edit-btn')
+                  .on('click', '.edit-btn', function(e) {
+            e.stopPropagation();
+            // Let the link navigation happen normally
         });
     }
 
@@ -162,7 +171,7 @@ define(['jquery'], function($) {
         $('.node-children').addClass('fluent-collapse-transition');
         
         // Add hover effects to interactive elements
-        $('.node-header[data-bs-toggle="collapse"]').addClass('fluent-interactive');
+        $('[data-toggle="expand"]').addClass('fluent-interactive');
         $('.action-btn').addClass('fluent-action');
     }
 
