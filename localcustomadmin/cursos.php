@@ -130,6 +130,9 @@ $templatecontext['actions'] = [
     ]
 ];
 
+// Add course URL for "Novo Curso" and "Criar Primeiro Curso" buttons
+$templatecontext['add_course_url'] = (new moodle_url('/local/localcustomadmin/edit_curso.php'))->out();
+
 // Render the template
 echo $OUTPUT->render_from_template('local_localcustomadmin/cursos', $templatecontext);
 
