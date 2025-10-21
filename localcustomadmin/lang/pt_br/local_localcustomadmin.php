@@ -230,3 +230,23 @@ $string['yes'] = 'Sim';
 $string['no'] = 'Não';
 $string['undefined'] = 'Indefinido';
 $string['manage_categories'] = 'Gerenciar Categorias';
+
+// Custom Status Integration
+$string['statusreport'] = 'Relatório de Status';
+$string['customstatus_integration'] = 'Integração Custom Status';
+$string['customstatus_notavailable'] = 'O plugin Custom Status não está instalado ou ativado';
+$string['totalstudents'] = 'Total de Alunos';
+$string['paidstudents'] = 'Alunos Quitados';
+$string['paymentdue'] = 'Pagamento Pendente';
+$string['blockedstudents'] = 'Alunos Bloqueados';
+$string['expectedrevenue'] = 'Receita Esperada';
+$string['receivedrevenue'] = 'Receita Recebida';
+$string['pendingrevenue'] = 'Receita Pendente';
+$string['markoverdue'] = 'Marcar Inadimplentes';
+$string['markoverdue_confirm'] = 'Tem certeza que deseja marcar todos os alunos não pagos como inadimplentes?';
+$string['overdue_marked'] = '{$a} aluno(s) marcado(s) como inadimplente(s)';
+$string['viewfullreport'] = 'Ver Relatório Completo';
+$string['quickactions'] = 'Ações Rápidas';
+$string['sendreminder'] = 'Enviar Lembrete';
+$string['contactstudent'] = 'Contatar Aluno';
+$string['checkoverduepayments'] = 'Verificar pagamentos vencidos e atualizar status dos alunos';

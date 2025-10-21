@@ -61,10 +61,10 @@ if ($action === 'import' && confirm_sesskey()) {
                 $count = count($result['created']);
                 \core\notification::success(get_string('prices_imported_success', 'local_localcustomadmin', $count));
             } else {
-                \core\notification::error(get_string('error') . ': ' . implode(', ', $result['errors']));
+                \core\notification::error(get_string('error', 'local_localcustomadmin') . ': ' . implode(', ', $result['errors']));
             }
         } catch (Exception $e) {
-            \core\notification::error(get_string('error') . ': ' . $e->getMessage());
+            \core\notification::error(get_string('error', 'local_localcustomadmin') . ': ' . $e->getMessage());
         }
     }
     redirect($PAGE->url);
@@ -77,10 +77,10 @@ if ($action === 'unlink' && confirm_sesskey()) {
         if (enrolment_price_manager::unlink_enrolment_from_price($enrolid)) {
             \core\notification::success(get_string('price_unlinked_success', 'local_localcustomadmin'));
         } else {
-            \core\notification::error(get_string('error'));
+            \core\notification::error(get_string('error', 'local_localcustomadmin'));
         }
     } catch (Exception $e) {
-        \core\notification::error(get_string('error') . ': ' . $e->getMessage());
+        \core\notification::error(get_string('error', 'local_localcustomadmin') . ': ' . $e->getMessage());
     }
     redirect($PAGE->url);
 }

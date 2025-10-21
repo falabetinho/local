@@ -208,3 +208,23 @@ $string['promotional'] = 'Promotional Price';
 $string['enrollment_fee'] = 'Enrollment Fee';
 $string['scheduled_task'] = 'Scheduled Task';
 $string['installments'] = 'Number of Installments';
+
+// Custom Status Integration
+$string['statusreport'] = 'Status Report';
+$string['customstatus_integration'] = 'Custom Status Integration';
+$string['customstatus_notavailable'] = 'Custom Status plugin is not installed or enabled';
+$string['totalstudents'] = 'Total Students';
+$string['paidstudents'] = 'Paid Students';
+$string['paymentdue'] = 'Payment Due';
+$string['blockedstudents'] = 'Blocked Students';
+$string['expectedrevenue'] = 'Expected Revenue';
+$string['receivedrevenue'] = 'Received Revenue';
+$string['pendingrevenue'] = 'Pending Revenue';
+$string['markoverdue'] = 'Mark Overdue';
+$string['markoverdue_confirm'] = 'Are you sure you want to mark all unpaid students as overdue?';
+$string['overdue_marked'] = '{$a} student(s) marked as overdue';
+$string['viewfullreport'] = 'View Full Report';
+$string['quickactions'] = 'Quick Actions';
+$string['sendreminder'] = 'Send Reminder';
+$string['contactstudent'] = 'Contact Student';
+$string['checkoverduepayments'] = 'Check overdue payments and update student status';
