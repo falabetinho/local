@@ -39,15 +39,18 @@ require_capability('local/localcustomadmin:manage', $context);
 // Set up the page
 $PAGE->set_url(new moodle_url('/local/localcustomadmin/manage_enrol_prices.php', ['id' => $courseid]));
 $PAGE->set_context($context);
-$PAGE->set_pagelayout('standard'); // Use standard layout without course tabs
-$PAGE->set_title('Gerenciar Preços de Matrícula - ' . format_string($course->fullname));
-$PAGE->set_heading('Gerenciar Preços de Matrícula');
+$PAGE->set_pagelayout('base');
+$PAGE->set_title(get_string('manage_enrol_prices', 'local_localcustomadmin') . ' - ' . format_string($course->fullname));
+$PAGE->set_heading(get_string('manage_enrol_prices', 'local_localcustomadmin'));
+
+// Disable secondary navigation
+$PAGE->set_secondary_navigation(false);
 
 // Add navigation breadcrumb
 $PAGE->navbar->add(get_string('localcustomadmin', 'local_localcustomadmin'), new moodle_url('/local/localcustomadmin/index.php'));
 $PAGE->navbar->add(get_string('courses', 'local_localcustomadmin'), new moodle_url('/local/localcustomadmin/cursos.php'));
 $PAGE->navbar->add(format_string($course->fullname), new moodle_url('/course/view.php', ['id' => $courseid]));
-$PAGE->navbar->add('Gerenciar Preços de Matrícula');
+$PAGE->navbar->add(get_string('manage_enrol_prices', 'local_localcustomadmin'));
 
 // Handle actions
 if ($action === 'import' && confirm_sesskey()) {
@@ -270,7 +273,7 @@ $available_prices = enrolment_price_manager::get_available_prices_for_course($co
                                         <td>
                                             <?php if ($price->ispromotional): ?>
                                                 <span class="badge badge-warning">
-                                                    <i class="fas fa-percentage"></i> Promocional
+                                                    <i class="fas fa-percentage"></i> <?php echo get_string('promotional', 'local_localcustomadmin'); ?>
                                                 </span>
                                             <?php endif; ?>
                                             <?php if ($price->isenrollmentfee): ?>

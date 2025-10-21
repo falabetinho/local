@@ -209,6 +209,30 @@ $string['enrollment_fee'] = 'Enrollment Fee';
 $string['scheduled_task'] = 'Scheduled Task';
 $string['installments'] = 'Number of Installments';
 
+// Enrollment prices management
+$string['manage_enrol_prices'] = 'Manage Enrollment Prices';
+$string['import_category_prices'] = 'Import Category Prices';
+$string['imported_prices'] = 'Imported Prices';
+$string['available_prices'] = 'Available Prices for Import';
+$string['no_prices_imported'] = 'No prices have been imported yet';
+$string['no_prices_imported_help'] = 'Use the form below to import category prices.';
+$string['no_prices_available'] = 'There are no prices available in this course category';
+$string['price_already_imported'] = 'Already imported';
+$string['unlink_price'] = 'Unlink';
+$string['confirm_unlink'] = 'Do you really want to unlink this price?';
+$string['prices_imported_success'] = '{$a} price(s) imported successfully!';
+$string['price_unlinked_success'] = 'Link removed successfully!';
+$string['import_selected_prices'] = 'Import Selected Prices';
+$string['back_to_course_edit'] = 'Back to Course Edit';
+$string['course'] = 'Course';
+$string['price_value'] = 'Value';
+$string['installments_short'] = 'Installments';
+$string['type'] = 'Type';
+$string['validity_period'] = 'Validity Period';
+$string['yes'] = 'Yes';
+$string['no'] = 'No';
+$string['undefined'] = 'Undefined';
+
 // Custom Status Integration
 $string['statusreport'] = 'Status Report';
 $string['customstatus_integration'] = 'Custom Status Integration';
