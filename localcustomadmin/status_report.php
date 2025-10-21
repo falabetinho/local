@@ -81,7 +81,7 @@ echo '<div class="card-body">';
 echo '<form method="get" action="' . $PAGE->url->out(false) . '" class="form-inline">';
 echo '<label class="mr-2">Selecionar Categoria:</label>';
 echo '<select name="categoryid" class="custom-select mr-2" onchange="this.form.submit()">';
-echo '<option value="0">-- Selecione --</option>';
+echo '<option value="0"' . ($categoryid == 0 ? ' selected' : '') . '>📊 Todas as Categorias (Consolidado)</option>';
 foreach ($categories as $id => $name) {
     $selected = ($id == $categoryid) ? 'selected' : '';
     echo "<option value=\"$id\" $selected>" . format_string($name) . "</option>";
@@ -92,14 +92,86 @@ echo '</form>';
 echo '</div>';
 echo '</div>';
 
-if (!$categoryid) {
-    echo '<div class="alert alert-info">Selecione uma categoria para visualizar o relatório de status.</div>';
-    echo $OUTPUT->footer();
-    exit;
+// Get report data
+if ($categoryid) {
+    // Report for specific category
+    $report = customstatus_integration::get_category_report($categoryid);
+} else {
+    // Consolidated report for all categories
+    $report = [
+        'category' => null,
+        'price' => 0,
+        'statistics' => [
+            'total' => 0,
+            'paid' => 0,
+            'payment_due' => 0,
+            'blocked' => 0,
+            'other' => 0
+        ],
+        'revenue' => [
+            'expected' => 0,
+            'received' => 0,
+            'pending' => 0
+        ],
+        'users' => [
+            'paid' => [],
+            'payment_due' => [],
+            'blocked' => []
+        ]
+    ];
+    
+    // Sum statistics from all categories with prices
+    $categories_with_prices = $DB->get_records_sql("
+        SELECT DISTINCT categoryid 
+        FROM {local_customadmin_category_prices}
+        WHERE price > 0
+    ");
+    
+    foreach ($categories_with_prices as $cat) {
+        $cat_report = customstatus_integration::get_category_report($cat->categoryid);
+        
+        // Sum statistics
+        $report['statistics']['total'] += $cat_report['statistics']['total'];
+        $report['statistics']['paid'] += $cat_report['statistics']['paid'];
+        $report['statistics']['payment_due'] += $cat_report['statistics']['payment_due'];
+        $report['statistics']['blocked'] += $cat_report['statistics']['blocked'];
+        $report['statistics']['other'] += $cat_report['statistics']['other'];
+        
+        // Sum revenue
+        $report['revenue']['expected'] += $cat_report['revenue']['expected'];
+        $report['revenue']['received'] += $cat_report['revenue']['received'];
+        $report['revenue']['pending'] += $cat_report['revenue']['pending'];
+        
+        // Merge users (avoid duplicates by using userid as key)
+        foreach ($cat_report['users']['paid'] as $user) {
+            if (!isset($report['users']['paid'][$user->id])) {
+                $report['users']['paid'][$user->id] = $user;
+            }
+        }
+        foreach ($cat_report['users']['payment_due'] as $user) {
+            if (!isset($report['users']['payment_due'][$user->id])) {
+                $report['users']['payment_due'][$user->id] = $user;
+            }
+        }
+        foreach ($cat_report['users']['blocked'] as $user) {
+            if (!isset($report['users']['blocked'][$user->id])) {
+                $report['users']['blocked'][$user->id] = $user;
+            }
+        }
+    }
 }
 
-// Get report data
-$report = customstatus_integration::get_category_report($categoryid);
+// Show title with category info
+if ($categoryid) {
+    $category = $DB->get_record('course_categories', ['id' => $categoryid]);
+    echo '<div class="alert alert-info mb-3">';
+    echo '<h5 class="mb-0"><i class="fa fa-folder-open"></i> Categoria: <strong>' . format_string($category->name) . '</strong></h5>';
+    echo '</div>';
+} else {
+    echo '<div class="alert alert-primary mb-3">';
+    echo '<h5 class="mb-0"><i class="fa fa-globe"></i> <strong>Visão Consolidada</strong> - Todas as categorias com preços definidos</h5>';
+    echo '</div>';
+}
 
 // Statistics Cards
 echo '<div class="row mb-4">';
@@ -155,8 +227,12 @@ echo '<div class="card">';
 echo '<div class="card-body">';
 echo '<h5 class="card-title">Receita Esperada</h5>';
 echo '<h3 class="text-info">R$ ' . number_format($report['revenue']['expected'], 2, ',', '.') . '</h3>';
-echo '<small class="text-muted">' . $report['statistics']['total'] . ' alunos × R$ ' . 
-     number_format($report['price'], 2, ',', '.') . '</small>';
+if ($categoryid) {
+    echo '<small class="text-muted">' . $report['statistics']['total'] . ' alunos × R$ ' . 
+         number_format($report['price'], 2, ',', '.') . '</small>';
+} else {
+    echo '<small class="text-muted">Total de todas as categorias</small>';
+}
 echo '</div></div></div>';
 
 // Received Revenue
@@ -180,25 +256,23 @@ echo '</div></div></div>';
 
 echo '</div>';
 
-// Actions
-echo '<div class="card mb-3">';
-echo '<div class="card-body">';
-echo '<h5 class="card-title">Ações Rápidas</h5>';
-echo '<div class="btn-group">';
-echo '<a href="' . new moodle_url('/enrol/customstatus/report.php', [
-    'categoryid' => $categoryid
-]) . '" class="btn btn-primary">';
-echo '<i class="fa fa-chart-bar"></i> Ver Relatório Completo Custom Status</a>';
-
-$markurl = new moodle_url('/local/localcustomadmin/status_report.php', [
-    'categoryid' => $categoryid,
-    'action' => 'mark_overdue',
-    'sesskey' => sesskey()
-]);
-echo '<a href="' . $markurl . '" class="btn btn-warning" onclick="return confirm(\'Tem certeza que deseja marcar todos os não pagos como inadimplentes?\');">';
-echo '<i class="fa fa-exclamation-triangle"></i> Marcar Inadimplentes</a>';
-echo '</div>';
-echo '</div></div>';
+// Actions (only for specific category)
+if ($categoryid) {
+    echo '<div class="card mb-3">';
+    echo '<div class="card-body">';
+    echo '<h5 class="card-title">Ações Rápidas</h5>';
+    echo '<div class="btn-group">';
+    
+    $markurl = new moodle_url('/local/localcustomadmin/status_report.php', [
+        'categoryid' => $categoryid,
+        'action' => 'mark_overdue',
+        'sesskey' => sesskey()
+    ]);
+    echo '<a href="' . $markurl . '" class="btn btn-warning" onclick="return confirm(\'Tem certeza que deseja marcar todos os não pagos como inadimplentes?\');">';
+    echo '<i class="fa fa-exclamation-triangle"></i> Marcar Inadimplentes</a>';
+    echo '</div>';
+    echo '</div></div>';
+}
 
 // Tabs for user lists
 echo '<ul class="nav nav-tabs mb-3" role="tablist">';
