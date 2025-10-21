@@ -108,10 +108,10 @@ foreach ($popularcourses as $course) {
 // Quick actions for course management
 $templatecontext['actions'] = [
     [
-        'title' => get_string('create_course', 'local_localcustomadmin'),
-        'description' => get_string('create_course_desc', 'local_localcustomadmin'),
-        'url' => (new moodle_url('/local/localcustomadmin/edit_curso.php'))->out(),
-        'icon' => 'fa-plus-circle',
+        'title' => get_string('manage_courses', 'local_localcustomadmin'),
+        'description' => get_string('manage_courses_desc', 'local_localcustomadmin'),
+        'url' => (new moodle_url('/local/localcustomadmin/manage_cursos.php'))->out(),
+        'icon' => 'fa-cogs',
         'variant' => 'primary'
     ],
     [

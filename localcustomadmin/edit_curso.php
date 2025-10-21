@@ -315,16 +315,17 @@ echo $OUTPUT->header();
 // Add elegant form styles
 echo '<style>
 .elegant-form-container {
-    background: linear-gradient(135deg, #f8faff 0%, #ffffff 100%);
-    min-height: 100vh;
-    font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0;
 }
 
 .elegant-form-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 3rem 2rem;
+    border-radius: 20px;
     color: white;
-    padding: 32px;
-    margin-bottom: 0;
+    margin-bottom: 2rem;
     position: relative;
     overflow: hidden;
 }
@@ -336,62 +337,65 @@ echo '<style>
     left: 0;
     right: 0;
     bottom: 0;
-    background: url("data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><defs><pattern id=\'grain\' width=\'100\' height=\'100\' patternUnits=\'userSpaceOnUse\'><circle cx=\'25\' cy=\'25\' r=\'1\' fill=\'rgba(255,255,255,0.1)\'/><circle cx=\'75\' cy=\'75\' r=\'1\' fill=\'rgba(255,255,255,0.08)\'/><circle cx=\'50\' cy=\'10\' r=\'0.5\' fill=\'rgba(255,255,255,0.12)\'/></pattern></defs><rect width=\'100\' height=\'100\' fill=\'url(%23grain)\'/></svg>");
-    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.1\'%3E%3Ccircle cx=\'30\' cy=\'30\' r=\'3\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.3;
 }
 
-.elegant-form-content {
-    background: white;
-    border-radius: 20px 20px 0 0;
-    margin-top: -20px;
+.elegant-form-header-content {
     position: relative;
-    z-index: 2;
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
-    min-height: calc(100vh - 200px);
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
 }
 
-.elegant-form-inner {
-    padding: 40px;
+.elegant-form-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.elegant-form-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    margin: 0;
 }
 
 .elegant-back-btn {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: rgba(255,255,255,0.15);
-    color: white;
-    border-radius: 10px;
-    text-decoration: none;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
-    transition: all 0.2s ease;
-    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .elegant-back-btn:hover {
-    background: rgba(255,255,255,0.25);
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     color: white;
-    transform: translateY(-1px);
 }
 
-.elegant-form-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0;
-    position: relative;
-    z-index: 1;
+.elegant-form-content {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
 }
 
-.elegant-form-subtitle {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    margin: 8px 0 0 0;
-    position: relative;
-    z-index: 1;
+.elegant-form-inner {
+    padding: 0;
 }
 </style>';
 
@@ -399,15 +403,10 @@ echo '<div class="elegant-form-container">';
 
 // Elegant Form Header
 echo '<div class="elegant-form-header">';
+echo '<div class="elegant-form-header-content">';
 
-// Back button
-$back_url = new moodle_url('/local/localcustomadmin/cursos.php');
-echo '<a href="' . $back_url . '" class="elegant-back-btn">';
-echo '<i class="fas fa-arrow-left"></i>';
-echo '<span>Voltar para Cursos</span>';
-echo '</a>';
-
-// Title
+// Title section
+echo '<div class="elegant-form-header-text">';
 if ($editing) {
     echo '<h1 class="elegant-form-title">';
     echo '<i class="fas fa-edit"></i>';
@@ -421,7 +420,18 @@ if ($editing) {
     echo '</h1>';
     echo '<p class="elegant-form-subtitle">Crie um novo curso no sistema</p>';
 }
+echo '</div>';
 
+// Back button
+echo '<div class="elegant-form-header-actions">';
+$back_url = new moodle_url('/local/localcustomadmin/cursos.php');
+echo '<a href="' . $back_url . '" class="elegant-back-btn">';
+echo '<i class="fas fa-arrow-left"></i>';
+echo '<span>Voltar</span>';
+echo '</a>';
+echo '</div>';
+
+echo '</div>'; // End elegant-form-header-content
 echo '</div>'; // End elegant-form-header
 
 echo '<div class="elegant-form-content">';
