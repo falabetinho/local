@@ -662,7 +662,6 @@ $totalenrollments = $DB->count_records_sql(
             <?php endif; ?>
         <?php else: ?>
             <div class="empty-state">
-                <i class="fas fa-search"></i>
                 <h3>Nenhum curso encontrado</h3>
                 <p>Tente ajustar seus filtros ou criar um novo curso</p>
                 <a href="<?php echo new moodle_url('/local/localcustomadmin/edit_curso.php'); ?>" class="btn-manage btn-manage-primary">
