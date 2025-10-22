@@ -59,6 +59,38 @@ if ($hassiteconfig) {
         PARAM_TEXT
     ));
 
+    // WordPress Integration Heading
+    $settings->add(new admin_setting_heading(
+        'local_localcustomadmin/wordpress_integration',
+        get_string('wordpress_integration', 'local_localcustomadmin'),
+        get_string('wordpress_integration_desc', 'local_localcustomadmin')
+    ));
+
+    // Enable WordPress Integration
+    $settings->add(new admin_setting_configcheckbox(
+        'local_localcustomadmin/enable_wordpress',
+        get_string('enable_wordpress', 'local_localcustomadmin'),
+        get_string('enable_wordpress_desc', 'local_localcustomadmin'),
+        0
+    ));
+
+    // WordPress Endpoint URL
+    $settings->add(new admin_setting_configtext(
+        'local_localcustomadmin/wordpress_endpoint',
+        get_string('wordpress_endpoint', 'local_localcustomadmin'),
+        get_string('wordpress_endpoint_desc', 'local_localcustomadmin'),
+        '',
+        PARAM_URL
+    ));
+
+    // WordPress API Key
+    $settings->add(new admin_setting_configpasswordunmask(
+        'local_localcustomadmin/wordpress_apikey',
+        get_string('wordpress_apikey', 'local_localcustomadmin'),
+        get_string('wordpress_apikey_desc', 'local_localcustomadmin'),
+        ''
+    ));
+
     // Add the settings page to the navigation tree
     $ADMIN->add('localplugins', $settings);
 }

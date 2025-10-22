@@ -33,6 +33,16 @@ $string['localcustomadmin:manage'] = 'Manage Local Custom Admin';
 $string['displayname'] = 'Display Name';
 $string['displayname_desc'] = 'Custom name that will be displayed instead of the default plugin name throughout the interface';
 
+// WordPress Integration Settings
+$string['wordpress_integration'] = 'WordPress Integration';
+$string['wordpress_integration_desc'] = 'Configure WordPress integration for data synchronization';
+$string['enable_wordpress'] = 'Enable WordPress Integration';
+$string['enable_wordpress_desc'] = 'Enable this option to activate WordPress integration';
+$string['wordpress_endpoint'] = 'WordPress Endpoint';
+$string['wordpress_endpoint_desc'] = 'WordPress REST API endpoint URL (e.g., https://yoursite.com/wp-json/custom/v1)';
+$string['wordpress_apikey'] = 'WordPress API Key';
+$string['wordpress_apikey_desc'] = 'API key for authentication with WordPress';
+
 // Modal form strings
 $string['addcategory'] = 'Add Category';
 $string['editcategory'] = 'Edit Category';
@@ -306,3 +316,8 @@ $string['paymentdue_count'] = 'Payment Due';
 $string['enrolmentdata'] = 'Enrolment Management';
 $string['enrolmentdata_desc'] = 'Complete student enrolment records with personal, address and payment data';
 $string['manage_enrolmentdata'] = 'Manage';
+
+// WordPress Integration Card
+$string['wordpress_card_title'] = 'WordPress Integration';
+$string['wordpress_card_desc'] = 'Synchronize and manage data between Moodle and WordPress';
+$string['manage_wordpress'] = 'Manage';

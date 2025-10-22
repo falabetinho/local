@@ -100,6 +100,28 @@ if (has_capability('local/localcustomadmin:manage', $context) && customstatus_in
     ];
 }
 
+// WordPress Integration card - only for managers if enabled
+if (has_capability('local/localcustomadmin:manage', $context) && get_config('local_localcustomadmin', 'enable_wordpress')) {
+    $templatecontext['cards'][] = [
+        'title' => get_string('wordpress_card_title', 'local_localcustomadmin'),
+        'description' => get_string('wordpress_card_desc', 'local_localcustomadmin'),
+        'url' => (new moodle_url('/local/localcustomadmin/wordpress_integration.php'))->out(),
+        'btntext' => get_string('manage_wordpress', 'local_localcustomadmin'),
+        'icon' => 'fa-wordpress'
+    ];
+}
+
+// Check if no cards are available
+if (empty($templatecontext['cards'])) {
+    $templatecontext['no_cards'] = true;
+}
+
+// Render the template
+echo $OUTPUT->render_from_template('local_localcustomadmin/index', $templatecontext);
+
+echo $OUTPUT->footer();
+
+
 // Check if no cards are available
 if (empty($templatecontext['cards'])) {
     $templatecontext['no_cards'] = true;
