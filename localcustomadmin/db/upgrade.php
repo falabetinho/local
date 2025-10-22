@@ -73,5 +73,59 @@ function xmldb_local_localcustomadmin_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2025101802, 'local', 'localcustomadmin');
     }
 
+    // Add WordPress mapping table.
+    if ($oldversion < 2025102202) {
+
+        // Define table local_customadmin_wp_mapping to be created.
+        $table = new xmldb_table('local_customadmin_wp_mapping');
+
+        // Adding fields to table local_customadmin_wp_mapping.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('moodle_type', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('moodle_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('wordpress_type', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('wordpress_id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('wordpress_taxonomy', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('wordpress_post_type', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+        $table->add_field('sync_status', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, 'pending');
+        $table->add_field('last_synced', XMLDB_TYPE_INTEGER, '10', null, null, null, '0');
+        $table->add_field('sync_error', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table local_customadmin_wp_mapping.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table local_customadmin_wp_mapping.
+        $table->add_index('moodle_item_idx', XMLDB_INDEX_UNIQUE, array('moodle_type', 'moodle_id'));
+        $table->add_index('wordpress_item_idx', XMLDB_INDEX_NOTUNIQUE, array('wordpress_type', 'wordpress_id'));
+        $table->add_index('sync_status_idx', XMLDB_INDEX_NOTUNIQUE, array('sync_status'));
+        $table->add_index('moodle_type_idx', XMLDB_INDEX_NOTUNIQUE, array('moodle_type'));
+
+        // Conditionally launch create table for local_customadmin_wp_mapping.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Localcustomadmin savepoint reached.
+        upgrade_plugin_savepoint(true, 2025102202, 'local', 'localcustomadmin');
+    }
+
+    // Force recreation of WordPress mapping table if needed.
+    if ($oldversion < 2025102203) {
+        
+        // Get the table
+        $table = new xmldb_table('local_customadmin_wp_mapping');
+        
+        // Drop and recreate if exists to ensure clean state
+        if ($dbman->table_exists($table)) {
+            // Clear any error mappings
+            $DB->delete_records_select('local_customadmin_wp_mapping', 'sync_status = ? OR wordpress_id = 0', ['error']);
+        }
+
+        // Localcustomadmin savepoint reached.
+        upgrade_plugin_savepoint(true, 2025102203, 'local', 'localcustomadmin');
+    }
+
     return true;
 }

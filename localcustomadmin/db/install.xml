@@ -26,5 +26,30 @@
                 <INDEX NAME="status_idx" UNIQUE="false" FIELDS="status" />
             </INDEXES>
         </TABLE>
+        <TABLE NAME="local_customadmin_wp_mapping" COMMENT="Table to store mappings between Moodle items and WordPress items">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" />
+                <FIELD NAME="moodle_type" TYPE="char" LENGTH="50" NOTNULL="true" COMMENT="Type of Moodle item: category, course" />
+                <FIELD NAME="moodle_id" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="ID of the Moodle item" />
+                <FIELD NAME="wordpress_type" TYPE="char" LENGTH="50" NOTNULL="true" COMMENT="Type of WordPress item: term, post" />
+                <FIELD NAME="wordpress_id" TYPE="int" LENGTH="10" NOTNULL="true" COMMENT="ID of the WordPress item" />
+                <FIELD NAME="wordpress_taxonomy" TYPE="char" LENGTH="100" NOTNULL="false" COMMENT="WordPress taxonomy name (for terms)" />
+                <FIELD NAME="wordpress_post_type" TYPE="char" LENGTH="100" NOTNULL="false" COMMENT="WordPress post type (for posts)" />
+                <FIELD NAME="sync_status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="pending" COMMENT="Sync status: pending, synced, error" />
+                <FIELD NAME="last_synced" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" COMMENT="Timestamp of last sync" />
+                <FIELD NAME="sync_error" TYPE="text" NOTNULL="false" COMMENT="Error message if sync failed" />
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" />
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="moodle_item_idx" UNIQUE="true" FIELDS="moodle_type, moodle_id" />
+                <INDEX NAME="wordpress_item_idx" UNIQUE="false" FIELDS="wordpress_type, wordpress_id" />
+                <INDEX NAME="sync_status_idx" UNIQUE="false" FIELDS="sync_status" />
+                <INDEX NAME="moodle_type_idx" UNIQUE="false" FIELDS="moodle_type" />
+            </INDEXES>
+        </TABLE>
     </TABLES>
 </XMLDB>

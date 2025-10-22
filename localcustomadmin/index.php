@@ -107,7 +107,8 @@ if (has_capability('local/localcustomadmin:manage', $context) && get_config('loc
         'description' => get_string('wordpress_card_desc', 'local_localcustomadmin'),
         'url' => (new moodle_url('/local/localcustomadmin/wordpress_integration.php'))->out(),
         'btntext' => get_string('manage_wordpress', 'local_localcustomadmin'),
-        'icon' => 'fa-wordpress'
+        'icon' => 'fa-brands fa-wordpress',
+        'icon_color' => '#21759b'
     ];
 }
 

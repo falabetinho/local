@@ -321,3 +321,46 @@ $string['manage_enrolmentdata'] = 'Manage';
 $string['wordpress_card_title'] = 'WordPress Integration';
 $string['wordpress_card_desc'] = 'Synchronize and manage data between Moodle and WordPress';
 $string['manage_wordpress'] = 'Manage';
+
+// WordPress Integration Page
+$string['wordpress_integration_disabled'] = 'WordPress integration is disabled. Enable it in settings.';
+$string['wordpress_settings_incomplete'] = 'Incomplete WordPress settings. Configure endpoint and API key.';
+$string['total_categories'] = 'Total Categories';
+$string['synced_categories'] = 'Synced Categories';
+$string['pending_categories'] = 'Pending Categories';
+$string['never_synced'] = 'Never synced';
+$string['sync_categories'] = 'Sync Categories';
+$string['sync_categories_desc'] = 'Send all Moodle categories to WordPress "niveis" taxonomy';
+$string['view_mappings'] = 'View Mappings';
+$string['view_mappings_desc'] = 'View mapping between Moodle categories and WordPress terms';
+$string['test_connection'] = 'Test Connection';
+$string['test_connection_desc'] = 'Check if connection with WordPress API is working';
+$string['synced'] = 'Synced';
+$string['not_synced'] = 'Not Synced';
+$string['syncing'] = 'Syncing...';
+$string['connection_success'] = 'Connection established successfully';
+$string['recent_categories'] = 'Recent Categories';
+$string['no_categories_found'] = 'No categories found';
+$string['actions'] = 'Quick Actions';
+
+// WordPress Integration Main Page
+$string['sync_categories_title'] = 'Sync Categories';
+$string['sync_categories_title_desc'] = 'Synchronize Moodle categories with WordPress "niveis" taxonomy';
+$string['sync_courses_title'] = 'Sync Courses';
+$string['sync_courses_title_desc'] = 'Synchronize Moodle courses as custom posts in WordPress';
+$string['total_courses'] = 'Total Courses';
+$string['connection_active'] = 'Active connection with WordPress';
+$string['connection_failed'] = 'Failed connection with WordPress';
+$string['wordpress_integration_help_title'] = 'How to use WordPress Integration';
+$string['wordpress_integration_help_1'] = 'Use "Sync Categories" to send Moodle categories to WordPress "niveis" taxonomy';
+$string['wordpress_integration_help_2'] = 'Use "Sync Courses" to create or update course posts in WordPress';
+$string['wordpress_integration_help_3'] = 'Make sure the endpoint and API key are correctly configured in plugin settings';
+
+// WordPress Integration Courses
+$string['synced_courses'] = 'Synced Courses';
+$string['pending_courses'] = 'Pending Courses';
+$string['sync_courses'] = 'Sync Courses';
+$string['sync_courses_action_desc'] = 'Send all Moodle courses as "curso" post type in WordPress';
+$string['view_course_mappings_desc'] = 'View mapping between Moodle courses and WordPress posts';
+$string['recent_courses'] = 'Recent Courses';
+$string['no_courses_found'] = 'No courses found';

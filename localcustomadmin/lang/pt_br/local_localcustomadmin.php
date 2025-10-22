@@ -319,3 +319,46 @@ $string['manage_enrolmentdata'] = 'Gerenciar';
 $string['wordpress_card_title'] = 'Integração WordPress';
 $string['wordpress_card_desc'] = 'Sincronize e gerencie dados entre Moodle e WordPress';
 $string['manage_wordpress'] = 'Gerenciar';
+
+// WordPress Integration Page
+$string['wordpress_integration_disabled'] = 'A integração WordPress está desabilitada. Ative nas configurações.';
+$string['wordpress_settings_incomplete'] = 'Configurações do WordPress incompletas. Configure o endpoint e chave API.';
+$string['total_categories'] = 'Total de Categorias';
+$string['synced_categories'] = 'Categorias Sincronizadas';
+$string['pending_categories'] = 'Categorias Pendentes';
+$string['never_synced'] = 'Nunca sincronizado';
+$string['sync_categories'] = 'Sincronizar Categorias';
+$string['sync_categories_desc'] = 'Envia todas as categorias do Moodle para a taxonomia "niveis" do WordPress';
+$string['view_mappings'] = 'Ver Mapeamentos';
+$string['view_mappings_desc'] = 'Visualizar mapeamento entre categorias Moodle e termos WordPress';
+$string['test_connection'] = 'Testar Conexão';
+$string['test_connection_desc'] = 'Verifica se a conexão com a API WordPress está funcionando';
+$string['synced'] = 'Sincronizado';
+$string['not_synced'] = 'Não Sincronizado';
+$string['syncing'] = 'Sincronizando...';
+$string['connection_success'] = 'Conexão estabelecida com sucesso';
+$string['recent_categories'] = 'Categorias Recentes';
+$string['no_categories_found'] = 'Nenhuma categoria encontrada';
+$string['actions'] = 'Ações Rápidas';
+
+// WordPress Integration Main Page
+$string['sync_categories_title'] = 'Sincronizar Categorias';
+$string['sync_categories_title_desc'] = 'Sincronize categorias do Moodle com a taxonomia "niveis" do WordPress';
+$string['sync_courses_title'] = 'Sincronizar Cursos';
+$string['sync_courses_title_desc'] = 'Sincronize cursos do Moodle como posts personalizados no WordPress';
+$string['total_courses'] = 'Total de Cursos';
+$string['connection_active'] = 'Conexão ativa com WordPress';
+$string['connection_failed'] = 'Falha na conexão com WordPress';
+$string['wordpress_integration_help_title'] = 'Como usar a Integração WordPress';
+$string['wordpress_integration_help_1'] = 'Use "Sincronizar Categorias" para enviar as categorias do Moodle para a taxonomia "niveis" do WordPress';
+$string['wordpress_integration_help_2'] = 'Use "Sincronizar Cursos" para criar ou atualizar posts de cursos no WordPress';
+$string['wordpress_integration_help_3'] = 'Certifique-se de que o endpoint e a chave API estão configurados corretamente nas configurações do plugin';
+
+// WordPress Integration Courses
+$string['synced_courses'] = 'Cursos Sincronizados';
+$string['pending_courses'] = 'Cursos Pendentes';
+$string['sync_courses'] = 'Sincronizar Cursos';
+$string['sync_courses_action_desc'] = 'Envia todos os cursos do Moodle como posts do tipo "curso" no WordPress';
+$string['view_course_mappings_desc'] = 'Visualizar mapeamento entre cursos Moodle e posts WordPress';
+$string['recent_courses'] = 'Cursos Recentes';
+$string['no_courses_found'] = 'Nenhum curso encontrado';
