@@ -161,10 +161,18 @@
                             </div>
                             <h5 class="card-title">{{title}}</h5>
                             <p class="card-text text-muted">{{description}}</p>
+                            {{#js_action}}
                             <button type="button" class="btn btn-{{variant}}" data-action="{{action}}">
                                 <i class="fa {{icon}} mr-1"></i>
                                 {{title}}
                             </button>
+                            {{/js_action}}
+                            {{^js_action}}
+                            <a href="{{url}}" class="btn btn-{{variant}}">
+                                <i class="fa {{icon}} mr-1"></i>
+                                {{title}}
+                            </a>
+                            {{/js_action}}
                         </div>
                     </div>
                 </div>

@@ -117,7 +117,7 @@ $templatecontext['actions'] = [
     [
         'title' => get_string('view_mappings', 'local_localcustomadmin'),
         'description' => get_string('view_mappings_desc', 'local_localcustomadmin'),
-        'url' => '#', // TODO: Create mappings page
+        'url' => new moodle_url('/local/localcustomadmin/wordpress_mappings.php'),
         'icon' => 'fa-table',
         'variant' => 'secondary',
         'action' => 'view-mappings'

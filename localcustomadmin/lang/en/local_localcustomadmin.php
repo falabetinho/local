@@ -106,6 +106,20 @@ $string['category_created'] = 'Category created successfully';
 $string['category_updated'] = 'Category updated successfully';
 $string['category_deleted'] = 'Category deleted successfully';
 
+// WordPress Mappings.
+$string['wordpress_mappings'] = 'WordPress Mappings';
+$string['synced'] = 'Synced';
+$string['pending'] = 'Pending';
+$string['notfound'] = 'Not Found';
+$string['type'] = 'Type';
+$string['last_sync'] = 'Last Sync';
+$string['showdetails'] = 'Show Details';
+$string['error_message'] = 'Error Message';
+$string['no_mappings_found'] = 'No Mappings Found';
+$string['no_mappings_found_desc'] = 'There are no synchronization mappings between Moodle and WordPress. Sync categories or courses to create mappings.';
+$string['timecreated'] = 'Created Date';
+$string['timemodified'] = 'Modified Date';
+
 // Messages.
 $string['welcome'] = 'Welcome to Local Custom Admin';
 $string['nopermission'] = 'You do not have permission to access this page.';

@@ -98,6 +98,20 @@ $string['categories'] = 'Categorias';
 $string['categories_management'] = 'Gerenciamento de Categorias';
 $string['categories_management_desc'] = 'Gerencie categorias de cursos, visualize estatísticas e organize sua estrutura de conteúdo educacional.';
 $string['add_category'] = 'Adicionar Categoria';
+
+// WordPress Mappings
+$string['wordpress_mappings'] = 'Mapeamentos WordPress';
+$string['synced'] = 'Sincronizado';
+$string['pending'] = 'Pendente';
+$string['notfound'] = 'Não encontrado';
+$string['type'] = 'Tipo';
+$string['last_sync'] = 'Última Sincronização';
+$string['showdetails'] = 'Mostrar Detalhes';
+$string['error_message'] = 'Mensagem de Erro';
+$string['no_mappings_found'] = 'Nenhum Mapeamento Encontrado';
+$string['no_mappings_found_desc'] = 'Não há mapeamentos de sincronização entre Moodle e WordPress. Sincronize categorias ou cursos para criar mapeamentos.';
+$string['timecreated'] = 'Data de Criação';
+$string['timemodified'] = 'Data de Modificação';
 $string['edit_category'] = 'Editar Categoria';
 $string['view_subcategories'] = 'Visualizar Subcategorias';
 $string['no_categories'] = 'Nenhuma categoria encontrada';
