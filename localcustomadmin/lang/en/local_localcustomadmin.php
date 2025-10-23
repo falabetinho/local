@@ -121,6 +121,18 @@ $string['no_mappings_found_desc'] = 'There are no synchronization mappings betwe
 $string['timecreated'] = 'Created Date';
 $string['timemodified'] = 'Modified Date';
 
+// WordPress Courses Sync.
+$string['wordpress_integration_courses'] = 'WordPress Integration - Courses';
+$string['sync_all_courses'] = 'Sync All Courses';
+$string['sync_all_courses_desc'] = 'Send all courses and their prices to WordPress';
+$string['sync_prices'] = 'Sync Prices';
+$string['sync_prices_desc'] = 'Update course prices in WordPress from enrolment data';
+$string['not_synced'] = 'Not Synced';
+$string['sync_course'] = 'Sync Course';
+$string['sync_status'] = 'Sync Status';
+$string['no_courses_found'] = 'No Courses Found';
+$string['no_courses_found_desc'] = 'There are no courses to display. Create courses to start syncing with WordPress.';
+
 // Messages.
 $string['welcome'] = 'Welcome to Local Custom Admin';
 $string['nopermission'] = 'You do not have permission to access this page.';

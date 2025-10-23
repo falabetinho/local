@@ -113,6 +113,19 @@ $string['no_mappings_found'] = 'Nenhum Mapeamento Encontrado';
 $string['no_mappings_found_desc'] = 'Não há mapeamentos de sincronização entre Moodle e WordPress. Sincronize categorias ou cursos para criar mapeamentos.';
 $string['timecreated'] = 'Data de Criação';
 $string['timemodified'] = 'Data de Modificação';
+
+// WordPress Courses Sync
+$string['wordpress_integration_courses'] = 'Integração WordPress - Cursos';
+$string['sync_all_courses'] = 'Sincronizar Todos os Cursos';
+$string['sync_all_courses_desc'] = 'Envia todos os cursos e seus preços para o WordPress';
+$string['sync_prices'] = 'Sincronizar Preços';
+$string['sync_prices_desc'] = 'Atualiza preços dos cursos no WordPress a partir das matrículas';
+$string['not_synced'] = 'Não Sincronizado';
+$string['sync_course'] = 'Sincronizar Curso';
+$string['sync_status'] = 'Status de Sincronização';
+$string['no_courses_found'] = 'Nenhum Curso Encontrado';
+$string['no_courses_found_desc'] = 'Não há cursos para exibir. Crie cursos para começar a sincronizar com o WordPress.';
+
 $string['edit_category'] = 'Editar Categoria';
 $string['view_subcategories'] = 'Visualizar Subcategorias';
 $string['no_categories'] = 'Nenhuma categoria encontrada';

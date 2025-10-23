@@ -52,6 +52,16 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str'], function($, Aja
                     case 'sync-categories':
                         self.syncCategories($button);
                         break;
+                    case 'sync-all-courses':
+                        self.syncAllCourses($button);
+                        break;
+                    case 'sync-prices':
+                        self.syncPrices($button);
+                        break;
+                    case 'sync-single-course':
+                        var courseId = $(this).data('courseid');
+                        self.syncSingleCourse(courseId, $button);
+                        break;
                     case 'test-connection':
                         self.testConnection($button);
                         break;
@@ -245,6 +255,163 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str'], function($, Aja
                 },
                 error: function(xhr, status, error) {
                     console.error('Error updating statistics:', error);
+                }
+            });
+        },
+
+        /**
+         * Sync all courses
+         */
+        syncAllCourses: function($button) {
+            var self = this;
+            
+            console.log('syncAllCourses method called');
+
+            // Disable button and show loading
+            $button.prop('disabled', true);
+            var originalHtml = $button.html();
+            $button.html('<i class="fa fa-spinner fa-spin"></i> Sincronizando...');
+            
+            console.log('Making AJAX request to sync all courses');
+
+            // Make AJAX request
+            $.ajax({
+                url: M.cfg.wwwroot + '/local/localcustomadmin/ajax/sync_courses.php?action=sync_all&sesskey=' + M.cfg.sesskey,
+                method: 'POST',
+                dataType: 'json',
+                success: function(response) {
+                    console.log('AJAX success:', response);
+                    if (response.success !== undefined) {
+                        var message = 'Sincronização de cursos concluída!\n';
+                        message += 'Total: ' + response.total + '\n';
+                        message += 'Sucesso: ' + response.success + '\n';
+                        message += 'Falhas: ' + response.failed;
+
+                        Notification.addNotification({
+                            message: message,
+                            type: response.failed > 0 ? 'warning' : 'success'
+                        });
+
+                        // Reload page after sync
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 2000);
+                    } else {
+                        Notification.addNotification({
+                            message: 'Erro ao sincronizar cursos: ' + (response.message || 'Erro desconhecido'),
+                            type: 'error'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                    Notification.addNotification({
+                        message: 'Erro na sincronização: ' + error,
+                        type: 'error'
+                    });
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                    $button.html(originalHtml);
+                }
+            });
+        },
+
+        /**
+         * Sync course prices
+         */
+        syncPrices: function($button) {
+            var self = this;
+            
+            console.log('syncPrices method called');
+
+            // Disable button and show loading
+            $button.prop('disabled', true);
+            var originalHtml = $button.html();
+            $button.html('<i class="fa fa-spinner fa-spin"></i> Sincronizando preços...');
+            
+            console.log('Making AJAX request to sync prices');
+
+            // Make AJAX request
+            $.ajax({
+                url: M.cfg.wwwroot + '/local/localcustomadmin/ajax/sync_courses.php?action=bulk_sync_prices&sesskey=' + M.cfg.sesskey,
+                method: 'POST',
+                dataType: 'json',
+                success: function(response) {
+                    console.log('AJAX success:', response);
+                    if (response.success) {
+                        Notification.addNotification({
+                            message: 'Preços sincronizados com sucesso!',
+                            type: 'success'
+                        });
+                    } else {
+                        Notification.addNotification({
+                            message: 'Erro ao sincronizar preços: ' + (response.message || 'Erro desconhecido'),
+                            type: 'error'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                    Notification.addNotification({
+                        message: 'Erro na sincronização de preços: ' + error,
+                        type: 'error'
+                    });
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                    $button.html(originalHtml);
+                }
+            });
+        },
+
+        /**
+         * Sync single course
+         */
+        syncSingleCourse: function(courseId, $button) {
+            var self = this;
+            
+            console.log('syncSingleCourse called for course ID:', courseId);
+
+            // Disable button and show loading
+            $button.prop('disabled', true);
+            var originalHtml = $button.html();
+            $button.html('<i class="fa fa-spinner fa-spin"></i>');
+            
+            // Make AJAX request
+            $.ajax({
+                url: M.cfg.wwwroot + '/local/localcustomadmin/ajax/sync_courses.php?action=sync_course&courseid=' + courseId + '&sesskey=' + M.cfg.sesskey,
+                method: 'POST',
+                dataType: 'json',
+                success: function(response) {
+                    console.log('AJAX success:', response);
+                    if (response.success) {
+                        Notification.addNotification({
+                            message: 'Curso sincronizado com sucesso!',
+                            type: 'success'
+                        });
+                        
+                        // Reload page to update sync status
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        Notification.addNotification({
+                            message: 'Erro ao sincronizar curso: ' + (response.message || 'Erro desconhecido'),
+                            type: 'error'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                    Notification.addNotification({
+                        message: 'Erro na sincronização: ' + error,
+                        type: 'error'
+                    });
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                    $button.html(originalHtml);
                 }
             });
         }

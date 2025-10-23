@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * WordPress Integration - Courses Sync Page
+ * WordPress Integration - Courses Synchronization
  *
  * @package    local_localcustomadmin
  * @copyright  2025 Your Name
@@ -24,101 +24,110 @@
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/course/lib.php');
+require_once($CFG->dirroot . '/local/localcustomadmin/classes/wordpress_course_sync.php');
 
-// Check if WordPress integration is enabled
-$wordpress_enabled = get_config('local_localcustomadmin', 'enable_wordpress');
-if (!$wordpress_enabled) {
-    redirect(new moodle_url('/local/localcustomadmin/index.php'), 
-             get_string('wordpress_integration_disabled', 'local_localcustomadmin'), 
-             null, 
-             \core\output\notification::NOTIFY_WARNING);
-}
-
-// Get WordPress settings
-$wordpress_endpoint = get_config('local_localcustomadmin', 'wordpress_endpoint');
-$wordpress_apikey = get_config('local_localcustomadmin', 'wordpress_apikey');
-
-// Validate settings
-if (empty($wordpress_endpoint) || empty($wordpress_apikey)) {
-    redirect(new moodle_url('/local/localcustomadmin/index.php'), 
-             get_string('wordpress_settings_incomplete', 'local_localcustomadmin'), 
-             null, 
-             \core\output\notification::NOTIFY_ERROR);
-}
-
-// Check for admin pages or set external page
-$PAGE->set_url(new moodle_url('/local/localcustomadmin/wordpress_integration_courses.php'));
-$PAGE->set_context(context_system::instance());
+// Check if logged in and has permission.
 require_login();
-require_capability('local/localcustomadmin:manage', context_system::instance());
+$context = context_system::instance();
+require_capability('local/localcustomadmin:manage', $context);
 
-$PAGE->set_title(get_string('sync_courses_title', 'local_localcustomadmin'));
-$PAGE->set_heading(get_string('sync_courses_title', 'local_localcustomadmin'));
-$PAGE->navbar->add(get_string('pluginname', 'local_localcustomadmin'), new moodle_url('/local/localcustomadmin/index.php'));
-$PAGE->navbar->add(get_string('wordpress_integration', 'local_localcustomadmin'), new moodle_url('/local/localcustomadmin/wordpress_integration.php'));
-$PAGE->navbar->add(get_string('sync_courses_title', 'local_localcustomadmin'));
+// Set page context.
+$PAGE->set_context($context);
+$PAGE->set_url(new moodle_url('/local/localcustomadmin/wordpress_integration_courses.php'));
+$PAGE->set_title(get_string('wordpress_integration_courses', 'local_localcustomadmin'));
+$PAGE->set_heading(get_string('wordpress_integration_courses', 'local_localcustomadmin'));
+$PAGE->set_pagelayout('base');
+$PAGE->navbar->ignore_active();
 
-// Prepare template context
-$templatecontext = [];
+// Add JavaScript module.
+$PAGE->requires->js_call_amd('local_localcustomadmin/wordpress_sync', 'init');
 
-// Get statistics
-// Total courses (excluding site course)
-$totalcourses = $DB->count_records_select('course', 'id > 1');
+// Get filter parameters
+$categoryid = optional_param('categoryid', 0, PARAM_INT);
 
-// Synced courses (courses that have a WordPress mapping)
-// TODO: This will need the mapping table
-$syncedcourses = 0; // Placeholder
+// Get WordPress configuration.
+$wp_enabled = get_config('local_localcustomadmin', 'enable_wordpress');
+$wp_endpoint = get_config('local_localcustomadmin', 'wordpress_endpoint');
 
-// Pending courses (courses without WordPress mapping)
-$pendingcourses = $totalcourses - $syncedcourses;
+// Get courses based on filter
+$sql = "SELECT c.* 
+        FROM {course} c 
+        WHERE c.id > :siteid";
+$params = ['siteid' => SITEID];
 
-// Last sync time
-// TODO: Get from database
-$lastsync = get_string('never_synced', 'local_localcustomadmin');
+if ($categoryid) {
+    $sql .= " AND c.category = :categoryid";
+    $params['categoryid'] = $categoryid;
+}
 
-// Build statistics array
-$templatecontext['statistics'] = [
-    [
-        'title' => get_string('total_courses', 'local_localcustomadmin'),
-        'value' => $totalcourses,
-        'icon' => 'fa-graduation-cap',
-        'variant' => 'info'
-    ],
-    [
-        'title' => get_string('synced_courses', 'local_localcustomadmin'),
-        'value' => $syncedcourses,
-        'icon' => 'fa-check-circle',
-        'variant' => 'success'
-    ],
-    [
-        'title' => get_string('pending_courses', 'local_localcustomadmin'),
-        'value' => $pendingcourses,
-        'icon' => 'fa-clock',
-        'variant' => 'warning'
-    ]
+$sql .= " ORDER BY c.fullname ASC";
+$courses = $DB->get_records_sql($sql, $params);
+
+// Get sync status for each course
+$sync_handler = new \local_localcustomadmin\wordpress_course_sync();
+$courses_data = [];
+
+foreach ($courses as $course) {
+    $sync_status = $sync_handler->get_sync_status($course->id);
+    
+    $courses_data[] = [
+        'id' => $course->id,
+        'fullname' => $course->fullname,
+        'shortname' => $course->shortname,
+        'idnumber' => $course->idnumber ?: '-',
+        'category' => $DB->get_field('course_categories', 'name', ['id' => $course->category]),
+        'visible' => $course->visible,
+        'visible_label' => $course->visible ? get_string('yes') : get_string('no'),
+        'courseurl' => new moodle_url('/course/view.php', ['id' => $course->id]),
+        'synced' => !empty($sync_status),
+        'sync_status' => $sync_status ? $sync_status->sync_status : 'not_synced',
+        'sync_status_label' => $sync_status ? $sync_status->sync_status : get_string('not_synced', 'local_localcustomadmin'),
+        'wordpress_id' => $sync_status ? $sync_status->wordpress_id : null,
+        'last_synced' => $sync_status && $sync_status->last_synced ? 
+            userdate($sync_status->last_synced) : get_string('never'),
+        'sync_error' => $sync_status ? $sync_status->sync_error : null,
+        'has_error' => $sync_status && $sync_status->sync_status === 'error'
+    ];
+}
+
+// Get categories for filter
+$categories = $DB->get_records('course_categories', null, 'name ASC');
+$category_options = [
+    ['value' => 0, 'label' => get_string('all'), 'selected' => $categoryid == 0]
 ];
+foreach ($categories as $cat) {
+    $category_options[] = [
+        'value' => $cat->id,
+        'label' => $cat->name,
+        'selected' => $cat->id == $categoryid
+    ];
+}
 
-// WordPress connection info
-$templatecontext['wordpress_info'] = [
-    'endpoint' => $wordpress_endpoint,
-    'connected' => true, // TODO: Test connection
-    'post_type' => 'curso'
-];
-
-// Quick actions for WordPress integration
-$templatecontext['actions'] = [
+// Action buttons
+$actions = [
     [
-        'title' => get_string('sync_courses', 'local_localcustomadmin'),
-        'description' => get_string('sync_courses_action_desc', 'local_localcustomadmin'),
-        'url' => '#', // TODO: Will be handled by JavaScript
-        'icon' => 'fa-sync',
+        'title' => get_string('sync_all_courses', 'local_localcustomadmin'),
+        'description' => get_string('sync_all_courses_desc', 'local_localcustomadmin'),
+        'url' => '#',
+        'icon' => 'fa-sync-alt',
         'variant' => 'primary',
-        'action' => 'sync-courses'
+        'js_action' => true,
+        'action' => 'sync-all-courses'
+    ],
+    [
+        'title' => get_string('sync_prices', 'local_localcustomadmin'),
+        'description' => get_string('sync_prices_desc', 'local_localcustomadmin'),
+        'url' => '#',
+        'icon' => 'fa-dollar-sign',
+        'variant' => 'success',
+        'js_action' => true,
+        'action' => 'sync-prices'
     ],
     [
         'title' => get_string('view_mappings', 'local_localcustomadmin'),
-        'description' => get_string('view_course_mappings_desc', 'local_localcustomadmin'),
-        'url' => '#', // TODO: Create mappings page
+        'description' => get_string('view_mappings_desc', 'local_localcustomadmin'),
+        'url' => new moodle_url('/local/localcustomadmin/wordpress_mappings.php', ['type' => 'course']),
         'icon' => 'fa-table',
         'variant' => 'secondary',
         'action' => 'view-mappings'
@@ -126,57 +135,29 @@ $templatecontext['actions'] = [
     [
         'title' => get_string('test_connection', 'local_localcustomadmin'),
         'description' => get_string('test_connection_desc', 'local_localcustomadmin'),
-        'url' => '#', // TODO: Will be handled by JavaScript
+        'url' => '#',
         'icon' => 'fa-plug',
         'variant' => 'info',
+        'js_action' => true,
         'action' => 'test-connection'
     ]
 ];
 
-// Get recent courses for display
-$courses = $DB->get_records_select('course', 'id > 1', null, 'timemodified DESC', '*', 0, 10);
-$templatecontext['courses'] = [];
+// Prepare template context.
+$templatecontext = [
+    'wordpress_enabled' => $wp_enabled,
+    'wordpress_endpoint' => $wp_endpoint,
+    'courses' => $courses_data,
+    'has_courses' => !empty($courses_data),
+    'actions' => $actions,
+    'category_options' => $category_options,
+    'selected_category' => $categoryid,
+    'back_url' => new moodle_url('/local/localcustomadmin/wordpress_integration.php'),
+    'has_manage_capability' => has_capability('local/localcustomadmin:manage', $context),
+    'sesskey' => sesskey()
+];
 
-foreach ($courses as $course) {
-    $courseurl = new moodle_url('/course/view.php', ['id' => $course->id]);
-    $editurl = new moodle_url('/local/localcustomadmin/edit_curso.php', ['id' => $course->id]);
-    
-    // TODO: Check if course is synced
-    $is_synced = false; // Placeholder
-    
-    // Get enrollment count
-    $enrollments = $DB->count_records('user_enrolments', [
-        'enrolid' => $DB->sql_concat_join("','", ['id']),
-    ]);
-    
-    $templatecontext['courses'][] = [
-        'id' => $course->id,
-        'fullname' => format_string($course->fullname),
-        'shortname' => format_string($course->shortname),
-        'visible' => $course->visible,
-        'courseurl' => $courseurl->out(),
-        'editurl' => $editurl->out(),
-        'is_synced' => $is_synced,
-        'sync_status_class' => $is_synced ? 'success' : 'warning',
-        'sync_status_text' => $is_synced ? get_string('synced', 'local_localcustomadmin') : get_string('not_synced', 'local_localcustomadmin'),
-        'visibility_class' => $course->visible ? 'success' : 'secondary',
-        'visibility_text' => $course->visible ? get_string('visible') : get_string('hidden')
-    ];
-}
-
-// Add back URLs
-$templatecontext['back_to_integration_url'] = (new moodle_url('/local/localcustomadmin/wordpress_integration.php'))->out();
-$templatecontext['back_to_index_url'] = (new moodle_url('/local/localcustomadmin/index.php'))->out();
-
-// Last sync information
-$templatecontext['last_sync'] = $lastsync;
-
-// Has manage capability
-$templatecontext['has_manage_capability'] = has_capability('local/localcustomadmin:manage', context_system::instance());
-
+// Output page.
 echo $OUTPUT->header();
-
-// Render the template
 echo $OUTPUT->render_from_template('local_localcustomadmin/wordpress_integration_courses', $templatecontext);
-
 echo $OUTPUT->footer();
