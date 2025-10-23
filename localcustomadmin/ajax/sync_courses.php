@@ -45,7 +45,7 @@ if (!confirm_sesskey($sesskey)) {
 }
 
 // Get parameters.
-$action = optional_param('action', '', PARAM_ALPHA);
+$action = optional_param('action', '', PARAM_ALPHAEXT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $categoryid = optional_param('categoryid', 0, PARAM_INT);
 

@@ -378,9 +378,12 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str'], function($, Aja
             var originalHtml = $button.html();
             $button.html('<i class="fa fa-spinner fa-spin"></i>');
             
+            var ajaxUrl = M.cfg.wwwroot + '/local/localcustomadmin/ajax/sync_courses.php?action=sync_course&courseid=' + courseId + '&sesskey=' + M.cfg.sesskey;
+            console.log('AJAX URL:', ajaxUrl);
+            
             // Make AJAX request
             $.ajax({
-                url: M.cfg.wwwroot + '/local/localcustomadmin/ajax/sync_courses.php?action=sync_course&courseid=' + courseId + '&sesskey=' + M.cfg.sesskey,
+                url: ajaxUrl,
                 method: 'POST',
                 dataType: 'json',
                 success: function(response) {
