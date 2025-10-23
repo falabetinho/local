@@ -188,13 +188,37 @@
                                 {{/has_error}}
                             </td>
                             <td>
-                                <button type="button" 
-                                        class="btn btn-sm btn-primary" 
-                                        data-action="sync-single-course" 
-                                        data-courseid="{{id}}"
-                                        title="{{#str}}sync_course, local_localcustomadmin{{/str}}">
-                                    <i class="fa fa-sync"></i>
-                                </button>
+                                <div class="btn-group" role="group">
+                                    <button type="button" 
+                                            class="btn btn-sm btn-primary" 
+                                            data-action="sync-single-course" 
+                                            data-courseid="{{id}}"
+                                            title="{{#str}}sync_course, local_localcustomadmin{{/str}}">
+                                        <i class="fa fa-sync"></i>
+                                    </button>
+                                    {{#synced}}
+                                    <button type="button" 
+                                            class="btn btn-sm btn-warning" 
+                                            data-action="toggle-course-visibility" 
+                                            data-courseid="{{id}}"
+                                            data-visible="{{visible}}"
+                                            title="{{#str}}toggle_visibility, local_localcustomadmin{{/str}}">
+                                        {{#visible}}
+                                        <i class="fa fa-eye-slash"></i>
+                                        {{/visible}}
+                                        {{^visible}}
+                                        <i class="fa fa-eye"></i>
+                                        {{/visible}}
+                                    </button>
+                                    <button type="button" 
+                                            class="btn btn-sm btn-danger" 
+                                            data-action="delete-course-wp" 
+                                            data-courseid="{{id}}"
+                                            title="{{#str}}delete_from_wp, local_localcustomadmin{{/str}}">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    {{/synced}}
+                                </div>
                             </td>
                         </tr>
                         {{/courses}}

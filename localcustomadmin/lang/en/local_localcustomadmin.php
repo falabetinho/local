@@ -132,6 +132,11 @@ $string['sync_course'] = 'Sync Course';
 $string['sync_status'] = 'Sync Status';
 $string['no_courses_found'] = 'No Courses Found';
 $string['no_courses_found_desc'] = 'There are no courses to display. Create courses to start syncing with WordPress.';
+$string['toggle_visibility'] = 'Toggle Visibility';
+$string['delete_from_wp'] = 'Delete from WordPress';
+$string['course_published'] = 'Course published on WordPress';
+$string['course_hidden'] = 'Course hidden on WordPress';
+$string['course_deleted_wp'] = 'Course deleted from WordPress';
 
 // Messages.
 $string['welcome'] = 'Welcome to Local Custom Admin';

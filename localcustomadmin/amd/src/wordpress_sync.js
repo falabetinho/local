@@ -62,6 +62,15 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str'], function($, Aja
                         var courseId = $(this).data('courseid');
                         self.syncSingleCourse(courseId, $button);
                         break;
+                    case 'toggle-course-visibility':
+                        var courseId = $(this).data('courseid');
+                        var visible = $(this).data('visible');
+                        self.toggleCourseVisibility(courseId, visible, $button);
+                        break;
+                    case 'delete-course-wp':
+                        var courseId = $(this).data('courseid');
+                        self.deleteCourseFromWordPress(courseId, $button);
+                        break;
                     case 'test-connection':
                         self.testConnection($button);
                         break;
@@ -409,6 +418,122 @@ define(['jquery', 'core/ajax', 'core/notification', 'core/str'], function($, Aja
                     console.error('AJAX error:', error);
                     Notification.addNotification({
                         message: 'Erro na sincronização: ' + error,
+                        type: 'error'
+                    });
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                    $button.html(originalHtml);
+                }
+            });
+        },
+
+        /**
+         * Toggle course visibility in WordPress
+         */
+        toggleCourseVisibility: function(courseId, currentVisible, $button) {
+            var self = this;
+            var newVisible = currentVisible ? 0 : 1;
+            var action = newVisible ? 'mostrar' : 'ocultar';
+            
+            if (!confirm('Deseja ' + action + ' este curso no WordPress?')) {
+                return;
+            }
+            
+            console.log('toggleCourseVisibility called for course ID:', courseId, 'newVisible:', newVisible);
+
+            // Disable button and show loading
+            $button.prop('disabled', true);
+            var originalHtml = $button.html();
+            $button.html('<i class="fa fa-spinner fa-spin"></i>');
+            
+            var ajaxUrl = M.cfg.wwwroot + '/local/localcustomadmin/ajax/sync_courses.php?action=toggle_visibility&courseid=' + courseId + '&visible=' + newVisible + '&sesskey=' + M.cfg.sesskey;
+            
+            // Make AJAX request
+            $.ajax({
+                url: ajaxUrl,
+                method: 'POST',
+                dataType: 'json',
+                success: function(response) {
+                    console.log('AJAX success:', response);
+                    if (response.success) {
+                        Notification.addNotification({
+                            message: response.message,
+                            type: 'success'
+                        });
+                        
+                        // Reload page to update status
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        Notification.addNotification({
+                            message: 'Erro: ' + (response.message || 'Erro desconhecido'),
+                            type: 'error'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                    Notification.addNotification({
+                        message: 'Erro na requisição: ' + error,
+                        type: 'error'
+                    });
+                },
+                complete: function() {
+                    $button.prop('disabled', false);
+                    $button.html(originalHtml);
+                }
+            });
+        },
+
+        /**
+         * Delete course from WordPress
+         */
+        deleteCourseFromWordPress: function(courseId, $button) {
+            var self = this;
+            
+            if (!confirm('Tem certeza que deseja DELETAR este curso do WordPress?\n\nEsta ação não pode ser desfeita!')) {
+                return;
+            }
+            
+            console.log('deleteCourseFromWordPress called for course ID:', courseId);
+
+            // Disable button and show loading
+            $button.prop('disabled', true);
+            var originalHtml = $button.html();
+            $button.html('<i class="fa fa-spinner fa-spin"></i>');
+            
+            var ajaxUrl = M.cfg.wwwroot + '/local/localcustomadmin/ajax/sync_courses.php?action=delete_course&courseid=' + courseId + '&sesskey=' + M.cfg.sesskey;
+            
+            // Make AJAX request
+            $.ajax({
+                url: ajaxUrl,
+                method: 'POST',
+                dataType: 'json',
+                success: function(response) {
+                    console.log('AJAX success:', response);
+                    if (response.success) {
+                        Notification.addNotification({
+                            message: response.message,
+                            type: 'success'
+                        });
+                        
+                        // Reload page to update status
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        Notification.addNotification({
+                            message: 'Erro: ' + (response.message || 'Erro desconhecido'),
+                            type: 'error'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                    Notification.addNotification({
+                        message: 'Erro na requisição: ' + error,
                         type: 'error'
                     });
                 },

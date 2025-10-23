@@ -116,11 +116,27 @@ try {
             $result = $sync->bulk_sync_prices($course_prices);
             break;
 
+        case 'toggle_visibility':
+            if (!$courseid) {
+                throw new moodle_exception('missingparam', 'error', '', 'courseid');
+            }
+            $visible = optional_param('visible', 0, PARAM_INT);
+            $result = $sync->toggle_visibility($courseid, (bool)$visible);
+            break;
+
+        case 'delete_course':
+            if (!$courseid) {
+                throw new moodle_exception('missingparam', 'error', '', 'courseid');
+            }
+            $remove_mapping = optional_param('remove_mapping', 0, PARAM_INT);
+            $result = $sync->delete_course($courseid, (bool)$remove_mapping);
+            break;
+
         default:
             http_response_code(400);
             echo json_encode([
                 'success' => false,
-                'message' => 'Invalid action: ' . $action . '. Valid actions: sync_course, sync_all, sync_category_courses, get_status, bulk_sync_prices'
+                'message' => 'Invalid action: ' . $action . '. Valid actions: sync_course, sync_all, sync_category_courses, get_status, bulk_sync_prices, toggle_visibility, delete_course'
             ]);
             exit;
     }

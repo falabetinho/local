@@ -125,6 +125,11 @@ $string['sync_course'] = 'Sincronizar Curso';
 $string['sync_status'] = 'Status de Sincronização';
 $string['no_courses_found'] = 'Nenhum Curso Encontrado';
 $string['no_courses_found_desc'] = 'Não há cursos para exibir. Crie cursos para começar a sincronizar com o WordPress.';
+$string['toggle_visibility'] = 'Alternar Visibilidade';
+$string['delete_from_wp'] = 'Deletar do WordPress';
+$string['course_published'] = 'Curso publicado no WordPress';
+$string['course_hidden'] = 'Curso ocultado no WordPress';
+$string['course_deleted_wp'] = 'Curso deletado do WordPress';
 
 $string['edit_category'] = 'Editar Categoria';
 $string['view_subcategories'] = 'Visualizar Subcategorias';

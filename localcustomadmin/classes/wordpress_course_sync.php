@@ -367,6 +367,9 @@ class wordpress_course_sync {
                 
                 if ($cat_mapping && $cat_mapping->wordpress_id) {
                     $data['nivel'] = [$cat_mapping->wordpress_id];
+                    error_log("WordPress Course Sync: Adding nivel taxonomy: " . $cat_mapping->wordpress_id);
+                } else {
+                    error_log("WordPress Course Sync: Category {$course->category} ({$category->name}) not synced with WordPress");
                 }
             }
         }
@@ -473,5 +476,87 @@ class wordpress_course_sync {
     public function get_wordpress_course_id($courseid) {
         $mapping = $this->get_sync_status($courseid);
         return $mapping ? $mapping->wordpress_id : false;
+    }
+
+    /**
+     * Toggle course visibility (hide/show)
+     *
+     * @param int $courseid Moodle course ID
+     * @param bool $visible Visibility status
+     * @return array Result
+     */
+    public function toggle_visibility($courseid, $visible) {
+        $mapping = $this->get_sync_status($courseid);
+        
+        if (!$mapping || !$mapping->wordpress_id) {
+            return ['success' => false, 'message' => 'Course not synced with WordPress'];
+        }
+
+        try {
+            $data = [
+                'status' => $visible ? 'publish' : 'draft'
+            ];
+
+            $result = $this->api->request(
+                'POST',
+                "/{$this->post_type_route}/{$mapping->wordpress_id}",
+                $data
+            );
+
+            if ($result !== false) {
+                return [
+                    'success' => true,
+                    'message' => $visible ? 'Course published' : 'Course hidden',
+                    'visible' => $visible
+                ];
+            } else {
+                $error = $this->api->get_last_error();
+                return ['success' => false, 'message' => $error ? $error['message'] : 'Unknown error'];
+            }
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Delete course from WordPress
+     *
+     * @param int $courseid Moodle course ID
+     * @param bool $remove_mapping Remove mapping record
+     * @return array Result
+     */
+    public function delete_course($courseid, $remove_mapping = false) {
+        $mapping = $this->get_sync_status($courseid);
+        
+        if (!$mapping || !$mapping->wordpress_id) {
+            return ['success' => false, 'message' => 'Course not synced with WordPress'];
+        }
+
+        try {
+            $result = $this->api->request(
+                'DELETE',
+                "/{$this->post_type_route}/{$mapping->wordpress_id}?force=true"
+            );
+
+            if ($result !== false) {
+                if ($remove_mapping) {
+                    // Delete mapping record
+                    $this->db->delete_records('local_customadmin_wp_mapping', ['id' => $mapping->id]);
+                } else {
+                    // Mark as pending resync
+                    $this->update_mapping($mapping->id, 'pending');
+                }
+                
+                return [
+                    'success' => true,
+                    'message' => 'Course deleted from WordPress'
+                ];
+            } else {
+                $error = $this->api->get_last_error();
+                return ['success' => false, 'message' => $error ? $error['message'] : 'Unknown error'];
+            }
+        } catch (\Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
     }
 }
