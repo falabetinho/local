@@ -45,6 +45,9 @@ class wordpress_category_sync {
     /** @var string WordPress taxonomy name */
     private $taxonomy = 'nivel';
     
+    /** @var string WordPress REST API route (plural form) */
+    private $taxonomy_route = 'niveis';
+    
     /** @var array Sync results */
     private $results = [
         'success' => 0,
@@ -121,7 +124,7 @@ class wordpress_category_sync {
         
         // If mapping exists, try to update the term
         if ($mapping && $mapping->wordpress_id > 0) {
-            $result = $this->api->update_term($this->taxonomy, $mapping->wordpress_id, $termdata);
+            $result = $this->api->update_term($this->taxonomy_route, $mapping->wordpress_id, $termdata);
             if ($result) {
                 $this->update_mapping($mapping->id, 'synced');
                 $this->results['updated']++;
@@ -136,7 +139,7 @@ class wordpress_category_sync {
                     $this->db->delete_records('local_customadmin_wp_mapping', ['id' => $mapping->id]);
                     
                     // Create new term
-                    $result = $this->api->create_term($this->taxonomy, $termdata);
+                    $result = $this->api->create_term($this->taxonomy_route, $termdata);
                     if ($result) {
                         $this->create_mapping('category', $category->id, 'term', $result['id'], $this->taxonomy);
                         $this->results['success']++;
@@ -159,7 +162,7 @@ class wordpress_category_sync {
                 $this->db->delete_records('local_customadmin_wp_mapping', ['id' => $mapping->id]);
             }
             
-            $result = $this->api->create_term($this->taxonomy, $termdata);
+            $result = $this->api->create_term($this->taxonomy_route, $termdata);
             if ($result) {
                 $this->create_mapping('category', $category->id, 'term', $result['id'], $this->taxonomy);
                 $this->results['success']++;
