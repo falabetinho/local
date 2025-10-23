@@ -101,6 +101,7 @@ $string['add_category'] = 'Adicionar Categoria';
 
 // WordPress Mappings
 $string['wordpress_mappings'] = 'Mapeamentos WordPress';
+$string['wordpress_mappings_desc'] = 'Visualize e gerencie todos os mapeamentos de sincronização entre Moodle e WordPress';
 $string['synced'] = 'Sincronizado';
 $string['pending'] = 'Pendente';
 $string['notfound'] = 'Não encontrado';

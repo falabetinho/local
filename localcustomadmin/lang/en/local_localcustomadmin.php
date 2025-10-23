@@ -108,6 +108,7 @@ $string['category_deleted'] = 'Category deleted successfully';
 
 // WordPress Mappings.
 $string['wordpress_mappings'] = 'WordPress Mappings';
+$string['wordpress_mappings_desc'] = 'View and manage all synchronization mappings between Moodle and WordPress';
 $string['synced'] = 'Synced';
 $string['pending'] = 'Pending';
 $string['notfound'] = 'Not Found';

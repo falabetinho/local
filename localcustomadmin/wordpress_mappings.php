@@ -79,6 +79,7 @@ $templatecontext = [
     'mappings' => [],
     'has_mappings' => !empty($mappings),
     'total_count' => count($mappings),
+    'back_url' => new moodle_url('/local/localcustomadmin/wordpress_integration_categories.php'),
     'filter_type' => $type,
     'filter_status' => $status,
     'type_options' => [
