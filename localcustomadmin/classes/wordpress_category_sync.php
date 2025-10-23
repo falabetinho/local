@@ -43,7 +43,7 @@ class wordpress_category_sync {
     private $db;
     
     /** @var string WordPress taxonomy name */
-    private $taxonomy = 'niveis';
+    private $taxonomy = 'nivel';
     
     /** @var array Sync results */
     private $results = [
