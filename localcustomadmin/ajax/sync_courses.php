@@ -31,14 +31,38 @@ require_once($CFG->dirroot . '/local/localcustomadmin/classes/wordpress_course_s
 require_login();
 $context = context_system::instance();
 require_capability('local/localcustomadmin:manage', $context);
-require_sesskey();
+
+// Check sesskey
+$sesskey = optional_param('sesskey', '', PARAM_RAW);
+if (!confirm_sesskey($sesskey)) {
+    header('Content-Type: application/json');
+    http_response_code(403);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Invalid session key'
+    ]);
+    exit;
+}
 
 // Get parameters.
-$action = required_param('action', PARAM_ALPHA);
+$action = optional_param('action', '', PARAM_ALPHA);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $categoryid = optional_param('categoryid', 0, PARAM_INT);
 
 header('Content-Type: application/json');
+
+// Debug logging
+error_log('WordPress Course Sync AJAX - Action: ' . $action . ', Course ID: ' . $courseid . ', Category ID: ' . $categoryid);
+
+// Validate action parameter
+if (empty($action)) {
+    http_response_code(400);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Missing action parameter'
+    ]);
+    exit;
+}
 
 $sync = new \local_localcustomadmin\wordpress_course_sync();
 
@@ -93,7 +117,12 @@ try {
             break;
 
         default:
-            throw new moodle_exception('invalidaction', 'error');
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Invalid action: ' . $action . '. Valid actions: sync_course, sync_all, sync_category_courses, get_status, bulk_sync_prices'
+            ]);
+            exit;
     }
 
     echo json_encode($result);
