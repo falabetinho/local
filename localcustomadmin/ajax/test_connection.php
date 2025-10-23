@@ -38,14 +38,15 @@ header('Content-Type: application/json');
 try {
     // Get WordPress settings
     $endpoint = get_config('local_localcustomadmin', 'wordpress_endpoint');
-    $apikey = get_config('local_localcustomadmin', 'wordpress_apikey');
+    $username = get_config('local_localcustomadmin', 'wordpress_username');
+    $apppassword = get_config('local_localcustomadmin', 'wordpress_apppassword');
     
-    if (empty($endpoint) || empty($apikey)) {
+    if (empty($endpoint) || empty($username) || empty($apppassword)) {
         throw new moodle_exception('wordpress_settings_incomplete', 'local_localcustomadmin');
     }
     
     // Create API instance and test connection
-    $api = new \local_localcustomadmin\wordpress_api($endpoint, $apikey);
+    $api = new \local_localcustomadmin\wordpress_api($endpoint, $username, $apppassword);
     $connected = $api->test_connection();
     
     if ($connected) {

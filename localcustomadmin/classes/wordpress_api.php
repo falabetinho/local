@@ -34,8 +34,11 @@ class wordpress_api {
     /** @var string WordPress API endpoint */
     private $endpoint;
     
-    /** @var string WordPress API key */
-    private $apikey;
+    /** @var string WordPress username */
+    private $username;
+    
+    /** @var string WordPress application password */
+    private $apppassword;
     
     /** @var array Last error information */
     private $lasterror = null;
@@ -44,11 +47,13 @@ class wordpress_api {
      * Constructor
      *
      * @param string|null $endpoint WordPress API endpoint (optional, uses config if not provided)
-     * @param string|null $apikey WordPress API key (optional, uses config if not provided)
+     * @param string|null $username WordPress username (optional, uses config if not provided)
+     * @param string|null $apppassword WordPress application password (optional, uses config if not provided)
      */
-    public function __construct($endpoint = null, $apikey = null) {
+    public function __construct($endpoint = null, $username = null, $apppassword = null) {
         $this->endpoint = $endpoint ?: get_config('local_localcustomadmin', 'wordpress_endpoint');
-        $this->apikey = $apikey ?: get_config('local_localcustomadmin', 'wordpress_apikey');
+        $this->username = $username ?: get_config('local_localcustomadmin', 'wordpress_username');
+        $this->apppassword = $apppassword ?: get_config('local_localcustomadmin', 'wordpress_apppassword');
         
         // Remove trailing slash from endpoint
         $this->endpoint = rtrim($this->endpoint, '/');
@@ -263,10 +268,13 @@ class wordpress_api {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         
-        // Set headers with API key authentication
+        // Set Basic Authentication for Application Passwords
+        curl_setopt($ch, CURLOPT_USERPWD, $this->username . ':' . $this->apppassword);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        
+        // Set headers
         $headers = [
             'Content-Type: application/json',
-            'Authorization: Bearer ' . $this->apikey,
         ];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         

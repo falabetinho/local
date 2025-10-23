@@ -39,9 +39,11 @@ $string['wordpress_integration_desc'] = 'Configure WordPress integration for dat
 $string['enable_wordpress'] = 'Enable WordPress Integration';
 $string['enable_wordpress_desc'] = 'Enable this option to activate WordPress integration';
 $string['wordpress_endpoint'] = 'WordPress Endpoint';
-$string['wordpress_endpoint_desc'] = 'WordPress REST API endpoint URL (e.g., https://yoursite.com/wp-json/custom/v1)';
-$string['wordpress_apikey'] = 'WordPress API Key';
-$string['wordpress_apikey_desc'] = 'API key for authentication with WordPress';
+$string['wordpress_endpoint_desc'] = 'WordPress REST API endpoint URL (e.g., https://yoursite.com/wp-json/wp/v2)';
+$string['wordpress_username'] = 'WordPress Username';
+$string['wordpress_username_desc'] = 'WordPress username for authentication (must have manage_categories permission)';
+$string['wordpress_apppassword'] = 'WordPress Application Password';
+$string['wordpress_apppassword_desc'] = 'Application Password generated in WordPress (Users → Profile → Application Passwords). Paste without spaces.';
 
 // Modal form strings
 $string['addcategory'] = 'Add Category';

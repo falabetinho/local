@@ -39,9 +39,11 @@ $string['wordpress_integration_desc'] = 'Configure a integração com WordPress 
 $string['enable_wordpress'] = 'Ativar Integração WordPress';
 $string['enable_wordpress_desc'] = 'Habilite esta opção para ativar a integração com WordPress';
 $string['wordpress_endpoint'] = 'Endpoint WordPress';
-$string['wordpress_endpoint_desc'] = 'URL do endpoint da API REST do WordPress (ex: https://seusite.com/wp-json/custom/v1)';
-$string['wordpress_apikey'] = 'Chave API WordPress';
-$string['wordpress_apikey_desc'] = 'Chave de API para autenticação com o WordPress';
+$string['wordpress_endpoint_desc'] = 'URL do endpoint da API REST do WordPress (ex: https://seusite.com/wp-json/wp/v2)';
+$string['wordpress_username'] = 'Usuário WordPress';
+$string['wordpress_username_desc'] = 'Nome de usuário do WordPress para autenticação (deve ter permissão manage_categories)';
+$string['wordpress_apppassword'] = 'Senha de Aplicativo WordPress';
+$string['wordpress_apppassword_desc'] = 'Application Password gerada no WordPress (Usuários → Perfil → Application Passwords). Cole sem espaços.';
 
 // Modal form strings
 $string['addcategory'] = 'Adicionar Categoria';

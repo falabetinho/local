@@ -83,11 +83,20 @@ if ($hassiteconfig) {
         PARAM_URL
     ));
 
-    // WordPress API Key
+    // WordPress Username
+    $settings->add(new admin_setting_configtext(
+        'local_localcustomadmin/wordpress_username',
+        get_string('wordpress_username', 'local_localcustomadmin'),
+        get_string('wordpress_username_desc', 'local_localcustomadmin'),
+        '',
+        PARAM_TEXT
+    ));
+
+    // WordPress Application Password
     $settings->add(new admin_setting_configpasswordunmask(
-        'local_localcustomadmin/wordpress_apikey',
-        get_string('wordpress_apikey', 'local_localcustomadmin'),
-        get_string('wordpress_apikey_desc', 'local_localcustomadmin'),
+        'local_localcustomadmin/wordpress_apppassword',
+        get_string('wordpress_apppassword', 'local_localcustomadmin'),
+        get_string('wordpress_apppassword_desc', 'local_localcustomadmin'),
         ''
     ));
 
