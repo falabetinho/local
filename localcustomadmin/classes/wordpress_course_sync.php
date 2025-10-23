@@ -67,9 +67,12 @@ class wordpress_course_sync {
         global $CFG;
         require_once($CFG->dirroot . '/course/lib.php');
 
+        error_log("WordPress Course Sync: Starting sync for course ID {$courseid}");
+
         $course = $this->db->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 
         if ($course->id == SITEID) {
+            error_log("WordPress Course Sync: Cannot sync site course");
             return ['success' => false, 'message' => 'Cannot sync site course'];
         }
 
@@ -80,21 +83,25 @@ class wordpress_course_sync {
                 'moodle_id' => $courseid
             ]);
 
+            error_log("WordPress Course Sync: Mapping exists: " . ($mapping ? 'yes' : 'no'));
+
             // Get course price from enrolment
             $price_data = $this->get_course_price($courseid);
+            error_log("WordPress Course Sync: Has price: " . ($price_data['has_price'] ? 'yes' : 'no'));
 
             // Prepare course data for WordPress
             $coursedata = $this->prepare_course_data($course, $price_data);
+            error_log("WordPress Course Sync: Course data prepared: " . json_encode($coursedata));
 
             if ($mapping && $mapping->wordpress_id) {
                 // Update existing post
                 $result = $this->api->request(
-                    "/{$this->post_type_route}/{$mapping->wordpress_id}",
                     'POST',
+                    "/{$this->post_type_route}/{$mapping->wordpress_id}",
                     $coursedata
                 );
 
-                if ($result['success']) {
+                if ($result !== false) {
                     $this->update_mapping($mapping->id, 'synced');
                     
                     // Sync price separately if available
@@ -108,19 +115,21 @@ class wordpress_course_sync {
                         'wordpress_id' => $mapping->wordpress_id
                     ];
                 } else {
-                    $this->update_mapping($mapping->id, 'error', $result['message']);
-                    return ['success' => false, 'message' => $result['message']];
+                    $error = $this->api->get_last_error();
+                    $errormsg = $error ? $error['message'] : 'Unknown error';
+                    $this->update_mapping($mapping->id, 'error', $errormsg);
+                    return ['success' => false, 'message' => $errormsg];
                 }
             } else {
                 // Create new post
                 $result = $this->api->request(
-                    "/{$this->post_type_route}",
                     'POST',
+                    "/{$this->post_type_route}",
                     $coursedata
                 );
 
-                if ($result['success'] && isset($result['data']->id)) {
-                    $wpid = $result['data']->id;
+                if ($result !== false && isset($result['id'])) {
+                    $wpid = $result['id'];
                     
                     // Create or update mapping
                     if ($mapping) {
@@ -140,13 +149,17 @@ class wordpress_course_sync {
                         'wordpress_id' => $wpid
                     ];
                 } else {
+                    $error = $this->api->get_last_error();
+                    $errormsg = $error ? $error['message'] : 'Unknown error creating course';
                     if ($mapping) {
-                        $this->update_mapping($mapping->id, 'error', $result['message']);
+                        $this->update_mapping($mapping->id, 'error', $errormsg);
                     }
-                    return ['success' => false, 'message' => $result['message']];
+                    return ['success' => false, 'message' => $errormsg];
                 }
             }
         } catch (\Exception $e) {
+            error_log("WordPress Course Sync ERROR: " . $e->getMessage());
+            error_log("WordPress Course Sync TRACE: " . $e->getTraceAsString());
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -275,8 +288,8 @@ class wordpress_course_sync {
         ];
 
         return $this->api->request(
-            "/{$this->pricing_endpoint}/sync",
             'POST',
+            "/{$this->pricing_endpoint}/sync",
             $pricing_data
         );
     }
@@ -306,8 +319,8 @@ class wordpress_course_sync {
         }
 
         return $this->api->request(
-            "/{$this->pricing_endpoint}/sync",
             'POST',
+            "/{$this->pricing_endpoint}/sync",
             ['cursos' => $cursos]
         );
     }

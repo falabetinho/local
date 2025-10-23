@@ -257,7 +257,7 @@ class wordpress_api {
      * @return array Response data
      * @throws \Exception On request failure
      */
-    private function request($method, $path, $data = []) {
+    public function request($method, $path, $data = []) {
         $url = $this->endpoint . $path;
         
         // Initialize cURL
