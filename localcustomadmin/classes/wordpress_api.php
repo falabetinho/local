@@ -30,35 +30,29 @@ defined('MOODLE_INTERNAL') || die();
  * WordPress REST API Client Class
  */
 class wordpress_api {
-    
-    /** @var string WordPress API endpoint */
-    private $endpoint;
-    
-    /** @var string WordPress username */
+    private $base_url;
     private $username;
-    
-    /** @var string WordPress application password */
-    private $apppassword;
-    
-    /** @var array Last error information */
-    private $lasterror = null;
-    
+    private $password;
+
+    /** @var string Resource path for cursos */
+    public $resource_path_cursos = 'wp-json/wp/v2/cursos';
+
+    /** @var string Resource path for niveis */
+    public $resource_path_niveis = 'wp-json/wp/v2/niveis';
+
     /**
      * Constructor
      *
-     * @param string|null $endpoint WordPress API endpoint (optional, uses config if not provided)
-     * @param string|null $username WordPress username (optional, uses config if not provided)
-     * @param string|null $apppassword WordPress application password (optional, uses config if not provided)
+     * @param string $base_url WordPress base URL
+     * @param string $username WordPress username
+     * @param string $password WordPress application password
      */
-    public function __construct($endpoint = null, $username = null, $apppassword = null) {
-        $this->endpoint = $endpoint ?: get_config('local_localcustomadmin', 'wordpress_endpoint');
-        $this->username = $username ?: get_config('local_localcustomadmin', 'wordpress_username');
-        $this->apppassword = $apppassword ?: get_config('local_localcustomadmin', 'wordpress_apppassword');
-        
-        // Remove trailing slash from endpoint
-        $this->endpoint = rtrim($this->endpoint, '/');
+    public function __construct($base_url, $username, $password) {
+        $this->base_url = rtrim($base_url, '/');
+        $this->username = $username;
+        $this->password = $password;
     }
-    
+
     /**
      * Test connection to WordPress API
      *
@@ -84,7 +78,7 @@ class wordpress_api {
     public function get_taxonomy_terms($taxonomy, $params = []) {
         try {
             $querystring = !empty($params) ? '?' . http_build_query($params) : '';
-            $response = $this->request('GET', "/{$taxonomy}{$querystring}");
+            $response = $this->request('GET', "wp-json/wp/v2/{$taxonomy}{$querystring}");
             return $response;
         } catch (\Exception $e) {
             $this->lasterror = ['message' => $e->getMessage()];
@@ -101,7 +95,7 @@ class wordpress_api {
      */
     public function get_term($taxonomy, $termid) {
         try {
-            $response = $this->request('GET', "/{$taxonomy}/{$termid}");
+            $response = $this->request('GET', "wp-json/wp/v2/{$taxonomy}/{$termid}");
             return $response;
         } catch (\Exception $e) {
             $this->lasterror = ['message' => $e->getMessage()];
@@ -118,7 +112,7 @@ class wordpress_api {
      */
     public function create_term($taxonomy, $data) {
         try {
-            $response = $this->request('POST', "/{$taxonomy}", $data);
+            $response = $this->request('POST', "wp-json/wp/v2/{$taxonomy}", $data);
             return $response;
         } catch (\Exception $e) {
             $this->lasterror = ['message' => $e->getMessage()];
@@ -136,7 +130,7 @@ class wordpress_api {
      */
     public function update_term($taxonomy, $termid, $data) {
         try {
-            $response = $this->request('POST', "/{$taxonomy}/{$termid}", $data);
+            $response = $this->request('POST', "wp-json/wp/v2/{$taxonomy}/{$termid}", $data);
             return $response;
         } catch (\Exception $e) {
             $this->lasterror = ['message' => $e->getMessage()];
@@ -153,7 +147,7 @@ class wordpress_api {
      */
     public function delete_term($taxonomy, $termid) {
         try {
-            $this->request('DELETE', "/{$taxonomy}/{$termid}?force=true");
+            $this->request('DELETE', "wp-json/wp/v2/{$taxonomy}/{$termid}?force=true");
             return true;
         } catch (\Exception $e) {
             $this->lasterror = ['message' => $e->getMessage()];
@@ -171,7 +165,7 @@ class wordpress_api {
     public function get_posts($posttype, $params = []) {
         try {
             $querystring = !empty($params) ? '?' . http_build_query($params) : '';
-            $response = $this->request('GET', "/{$posttype}{$querystring}");
+            $response = $this->request('GET', "wp-json/wp/v2/{$posttype}{$querystring}");
             return $response;
         } catch (\Exception $e) {
             $this->lasterror = ['message' => $e->getMessage()];
@@ -188,7 +182,7 @@ class wordpress_api {
      */
     public function get_post($posttype, $postid) {
         try {
-            $response = $this->request('GET', "/{$posttype}/{$postid}");
+            $response = $this->request('GET', "wp-json/wp/v2/{$posttype}/{$postid}");
             return $response;
         } catch (\Exception $e) {
             $this->lasterror = ['message' => $e->getMessage()];
@@ -205,7 +199,7 @@ class wordpress_api {
      */
     public function create_post($posttype, $data) {
         try {
-            $response = $this->request('POST', "/{$posttype}", $data);
+            $response = $this->request('POST', "wp-json/wp/v2/{$posttype}", $data);
             return $response;
         } catch (\Exception $e) {
             $this->lasterror = ['message' => $e->getMessage()];
@@ -223,7 +217,7 @@ class wordpress_api {
      */
     public function update_post($posttype, $postid, $data) {
         try {
-            $response = $this->request('POST', "/{$posttype}/{$postid}", $data);
+            $response = $this->request('POST', "wp-json/wp/v2/{$posttype}/{$postid}", $data);
             return $response;
         } catch (\Exception $e) {
             $this->lasterror = ['message' => $e->getMessage()];
@@ -240,7 +234,7 @@ class wordpress_api {
      */
     public function delete_post($posttype, $postid) {
         try {
-            $this->request('DELETE', "/{$posttype}/{$postid}?force=true");
+            $this->request('DELETE', "wp-json/wp/v2/{$posttype}/{$postid}?force=true");
             return true;
         } catch (\Exception $e) {
             $this->lasterror = ['message' => $e->getMessage()];
@@ -252,80 +246,46 @@ class wordpress_api {
      * Make HTTP request to WordPress API
      *
      * @param string $method HTTP method (GET, POST, PUT, DELETE)
-     * @param string $path API path (relative to endpoint)
-     * @param array $data Request data (for POST/PUT requests)
-     * @return array Response data
-     * @throws \Exception On request failure
+     * @param string $resource_path Resource path (e.g., wp-json/wp/v2/cursos)
+     * @param array|null $data Data to send (for POST/PUT requests)
+     * @return array|false Response data or false on failure
      */
-    public function request($method, $path, $data = []) {
-        $url = $this->endpoint . $path;
-        
-        // Initialize cURL
-        $ch = curl_init();
-        
-        // Set cURL options
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-        
-        // Set Basic Authentication for Application Passwords
-        curl_setopt($ch, CURLOPT_USERPWD, $this->username . ':' . $this->apppassword);
-        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        
-        // Set headers
-        $headers = [
-            'Content-Type: application/json',
-        ];
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        
-        // Set method and data
-        switch (strtoupper($method)) {
-            case 'POST':
-                curl_setopt($ch, CURLOPT_POST, true);
-                if (!empty($data)) {
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-                }
-                break;
-            case 'PUT':
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-                if (!empty($data)) {
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-                }
-                break;
-            case 'DELETE':
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-                break;
-            case 'GET':
-            default:
-                // GET is the default
-                break;
+    public function request($method, $resource_path, $data = null) {
+        $url = "{$this->base_url}/{$resource_path}";
+        error_log("WordPress API: Starting cURL request to $url with method $method");
+
+        $curl = curl_init($url);
+
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $method);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($curl, CURLOPT_USERPWD, "{$this->username}:{$this->password}");
+
+        if ($data !== null) {
+            $json_data = json_encode($data);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $json_data);
+            error_log("WordPress API: Request payload: $json_data");
         }
-        
-        // Execute request
-        $response = curl_exec($ch);
-        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $error = curl_error($ch);
-        curl_close($ch);
-        
-        // Check for cURL errors
-        if ($error) {
-            throw new \Exception("cURL Error: {$error}");
+
+        $response = curl_exec($curl);
+        $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        $curl_error = curl_error($curl);
+        curl_close($curl);
+
+        if ($curl_error) {
+            error_log("WordPress API: cURL error: $curl_error");
+            return false;
         }
-        
-        // Check HTTP status code
-        if ($httpcode < 200 || $httpcode >= 300) {
-            $errormsg = "HTTP {$httpcode}";
-            if ($response) {
-                $decoded = json_decode($response, true);
-                if (isset($decoded['message'])) {
-                    $errormsg .= ": {$decoded['message']}";
-                }
-            }
-            throw new \Exception($errormsg);
+
+        error_log("WordPress API: HTTP response code: $http_code");
+        error_log("WordPress API: Response body: $response");
+
+        if ($http_code >= 200 && $http_code < 300) {
+            return json_decode($response, true);
+        } else {
+            error_log("WordPress API: Request failed with HTTP code $http_code");
+            return false;
         }
-        
-        // Decode and return response
-        return json_decode($response, true);
     }
     
     /**

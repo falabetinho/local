@@ -45,8 +45,11 @@ class wordpress_category_sync {
     /** @var string WordPress taxonomy name */
     private $taxonomy = 'nivel';
     
-    /** @var string WordPress REST API route (plural form) */
-    private $taxonomy_route = 'niveis';
+    /** @var string WordPress taxonomy resource path */
+    private $taxonomy_resource_path = 'wp-json/wp/v2';
+    
+    /** @var string WordPress taxonomy resource final */
+    private $taxonomy_resource_final = 'niveis';
     
     /** @var array Sync results */
     private $results = [
@@ -63,7 +66,16 @@ class wordpress_category_sync {
     public function __construct() {
         global $DB;
         $this->db = $DB;
-        $this->api = new wordpress_api();
+
+        // Load WordPress base URL from plugin settings
+        $wordpress_base_url = get_config('local_localcustomadmin', 'wordpress_base_url');
+
+        if (!$wordpress_base_url) {
+            throw new \moodle_exception('missingconfig', 'local_localcustomadmin', '', 'WordPress Base URL is not configured');
+        }
+
+        // Initialize WordPress API client
+        $this->api = new wordpress_api($wordpress_base_url);
     }
     
     /**
@@ -122,9 +134,11 @@ class wordpress_category_sync {
         // Prepare WordPress term data
         $termdata = $this->prepare_category_data($category);
         
+        $resource_path = "{$this->taxonomy_resource_path}/{$this->taxonomy_resource_final}";
+
         // If mapping exists, try to update the term
         if ($mapping && $mapping->wordpress_id > 0) {
-            $result = $this->api->update_term($this->taxonomy_route, $mapping->wordpress_id, $termdata);
+            $result = $this->api->update_term($resource_path, $mapping->wordpress_id, $termdata);
             if ($result) {
                 $this->update_mapping($mapping->id, 'synced');
                 $this->results['updated']++;
@@ -139,7 +153,7 @@ class wordpress_category_sync {
                     $this->db->delete_records('local_customadmin_wp_mapping', ['id' => $mapping->id]);
                     
                     // Create new term
-                    $result = $this->api->create_term($this->taxonomy_route, $termdata);
+                    $result = $this->api->create_term($resource_path, $termdata);
                     if ($result) {
                         $this->create_mapping('category', $category->id, 'term', $result['id'], $this->taxonomy);
                         $this->results['success']++;
@@ -157,12 +171,7 @@ class wordpress_category_sync {
             }
         } else {
             // Create new term (no mapping or invalid wordpress_id)
-            if ($mapping) {
-                // Delete invalid mapping
-                $this->db->delete_records('local_customadmin_wp_mapping', ['id' => $mapping->id]);
-            }
-            
-            $result = $this->api->create_term($this->taxonomy_route, $termdata);
+            $result = $this->api->create_term($resource_path, $termdata);
             if ($result) {
                 $this->create_mapping('category', $category->id, 'term', $result['id'], $this->taxonomy);
                 $this->results['success']++;

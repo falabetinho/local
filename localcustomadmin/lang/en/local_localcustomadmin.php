@@ -37,13 +37,21 @@ $string['displayname_desc'] = 'Custom name that will be displayed instead of the
 $string['wordpress_integration'] = 'WordPress Integration';
 $string['wordpress_integration_desc'] = 'Configure WordPress integration for data synchronization';
 $string['enable_wordpress'] = 'Enable WordPress Integration';
-$string['enable_wordpress_desc'] = 'Enable this option to activate WordPress integration';
+$string['enable_wordpress_desc'] = 'Enable or disable the integration with WordPress.';
 $string['wordpress_endpoint'] = 'WordPress Endpoint';
 $string['wordpress_endpoint_desc'] = 'WordPress REST API endpoint URL (e.g., https://yoursite.com/wp-json/wp/v2)';
+$string['wordpress_baseurl'] = 'WordPress Base URL';
+$string['wordpress_baseurl_desc'] = 'The base URL of your WordPress site (e.g., https://example.com).';
+
 $string['wordpress_username'] = 'WordPress Username';
-$string['wordpress_username_desc'] = 'WordPress username for authentication (must have manage_categories permission)';
+$string['wordpress_username_desc'] = 'The username for authenticating with the WordPress API.';
+
 $string['wordpress_apppassword'] = 'WordPress Application Password';
-$string['wordpress_apppassword_desc'] = 'Application Password generated in WordPress (Users → Profile → Application Passwords). Paste without spaces.';
+$string['wordpress_apppassword_desc'] = 'The application password for authenticating with the WordPress API.';
+$string['wordpress_courses_path'] = 'WordPress Courses Path';
+$string['wordpress_courses_path_desc'] = 'The API path for syncing courses with WordPress. Default: wp-json/wp/v2/cursos';
+$string['wordpress_prices_path'] = 'WordPress Prices Path';
+$string['wordpress_prices_path_desc'] = 'The API path for syncing prices with WordPress. Default: wp-json/wp/v2/prices';
 
 // Modal form strings
 $string['addcategory'] = 'Add Category';

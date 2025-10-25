@@ -20,12 +20,12 @@
  * @package    local_localcustomadmin
  * @copyright  2025 Your Name
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @version    2025102401
  */
 
 define('AJAX_SCRIPT', true);
 
 require_once(__DIR__ . '/../../../config.php');
-require_once($CFG->dirroot . '/local/localcustomadmin/classes/wordpress_course_sync.php');
 
 // Check authentication and permissions.
 require_login();
@@ -101,21 +101,6 @@ try {
             ];
             break;
 
-        case 'bulk_sync_prices':
-            // Get all synced courses and their prices
-            $synced = $sync->get_synced_courses();
-            $course_prices = [];
-            
-            foreach ($synced as $mapping) {
-                $price_data = $sync->get_course_price($mapping->moodle_id);
-                if ($price_data['has_price']) {
-                    $course_prices[$mapping->wordpress_id] = $price_data;
-                }
-            }
-            
-            $result = $sync->bulk_sync_prices($course_prices);
-            break;
-
         case 'toggle_visibility':
             if (!$courseid) {
                 throw new moodle_exception('missingparam', 'error', '', 'courseid');
@@ -136,7 +121,7 @@ try {
             http_response_code(400);
             echo json_encode([
                 'success' => false,
-                'message' => 'Invalid action: ' . $action . '. Valid actions: sync_course, sync_all, sync_category_courses, get_status, bulk_sync_prices, toggle_visibility, delete_course'
+                'message' => 'Invalid action: ' . $action . '. Valid actions: sync_course, sync_all, sync_category_courses, get_status, toggle_visibility, delete_course'
             ]);
             exit;
     }

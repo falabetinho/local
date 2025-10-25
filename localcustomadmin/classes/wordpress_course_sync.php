@@ -45,8 +45,11 @@ class wordpress_course_sync {
     /** @var string WordPress post type route (plural) */
     private $post_type_route = 'cursos';
 
-    /** @var string WordPress pricing endpoint */
-    private $pricing_endpoint = 'fluentelegante/v1/pricing';
+    /** @var string WordPress courses resource path */
+    private $courses_path;
+
+    /** @var string WordPress prices resource path */
+    private $prices_path;
 
     /**
      * Constructor
@@ -54,7 +57,34 @@ class wordpress_course_sync {
     public function __construct() {
         global $DB;
         $this->db = $DB;
-        $this->api = new wordpress_api();
+
+        // Load WordPress API credentials and base URL from plugin settings
+        $wordpress_base_url = get_config('local_localcustomadmin', 'wordpress_base_url');
+        $username = get_config('local_localcustomadmin', 'wordpress_username');
+        $apppassword = get_config('local_localcustomadmin', 'wordpress_apppassword');
+        
+        $this->courses_path = get_config('local_localcustomadmin', 'wordpress_courses_path');
+        $this->prices_path = get_config('local_localcustomadmin', 'wordpress_prices_path');
+
+        // Validate configurations
+        if (!$wordpress_base_url) {
+            throw new \moodle_exception('missingconfig', 'local_localcustomadmin', '', 'WordPress Base URL is not configured');
+        }
+        if (!$username) {
+            throw new \moodle_exception('missingconfig', 'local_localcustomadmin', '', 'WordPress Username is not configured');
+        }
+        if (!$apppassword) {
+            throw new \moodle_exception('missingconfig', 'local_localcustomadmin', '', 'WordPress Application Password is not configured');
+        }
+        if (!$this->courses_path) {
+            throw new \moodle_exception('missingconfig', 'local_localcustomadmin', '', 'WordPress Courses Path is not configured');
+        }
+        if (!$this->prices_path) {
+            throw new \moodle_exception('missingconfig', 'local_localcustomadmin', '', 'WordPress Prices Path is not configured');
+        }
+
+        // Initialize WordPress API client
+        $this->api = new wordpress_api($wordpress_base_url, $username, $apppassword);
     }
 
     /**
@@ -85,38 +115,38 @@ class wordpress_course_sync {
 
             error_log("WordPress Course Sync: Mapping exists: " . ($mapping ? 'yes' : 'no'));
 
-            // Get course price from enrolment
-            $price_data = $this->get_course_price($courseid);
-            error_log("WordPress Course Sync: Has price: " . ($price_data['has_price'] ? 'yes' : 'no'));
-
             // Prepare course data for WordPress
-            $coursedata = $this->prepare_course_data($course, $price_data);
+            $coursedata = $this->prepare_course_data($course);
             error_log("WordPress Course Sync: Course data prepared: " . json_encode($coursedata));
 
             if ($mapping && $mapping->wordpress_id) {
                 // Update existing post
                 $result = $this->api->request(
                     'POST',
-                    "/{$this->post_type_route}/{$mapping->wordpress_id}",
+                    "{$this->courses_path}/{$mapping->wordpress_id}",
                     $coursedata
                 );
 
                 if ($result !== false) {
                     $this->update_mapping($mapping->id, 'synced');
-                    
-                    // Sync price separately if available
-                    if ($price_data['has_price']) {
-                        $this->sync_course_price($mapping->wordpress_id, $price_data);
-                    }
-                    
                     return [
                         'success' => true,
                         'message' => 'Course updated successfully',
                         'wordpress_id' => $mapping->wordpress_id
                     ];
+
+                    
                 } else {
                     $error = $this->api->get_last_error();
                     $errormsg = $error ? $error['message'] : 'Unknown error';
+                    
+                    // Check if post was deleted in WordPress and remove stale mapping
+                    if ($this->handle_invalid_post_error($errormsg, $mapping->id)) {
+                        error_log("WordPress Course Sync: Mapping removed, retrying sync as new post for course ID {$courseid}");
+                        // Recursively call to create a new post since mapping was removed
+                        return $this->sync_course($courseid);
+                    }
+                    
                     $this->update_mapping($mapping->id, 'error', $errormsg);
                     return ['success' => false, 'message' => $errormsg];
                 }
@@ -124,7 +154,7 @@ class wordpress_course_sync {
                 // Create new post
                 $result = $this->api->request(
                     'POST',
-                    "/{$this->post_type_route}",
+                    $this->courses_path,
                     $coursedata
                 );
 
@@ -136,11 +166,6 @@ class wordpress_course_sync {
                         $this->update_mapping_wordpress_id($mapping->id, $wpid, 'synced');
                     } else {
                         $this->create_mapping($courseid, $wpid);
-                    }
-
-                    // Sync price separately if available
-                    if ($price_data['has_price']) {
-                        $this->sync_course_price($wpid, $price_data);
                     }
 
                     return [
@@ -160,6 +185,16 @@ class wordpress_course_sync {
         } catch (\Exception $e) {
             error_log("WordPress Course Sync ERROR: " . $e->getMessage());
             error_log("WordPress Course Sync TRACE: " . $e->getTraceAsString());
+            
+            // Check if error indicates invalid post and remove mapping if so
+            if ($mapping && $mapping->id) {
+                if ($this->handle_invalid_post_error($e->getMessage(), $mapping->id)) {
+                    error_log("WordPress Course Sync: Mapping removed in catch block, retrying sync for course ID {$courseid}");
+                    // Retry as new post since mapping was removed
+                    return $this->sync_course($courseid);
+                }
+            }
+            
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -218,121 +253,12 @@ class wordpress_course_sync {
     }
 
     /**
-     * Get course price from enrolment instances
-     *
-     * @param int $courseid Course ID
-     * @return array Price data
-     */
-    public function get_course_price($courseid) {
-        // Check for enrol_fee plugin
-        $enrol = $this->db->get_record('enrol', [
-            'courseid' => $courseid,
-            'enrol' => 'fee',
-            'status' => 0 // Active
-        ], 'cost, currency');
-
-        if ($enrol && !empty($enrol->cost)) {
-            return [
-                'has_price' => true,
-                'price' => floatval($enrol->cost),
-                'currency' => $enrol->currency ?: 'BRL',
-                'active' => true
-            ];
-        }
-
-        // Check for enrol_paypal plugin
-        $enrol = $this->db->get_record('enrol', [
-            'courseid' => $courseid,
-            'enrol' => 'paypal',
-            'status' => 0
-        ], 'cost, currency');
-
-        if ($enrol && !empty($enrol->cost)) {
-            return [
-                'has_price' => true,
-                'price' => floatval($enrol->cost),
-                'currency' => $enrol->currency ?: 'BRL',
-                'active' => true
-            ];
-        }
-
-        return [
-            'has_price' => false,
-            'price' => 0,
-            'currency' => 'BRL',
-            'active' => false
-        ];
-    }
-
-    /**
-     * Sync course price to WordPress
-     *
-     * @param int $wordpress_course_id WordPress course post ID
-     * @param array $price_data Price information
-     * @return array Result
-     */
-    private function sync_course_price($wordpress_course_id, $price_data) {
-        if (!$price_data['has_price']) {
-            return ['success' => false, 'message' => 'No price to sync'];
-        }
-
-        $pricing_data = [
-            'cursos' => [
-                [
-                    'id' => $wordpress_course_id,
-                    'preco' => $price_data['price'],
-                    'moeda' => $price_data['currency'],
-                    'ativo' => $price_data['active']
-                ]
-            ]
-        ];
-
-        return $this->api->request(
-            'POST',
-            "/{$this->pricing_endpoint}/sync",
-            $pricing_data
-        );
-    }
-
-    /**
-     * Bulk sync prices for multiple courses
-     *
-     * @param array $course_prices Array of [wordpress_id => price_data]
-     * @return array Result
-     */
-    public function bulk_sync_prices($course_prices) {
-        $cursos = [];
-        
-        foreach ($course_prices as $wpid => $price_data) {
-            if ($price_data['has_price']) {
-                $cursos[] = [
-                    'id' => $wpid,
-                    'preco' => $price_data['price'],
-                    'moeda' => $price_data['currency'],
-                    'ativo' => $price_data['active']
-                ];
-            }
-        }
-
-        if (empty($cursos)) {
-            return ['success' => false, 'message' => 'No prices to sync'];
-        }
-
-        return $this->api->request(
-            'POST',
-            "/{$this->pricing_endpoint}/sync",
-            ['cursos' => $cursos]
-        );
-    }
-
-    /**
      * Prepare course data for WordPress
      *
      * @param object $course Moodle course object
-     * @param array $price_data Price information
      * @return array WordPress post data
      */
-    private function prepare_course_data($course, $price_data) {
+    private function prepare_course_data($course) {
         global $CFG;
 
         $data = [
@@ -349,13 +275,6 @@ class wordpress_course_sync {
             ]
         ];
 
-        // Add price as metadata
-        if ($price_data['has_price']) {
-            $data['meta']['price'] = $price_data['price'];
-            $data['meta']['currency'] = $price_data['currency'];
-            $data['meta']['price_active'] = $price_data['active'];
-        }
-
         // Add category taxonomy if course has category
         if ($course->category) {
             $category = $this->db->get_record('course_categories', ['id' => $course->category]);
@@ -366,14 +285,38 @@ class wordpress_course_sync {
                 ]);
                 
                 if ($cat_mapping && $cat_mapping->wordpress_id) {
-                    $data['nivel'] = [$cat_mapping->wordpress_id];
-                    error_log("WordPress Course Sync: Adding nivel taxonomy: " . $cat_mapping->wordpress_id);
+                    // WordPress REST API expects taxonomy field as array of integers
+                    $niveis = [intval($cat_mapping->wordpress_id)];
+                    
+                    // Check if category has parent and add it too
+                    if ($category->parent > 0) {
+                        $parent_mapping = $this->db->get_record('local_customadmin_wp_mapping', [
+                            'moodle_type' => 'category',
+                            'moodle_id' => $category->parent
+                        ]);
+                        
+                        if ($parent_mapping && $parent_mapping->wordpress_id) {
+                            // Add parent first (WordPress hierarchical taxonomy convention)
+                            array_unshift($niveis, intval($parent_mapping->wordpress_id));
+                            error_log("WordPress Course Sync: Adding parent nivel taxonomy ID: " . $parent_mapping->wordpress_id);
+                        } else {
+                            error_log("WordPress Course Sync: Parent category {$category->parent} not synced with WordPress");
+                        }
+                    }
+                    
+                    $data['niveis'] = $niveis;
+                    error_log("WordPress Course Sync: Adding niveis taxonomy IDs: " . json_encode($niveis) . " for category: {$category->name}");
                 } else {
-                    error_log("WordPress Course Sync: Category {$course->category} ({$category->name}) not synced with WordPress");
+                    error_log("WordPress Course Sync: WARNING - Category {$course->category} ({$category->name}) not synced with WordPress. Please sync categories first.");
                 }
+            } else {
+                error_log("WordPress Course Sync: Category ID {$course->category} not found in Moodle");
             }
+        } else {
+            error_log("WordPress Course Sync: Course {$course->id} has no category");
         }
 
+        error_log("WordPress Course Sync: Final course data: " . json_encode($data));
         return $data;
     }
 
@@ -440,6 +383,50 @@ class wordpress_course_sync {
         $mapping->sync_error = null;
 
         $this->db->update_record('local_customadmin_wp_mapping', $mapping);
+    }
+
+    /**
+     * Check if error indicates invalid/deleted WordPress post
+     * If so, remove the mapping to allow resync
+     *
+     * @param string $error Error message
+     * @param int $mappingid Mapping ID
+     * @return bool True if mapping was removed
+     */
+    private function handle_invalid_post_error($error, $mappingid) {
+        // Log the error for debugging
+        error_log("WordPress Course Sync: Checking error for mapping ID {$mappingid}: " . $error);
+
+        // Check for common "invalid post" error messages
+        $invalid_post_errors = [
+            'invalid post id',
+            'invalid_post_id',
+            'post_not_found',
+            'no post found',
+            'http 404',
+            'http/1.1 404',
+            'rest_post_invalid_id',
+            'rest_forbidden',
+            'rest_post_invalid_page_number'
+        ];
+
+        $error_lower = strtolower($error);
+        foreach ($invalid_post_errors as $invalid_error) {
+            if (strpos($error_lower, $invalid_error) !== false) {
+                error_log("WordPress Course Sync: Detected invalid post error ('{$invalid_error}'), removing mapping ID {$mappingid}");
+                $deleted = $this->db->delete_records('local_customadmin_wp_mapping', ['id' => $mappingid]);
+                error_log("WordPress Course Sync: Delete result: " . ($deleted ? 'SUCCESS' : 'FAILED'));
+                return true;
+            }
+        }
+
+        // Log additional details for HTTP 0 errors
+        if (strpos($error_lower, 'http 0') !== false) {
+            error_log("WordPress Course Sync: HTTP 0 detected. Possible connectivity issue or invalid endpoint.");
+        }
+
+        error_log("WordPress Course Sync: Error does not match invalid post patterns");
+        return false;
     }
 
     /**
@@ -511,9 +498,28 @@ class wordpress_course_sync {
                 ];
             } else {
                 $error = $this->api->get_last_error();
-                return ['success' => false, 'message' => $error ? $error['message'] : 'Unknown error'];
+                $errormsg = $error ? $error['message'] : 'Unknown error';
+                
+                // Check if post was deleted in WordPress and remove stale mapping
+                if ($this->handle_invalid_post_error($errormsg, $mapping->id)) {
+                    return [
+                        'success' => false,
+                        'message' => 'Post not found in WordPress. Mapping removed. Please sync the course again.',
+                        'mapping_removed' => true
+                    ];
+                }
+                
+                return ['success' => false, 'message' => $errormsg];
             }
         } catch (\Exception $e) {
+            // Check if error indicates invalid post and remove mapping if so
+            if ($this->handle_invalid_post_error($e->getMessage(), $mapping->id)) {
+                return [
+                    'success' => false,
+                    'message' => 'Post not found in WordPress. Mapping removed. Please sync the course again.',
+                    'mapping_removed' => true
+                ];
+            }
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
@@ -537,7 +543,6 @@ class wordpress_course_sync {
                 'DELETE',
                 "/{$this->post_type_route}/{$mapping->wordpress_id}?force=true"
             );
-
             if ($result !== false) {
                 if ($remove_mapping) {
                     // Delete mapping record
@@ -546,16 +551,32 @@ class wordpress_course_sync {
                     // Mark as pending resync
                     $this->update_mapping($mapping->id, 'pending');
                 }
-                
                 return [
                     'success' => true,
                     'message' => 'Course deleted from WordPress'
                 ];
             } else {
                 $error = $this->api->get_last_error();
-                return ['success' => false, 'message' => $error ? $error['message'] : 'Unknown error'];
+                $errormsg = $error ? $error['message'] : 'Unknown error';
+                // Check if post was already deleted in WordPress
+                if ($this->handle_invalid_post_error($errormsg, $mapping->id)) {
+                    return [
+                        'success' => true,
+                        'message' => 'Post already deleted in WordPress. Mapping removed.',
+                        'already_deleted' => true
+                    ];
+                }
+                return ['success' => false, 'message' => $errormsg];
             }
         } catch (\Exception $e) {
+            // Check if post was already deleted in WordPress
+            if ($this->handle_invalid_post_error($e->getMessage(), $mapping->id)) {
+                return [
+                    'success' => true,
+                    'message' => 'Post already deleted in WordPress. Mapping removed.',
+                    'already_deleted' => true
+                ];
+            }
             return ['success' => false, 'message' => $e->getMessage()];
         }
     }
