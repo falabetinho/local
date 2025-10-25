@@ -35,23 +35,29 @@ $string['displayname_desc'] = 'Custom name that will be displayed instead of the
 
 // WordPress Integration Settings
 $string['wordpress_integration'] = 'WordPress Integration';
-$string['wordpress_integration_desc'] = 'Configure WordPress integration for data synchronization';
-$string['enable_wordpress'] = 'Enable WordPress Integration';
-$string['enable_wordpress_desc'] = 'Enable or disable the integration with WordPress.';
-$string['wordpress_endpoint'] = 'WordPress Endpoint';
-$string['wordpress_endpoint_desc'] = 'WordPress REST API endpoint URL (e.g., https://yoursite.com/wp-json/wp/v2)';
-$string['wordpress_baseurl'] = 'WordPress Base URL';
-$string['wordpress_baseurl_desc'] = 'The base URL of your WordPress site (e.g., https://example.com).';
-
-$string['wordpress_username'] = 'WordPress Username';
-$string['wordpress_username_desc'] = 'The username for authenticating with the WordPress API.';
-
-$string['wordpress_apppassword'] = 'WordPress Application Password';
-$string['wordpress_apppassword_desc'] = 'The application password for authenticating with the WordPress API.';
-$string['wordpress_courses_path'] = 'WordPress Courses Path';
-$string['wordpress_courses_path_desc'] = 'The API path for syncing courses with WordPress. Default: wp-json/wp/v2/cursos';
-$string['wordpress_prices_path'] = 'WordPress Prices Path';
-$string['wordpress_prices_path_desc'] = 'The API path for syncing prices with WordPress. Default: wp-json/wp/v2/prices';
+$string['wordpress_integration_desc'] = 'Manage the synchronization of categories, courses, and prices with WordPress.';
+$string['wordpress_integration_help_title'] = 'How to use WordPress Integration';
+$string['wordpress_integration_help_1'] = 'Synchronize Moodle categories with WordPress.';
+$string['wordpress_integration_help_2'] = 'Synchronize Moodle courses with WordPress.';
+$string['wordpress_integration_help_3'] = 'Synchronize course prices with WordPress.';
+$string['sync_categories'] = 'Sync Categories';
+$string['sync_categories_desc'] = 'Synchronize Moodle categories with WordPress.';
+$string['sync_courses'] = 'Sync Courses';
+$string['sync_courses_desc'] = 'Synchronize Moodle courses with WordPress.';
+$string['sync_prices'] = 'Sync Prices';
+$string['sync_prices_desc'] = 'Synchronize course prices with WordPress.';
+$string['total_courses'] = 'Total Courses';
+$string['visible_courses'] = 'Visible Courses';
+$string['hidden_courses'] = 'Hidden Courses';
+$string['manage_courses'] = 'Manage Courses';
+$string['manage_courses_desc'] = 'View and manage all Moodle courses.';
+$string['manage_categories'] = 'Manage Categories';
+$string['manage_categories_desc'] = 'View and manage all Moodle categories.';
+$string['course_backups'] = 'Course Backups';
+$string['course_backups_desc'] = 'Manage and restore course backups.';
+$string['back'] = 'Back';
+$string['help'] = 'Help';
+$string['manage'] = 'Manage';
 
 // Modal form strings
 $string['addcategory'] = 'Add Category';
@@ -372,7 +378,12 @@ $string['synced_categories'] = 'Synced Categories';
 $string['pending_categories'] = 'Pending Categories';
 $string['never_synced'] = 'Never synced';
 $string['sync_categories'] = 'Sync Categories';
-$string['sync_categories_desc'] = 'Send all Moodle categories to WordPress "niveis" taxonomy';
+$string['sync_categories_desc'] = 'Synchronize Moodle categories with WordPress.';
+$string['sync_courses'] = 'Sync Courses';
+$string['sync_courses_desc'] = 'Synchronize Moodle courses with WordPress.';
+$string['sync_prices'] = 'Sync Prices';
+$string['sync_prices_desc'] = 'Synchronize course prices with WordPress.';
+$string['go_to_sync'] = 'Go to Sync';
 $string['view_mappings'] = 'View Mappings';
 $string['view_mappings_desc'] = 'View mapping between Moodle categories and WordPress terms';
 $string['test_connection'] = 'Test Connection';

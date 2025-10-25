@@ -1,0 +1,99 @@
+.integration-panel {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.integration-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.integration-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.integration-description {
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.integration-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.integration-card {
+    flex: 1 1 calc(33.333% - 20px);
+    max-width: calc(33.333% - 20px);
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.integration-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.integration-card-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: #0073e6;
+}
+
+.icon-categories::before {
+    content: "\f07c"; /* Example FontAwesome icon */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+}
+
+.icon-courses::before {
+    content: "\f02d"; /* Example FontAwesome icon */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+}
+
+.icon-prices::before {
+    content: "\f155"; /* Example FontAwesome icon */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+}
+
+.integration-card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.integration-card-description {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.integration-card-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #0073e6;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.integration-card-button:hover {
+    background-color: #005bb5;
+}
