@@ -9,12 +9,12 @@ require_capability('local/localcustomadmin:manage', $context);
 $action = required_param('action', PARAM_ALPHA);
 $categoryid = required_param('categoryid', PARAM_INT);
 
-// Process the action using the handler logic
+// Process the action
 try {
     // Fetch category
     $category = $DB->get_record('course_categories', ['id' => $categoryid], '*', MUST_EXIST);
-
-    // Perform action based on the handler
+    
+    // Perform action
     switch ($action) {
         case 'sync':
             $result = sync_category_to_wordpress($category);
@@ -39,7 +39,7 @@ try {
     redirect(new moodle_url('/local/localcustomadmin/sync_categories.php'), $e->getMessage(), null, \core\output\notification::NOTIFY_ERROR);
 }
 
-// Include the handler functions (adapted from sync_categories_handler.php)
+// Include the handler functions
 function sync_category_to_wordpress($category) {
     global $DB;
 
