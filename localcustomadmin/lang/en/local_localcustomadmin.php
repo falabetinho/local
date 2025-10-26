@@ -372,29 +372,14 @@ $string['manage_wordpress'] = 'Manage';
 
 // WordPress Integration Page
 $string['wordpress_integration_disabled'] = 'WordPress integration is disabled. Enable it in settings.';
-$string['wordpress_settings_incomplete'] = 'Incomplete WordPress settings. Configure endpoint and API key.';
-$string['total_categories'] = 'Total Categories';
-$string['synced_categories'] = 'Synced Categories';
-$string['pending_categories'] = 'Pending Categories';
-$string['never_synced'] = 'Never synced';
-$string['sync_categories'] = 'Sync Categories';
-$string['sync_categories_desc'] = 'Synchronize Moodle categories with WordPress.';
-$string['sync_courses'] = 'Sync Courses';
-$string['sync_courses_desc'] = 'Synchronize Moodle courses with WordPress.';
-$string['sync_prices'] = 'Sync Prices';
-$string['sync_prices_desc'] = 'Synchronize course prices with WordPress.';
-$string['go_to_sync'] = 'Go to Sync';
-$string['view_mappings'] = 'View Mappings';
-$string['view_mappings_desc'] = 'View mapping between Moodle categories and WordPress terms';
-$string['test_connection'] = 'Test Connection';
-$string['test_connection_desc'] = 'Check if connection with WordPress API is working';
-$string['synced'] = 'Synced';
-$string['not_synced'] = 'Not Synced';
-$string['syncing'] = 'Syncing...';
-$string['connection_success'] = 'Connection established successfully';
-$string['recent_categories'] = 'Recent Categories';
-$string['no_categories_found'] = 'No categories found';
-$string['actions'] = 'Quick Actions';
+$string['wordpress_settings_incomplete'] = 'WordPress settings are incomplete. Configure base URL, username, and password.';
+$string['category_synced'] = 'Category "{$a}" synced successfully.';
+$string['category_updated'] = 'Category "{$a}" updated successfully.';
+$string['category_deleted'] = 'Category "{$a}" deleted successfully.';
+$string['mapping_not_found'] = 'Mapping not found for this category.';
+$string['sync_failed'] = 'Sync failed.';
+$string['update_failed'] = 'Update failed.';
+$string['delete_failed'] = 'Delete failed.';
 
 // WordPress Integration Main Page
 $string['sync_categories_title'] = 'Sync Categories';
@@ -417,3 +402,10 @@ $string['sync_courses_action_desc'] = 'Send all Moodle courses as "curso" post t
 $string['view_course_mappings_desc'] = 'View mapping between Moodle courses and WordPress posts';
 $string['recent_courses'] = 'Recent Courses';
 $string['no_courses_found'] = 'No courses found';
+$string['sync_category_button'] = 'Sync';
+$string['update'] = 'Update';
+$string['delete'] = 'Delete';
+
+// JavaScript strings
+$string['processing'] = 'Processing...';
+$string['ajax_error'] = 'AJAX Error occurred. Please try again.';

@@ -1,0 +1,58 @@
+<!-- filepath: /home/betinho/projetos/moodle/local/localcustomadmin/templates/sync_categories.mustache -->
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fa fa-sitemap mr-2 text-primary"></i>
+            {{#str}}sync_categories, local_localcustomadmin{{/str}}
+        </h2>
+        <a href="{{back_to_index_url}}" class="btn btn-outline-secondary">
+            <i class="fa fa-arrow-left mr-1"></i>
+            {{#str}}back, local_localcustomadmin{{/str}}
+        </a>
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>{{#str}}categories, local_localcustomadmin{{/str}}</th>
+                <th>{{#str}}description, local_localcustomadmin{{/str}}</th>
+                <th>{{#str}}parent, local_localcustomadmin{{/str}}</th>
+                <th>{{#str}}sync_status, local_localcustomadmin{{/str}}</th>
+                <th>{{#str}}last_sync, local_localcustomadmin{{/str}}</th>
+                <th>{{#str}}actions, local_localcustomadmin{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#categories}}
+            <tr>
+                <td>{{name}}</td>
+                <td>{{description}}</td>
+                <td>{{parent}}</td>
+                <td>
+                    {{#sync_status}}
+                        {{sync_status}}
+                    {{/sync_status}}
+                </td>
+                <td>{{last_synced}}</td>
+                <td>
+                    {{#actions.sync}}
+                        <a href="process_sync_categories.php?action=sync&categoryid={{id}}" class="btn btn-primary btn-sm">
+                            <i class="fa fa-cloud-upload-alt"></i> {{#str}}sync_category_button, local_localcustomadmin{{/str}}
+                        </a>
+                    {{/actions.sync}}
+                    {{#actions.update}}
+                        <a href="process_sync_categories.php?action=update&categoryid={{id}}" class="btn btn-success btn-sm">
+                            <i class="fa fa-sync-alt"></i> {{#str}}update, local_localcustomadmin{{/str}}
+                        </a>
+                    {{/actions.update}}
+                    {{#actions.delete}}
+                        <a href="process_sync_categories.php?action=delete&categoryid={{id}}" class="btn btn-danger btn-sm">
+                            <i class="fa fa-trash"></i> {{#str}}delete, local_localcustomadmin{{/str}}
+                        </a>
+                    {{/actions.delete}}
+                </td>
+            </tr>
+            {{/categories}}
+        </tbody>
+    </table>
+</div>

@@ -76,3 +76,12 @@ $functions = array(
         'capabilities' => 'local/localcustomadmin:manage'
     )
 );
+
+$services = array(
+    'Local Custom Admin Services' => array(
+        'functions' => array('local_localcustomadmin_sync_categories'),
+        'restrictedusers' => 0,
+        'enabled' => 1,
+        'shortname' => 'local_customadmin_services'
+    )
+);
