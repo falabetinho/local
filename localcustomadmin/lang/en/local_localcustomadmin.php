@@ -421,3 +421,16 @@ $string['delete_course_button'] = 'Delete';
 $string['course_synced'] = 'Course "{$a}" synced successfully.';
 $string['course_updated'] = 'Course "{$a}" updated successfully.';
 $string['course_deleted'] = 'Course "{$a}" deleted successfully.';
+
+// Price synchronization strings
+$string['sync_prices'] = 'Sync Prices';
+$string['price_name'] = 'Price Name';
+$string['price_value'] = 'Price Value';
+$string['sync_price_button'] = 'Sync';
+$string['update_price_button'] = 'Update';
+$string['delete_price_button'] = 'Delete';
+$string['price_synced'] = 'Price "{$a}" synced successfully.';
+$string['price_updated'] = 'Price "{$a}" updated successfully.';
+$string['price_deleted'] = 'Price "{$a}" deleted successfully.';
+$string['course_not_synced'] = 'Course not synced - price sync not allowed.';$string['course_not_synced'] = 'Course not synced - price sync not allowed.';
+
