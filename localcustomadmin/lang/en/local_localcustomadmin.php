@@ -409,3 +409,15 @@ $string['delete'] = 'Delete';
 // JavaScript strings
 $string['processing'] = 'Processing...';
 $string['ajax_error'] = 'AJAX Error occurred. Please try again.';
+
+$string['sync_courses'] = 'Sync Courses';
+$string['course'] = 'Course';
+$string['shortname'] = 'Short Name';
+$string['category_not_synced'] = 'Category not synced';
+$string['category_not_synced_alert'] = 'Category not synced - sync not allowed';
+$string['sync_course_button'] = 'Sync';
+$string['update_course_button'] = 'Update';
+$string['delete_course_button'] = 'Delete';
+$string['course_synced'] = 'Course "{$a}" synced successfully.';
+$string['course_updated'] = 'Course "{$a}" updated successfully.';
+$string['course_deleted'] = 'Course "{$a}" deleted successfully.';

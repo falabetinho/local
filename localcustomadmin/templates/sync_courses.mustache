@@ -1,0 +1,68 @@
+<!-- filepath: /home/betinho/projetos/moodle/local/localcustomadmin/templates/sync_courses.mustache -->
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fa fa-graduation-cap mr-2 text-primary"></i>
+            {{#str}}sync_courses, local_localcustomadmin{{/str}}
+        </h2>
+        <a href="{{back_to_index_url}}" class="btn btn-outline-secondary">
+            <i class="fa fa-arrow-left mr-1"></i>
+            {{#str}}back, local_localcustomadmin{{/str}}
+        </a>
+    </div>
+
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>{{#str}}course, local_localcustomadmin{{/str}}</th>
+                <th>{{#str}}shortname, local_localcustomadmin{{/str}}</th>
+                <th>{{#str}}category, local_localcustomadmin{{/str}}</th>
+                <th>{{#str}}sync_status, local_localcustomadmin{{/str}}</th>
+                <th>{{#str}}last_sync, local_localcustomadmin{{/str}}</th>
+                <th>{{#str}}actions, local_localcustomadmin{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#courses}}
+            <tr>
+                <td>{{fullname}}</td>
+                <td>{{shortname}}</td>
+                <td>
+                    {{#category_synced}}
+                        {{#str}}synced, local_localcustomadmin{{/str}}
+                    {{/category_synced}}
+                    {{^category_synced}}
+                        <span class="text-danger">{{#str}}category_not_synced, local_localcustomadmin{{/str}}</span>
+                    {{/category_synced}}
+                </td>
+                <td>
+                    {{#sync_status}}
+                        {{sync_status}}
+                    {{/sync_status}}
+                </td>
+                <td>{{last_synced}}</td>
+                <td>
+                    {{#actions.sync}}
+                        <a href="process_sync_courses.php?action=sync&courseid={{id}}" class="btn btn-primary btn-sm">
+                            <i class="fa fa-cloud-upload-alt"></i> {{#str}}sync_course_button, local_localcustomadmin{{/str}}
+                        </a>
+                    {{/actions.sync}}
+                    {{#actions.update}}
+                        <a href="process_sync_courses.php?action=update&courseid={{id}}" class="btn btn-success btn-sm">
+                            <i class="fa fa-sync-alt"></i> {{#str}}update, local_localcustomadmin{{/str}}
+                        </a>
+                    {{/actions.update}}
+                    {{#actions.delete}}
+                        <a href="process_sync_courses.php?action=delete&courseid={{id}}" class="btn btn-danger btn-sm">
+                            <i class="fa fa-trash"></i> {{#str}}delete, local_localcustomadmin{{/str}}
+                        </a>
+                    {{/actions.delete}}
+                    {{^category_synced}}
+                        <span class="text-muted">{{#str}}category_not_synced_alert, local_localcustomadmin{{/str}}</span>
+                    {{/category_synced}}
+                </td>
+            </tr>
+            {{/courses}}
+        </tbody>
+    </table>
+</div>
