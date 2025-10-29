@@ -84,10 +84,12 @@ function sync_price_to_wordpress($enrol, $course_synced) {
     ];
 
     // Make API call
-    $url = rtrim($baseurl, '/') . '/wp-json/curso-pricing/v1/prices';
+    $url = rtrim($baseurl, '/') . '/wp-json/wp/v2/prices';  // Updated endpoint
     $response = make_api_call('POST', $url, $data, $username, $password);
 
     if ($response['success'] && isset($response['data']['id'])) {
+        // Optionally store the WordPress price ID somewhere, e.g., in enrol custom fields or a custom table
+        // For now, assume enrol->id is used for updates/deletes
         return [
             'success' => true,
             'message' => get_string('price_synced', 'local_localcustomadmin', $data['name'])
@@ -120,7 +122,7 @@ function update_price_in_wordpress($enrol, $course_synced) {
     ];
 
     // Make API call
-    $url = rtrim($baseurl, '/') . '/wp-json/curso-pricing/v1/prices/' . $enrol->id; // Assuming price_id is enrol id
+    $url = rtrim($baseurl, '/') . '/wp-json/wp/v2/prices/' . $enrol->id;  // Updated endpoint, assuming enrol->id is price_id
     $response = make_api_call('PUT', $url, $data, $username, $password);
 
     if ($response['success']) {
@@ -150,7 +152,7 @@ function delete_price_from_wordpress($enrol, $course_synced) {
     }
 
     // Make API call
-    $url = rtrim($baseurl, '/') . '/wp-json/curso-pricing/v1/prices/' . $enrol->id;
+    $url = rtrim($baseurl, '/') . '/wp-json/wp/v2/prices/' . $enrol->id;  // Updated endpoint, assuming enrol->id is price_id
     $response = make_api_call('DELETE', $url, null, $username, $password);
 
     if ($response['success']) {
