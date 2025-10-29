@@ -16,8 +16,10 @@ define(['local_localcustomadmin/reset_password'], function(ResetPassword) {
                 const userId = this.getAttribute('data-userid');
                 console.log('[usuarios.init] Button clicked, userId:', userId);
                 
-                if (userId) {
+                if (userId && ResetPassword && typeof ResetPassword.open === 'function') {
                     ResetPassword.open(userId);
+                } else {
+                    console.error('[usuarios.init] ResetPassword module not available or invalid userId');
                 }
             });
         });

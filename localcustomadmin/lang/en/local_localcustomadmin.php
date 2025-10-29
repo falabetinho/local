@@ -191,6 +191,8 @@ $string['course_backups_desc'] = 'Restore courses from backup files';
 
 // Password reset strings
 $string['resetpassword'] = 'Reset Password';
+$string['confirm_reset_password'] = 'Are you sure you want to reset the password for user ID {$a}?';
+$string['reset'] = 'Reset';
 $string['newpassword'] = 'New Password';
 $string['confirmpassword'] = 'Confirm Password';
 $string['passwordmustmatch'] = 'The passwords do not match. Please try again.';
