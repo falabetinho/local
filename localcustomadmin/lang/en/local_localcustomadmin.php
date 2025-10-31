@@ -435,4 +435,5 @@ $string['price_synced'] = 'Price "{$a}" synced successfully.';
 $string['price_updated'] = 'Price "{$a}" updated successfully.';
 $string['price_deleted'] = 'Price "{$a}" deleted successfully.';
 $string['course_not_synced'] = 'Course not synced - price sync not allowed.';$string['course_not_synced'] = 'Course not synced - price sync not allowed.';
+$string['prices_synced'] = '{$a} prices synced from WordPress.';
 
