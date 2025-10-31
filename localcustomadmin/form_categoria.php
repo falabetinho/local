@@ -801,10 +801,19 @@ function render_pricing_tab($category_id) {
     $html .= '<i class="fas fa-tags mr-2"></i>';
     $html .= '<h3>' . get_string('category_prices', 'local_localcustomadmin') . '</h3>';
     $html .= '</div>';
-    $html .= '<button type="button" class="btn-elegant btn-primary" id="btn-add-price" data-bs-toggle="modal" data-bs-target="#priceModal">';
+    // Agrupamento dos botões usando Bootstrap button-group
+    $html .= '<div class="btn-group" role="group" aria-label="Price actions">';
+    // Botão Adicionar Preço
+    $html .= '<button type="button" class="btn btn-primary" id="btn-add-price" data-bs-toggle="modal" data-bs-target="#priceModal">';
     $html .= '<span class="btn-icon"><i class="fas fa-plus"></i></span>';
     $html .= '<span class="btn-text">' . get_string('add_price', 'local_localcustomadmin') . '</span>';
     $html .= '</button>';
+    // Botão Sincronizar Preços
+    $html .= '<a href="process_sync_category_prices.php?action=sync_category&categoryid=' . $category_id . '" class="btn btn-secondary" id="btn-sync-category-prices">';
+    $html .= '<span class="btn-icon"><i class="fas fa-sync-alt"></i></span>';
+    $html .= '<span class="btn-text">' . get_string('sync_category_prices', 'local_localcustomadmin') . '</span>';
+    $html .= '</a>';
+    $html .= '</div>'; // end btn-group
     $html .= '</div>';
     $html .= '</div>';
     
