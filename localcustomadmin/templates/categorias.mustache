@@ -131,184 +131,100 @@
 </div>
 
 {{#has_categories}}
-<!-- Elegant Tree JavaScript -->
+<!-- Elegant Tree Accordion Functionality -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    initElegantTree();
+    // Initialize accordion after a short delay to ensure DOM is ready
+    setTimeout(function() {
+        initializeElegantAccordion();
+    }, 500);
 });
 
-function initElegantTree() {
-    // Initialize search functionality
-    initCategorySearch();
+function initializeElegantAccordion() {
+    // Setup click handlers for expandable elements
+    var expandableElements = document.querySelectorAll('[data-toggle="expand"]');
     
-    // Initialize tree interactions
-    initTreeInteractions();
-    
-    // Add elegant entrance animations
-    addEntranceAnimations();
-}
-
-function initCategorySearch() {
-    const searchInput = document.getElementById('categorySearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const nodes = document.querySelectorAll('.elegant-node');
-            
-            nodes.forEach(node => {
-                const categoryName = node.dataset.categoryName.toLowerCase();
-                const matches = categoryName.includes(searchTerm);
-                
-                if (matches || searchTerm === '') {
-                    node.style.display = 'block';
-                    node.classList.add('search-highlight');
-                    setTimeout(() => node.classList.remove('search-highlight'), 300);
-                } else {
-                    node.style.display = 'none';
-                }
-            });
-        });
-    }
-}
-
-function initTreeInteractions() {
-    // Node expansion
-    document.querySelectorAll('.node-header[data-toggle="expand"]').forEach(header => {
-        header.addEventListener('click', function(e) {
+    expandableElements.forEach(function(element) {
+        element.addEventListener('click', function(e) {
             e.preventDefault();
+            e.stopPropagation();
             
-            if (e.target.closest('.action-btn')) return;
-            
-            const targetId = this.getAttribute('data-target');
-            const target = document.querySelector(targetId);
-            const expandBtn = this.querySelector('.expand-btn i');
-            const nodeIcon = this.querySelector('.node-icon i');
+            var targetId = this.getAttribute('data-target');
+            var target = document.querySelector(targetId);
             
             if (target) {
-                const isExpanded = target.classList.contains('expanded');
+                // Toggle expanded class
+                target.classList.toggle('expanded');
                 
-                if (isExpanded) {
-                    // Collapse
-                    target.classList.remove('expanded');
-                    expandBtn.style.transform = 'rotate(0deg)';
-                    nodeIcon.className = 'fas fa-folder';
-                    this.setAttribute('aria-expanded', 'false');
-                } else {
-                    // Expand
-                    target.classList.add('expanded');
-                    expandBtn.style.transform = 'rotate(90deg)';
-                    nodeIcon.className = 'fas fa-folder-open';
-                    this.setAttribute('aria-expanded', 'true');
+                // Update button rotation
+                var header = this.closest('.node-header');
+                var expandBtn = header.querySelector('.expand-btn i');
+                if (expandBtn) {
+                    var isExpanded = target.classList.contains('expanded');
+                    expandBtn.style.transform = isExpanded ? 'rotate(90deg)' : 'rotate(0deg)';
                 }
-                
-                // Add ripple effect
-                addRippleEffect(this, e);
             }
         });
     });
     
-    // Control buttons
-    const expandAllBtn = document.getElementById('expandAllBtn');
-    const collapseAllBtn = document.getElementById('collapseAllBtn');
+    // Setup expand/collapse all buttons
+    var expandAllBtn = document.getElementById('expandAllBtn');
+    var collapseAllBtn = document.getElementById('collapseAllBtn');
     
     if (expandAllBtn) {
         expandAllBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             expandAllNodes();
-            addRippleEffect(this, e);
         });
     }
     
     if (collapseAllBtn) {
         collapseAllBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             collapseAllNodes();
-            addRippleEffect(this, e);
         });
     }
 }
 
 function expandAllNodes() {
-    document.querySelectorAll('.node-children').forEach((node, index) => {
-        setTimeout(() => {
+    var childNodes = document.querySelectorAll('.node-children');
+    var expandBtns = document.querySelectorAll('.expand-btn i');
+    
+    childNodes.forEach(function(node, index) {
+        setTimeout(function() {
             node.classList.add('expanded');
-        }, index * 50); // Staggered animation
+        }, index * 50);
     });
     
-    document.querySelectorAll('.expand-btn i').forEach(icon => {
-        icon.style.transform = 'rotate(90deg)';
+    expandBtns.forEach(function(btn) {
+        btn.style.transform = 'rotate(90deg)';
     });
     
-    document.querySelectorAll('.node-icon i').forEach(icon => {
-        if (icon.classList.contains('fa-folder')) {
-            icon.className = 'fas fa-folder-open';
-        }
+    // Update folder icons
+    document.querySelectorAll('.node-icon i.fa-folder').forEach(function(icon) {
+        icon.className = 'fas fa-folder-open';
     });
 }
 
 function collapseAllNodes() {
-    document.querySelectorAll('.node-children').forEach((node, index) => {
-        setTimeout(() => {
+    var childNodes = document.querySelectorAll('.node-children');
+    var expandBtns = document.querySelectorAll('.expand-btn i');
+    
+    childNodes.forEach(function(node, index) {
+        setTimeout(function() {
             node.classList.remove('expanded');
         }, index * 30);
     });
     
-    document.querySelectorAll('.expand-btn i').forEach(icon => {
-        icon.style.transform = 'rotate(0deg)';
+    expandBtns.forEach(function(btn) {
+        btn.style.transform = 'rotate(0deg)';
     });
     
-    document.querySelectorAll('.node-icon i').forEach(icon => {
-        if (icon.classList.contains('fa-folder-open')) {
-            icon.className = 'fas fa-folder';
-        }
+    // Update folder icons
+    document.querySelectorAll('.node-icon i.fa-folder-open').forEach(function(icon) {
+        icon.className = 'fas fa-folder';
     });
 }
-
-function addEntranceAnimations() {
-    // Staggered entrance animation for nodes
-    document.querySelectorAll('.elegant-node').forEach((node, index) => {
-        node.style.opacity = '0';
-        node.style.transform = 'translateY(20px)';
-        
-        setTimeout(() => {
-            // Don't override the transition - it's already in CSS
-            node.style.opacity = '1';
-            node.style.transform = 'translateY(0)';
-        }, index * 100);
-    });
-}
-
-function addRippleEffect(element, event) {
-    const ripple = document.createElement('span');
-    const rect = element.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    const x = event.clientX - rect.left - size / 2;
-    const y = event.clientY - rect.top - size / 2;
-    
-    ripple.className = 'elegant-ripple';
-    ripple.style.width = ripple.style.height = size + 'px';
-    ripple.style.left = x + 'px';
-    ripple.style.top = y + 'px';
-    
-    element.appendChild(ripple);
-    
-    setTimeout(() => {
-        ripple.remove();
-    }, 600);
-}
-
-// Keyboard navigation
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        const searchInput = document.getElementById('categorySearch');
-        if (searchInput && document.activeElement === searchInput) {
-            searchInput.value = '';
-            searchInput.blur();
-            // Reset search
-            document.querySelectorAll('.elegant-node').forEach(node => {
-                node.style.display = 'block';
-            });
-        }
-    }
-});
 </script>
 {{/has_categories}}
 

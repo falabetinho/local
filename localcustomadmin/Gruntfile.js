@@ -29,6 +29,41 @@ module.exports = function (grunt) {
             }
         },
 
+        // Compress plugin into ZIP excluding unnecessary files
+        compress: {
+            main: {
+                options: {
+                    archive: 'local_localcustomadmin.zip',
+                    mode: 'zip'
+                },
+                files: [{
+                    expand: true,
+                    cwd: '.',
+                    src: [
+                        '**/*',
+                        '!node_modules/**',
+                        '!.git/**',
+                        '!tests/**',
+                        '!*.log',
+                        '!*.tmp',
+                        '!cache/**',
+                        '!moodledata/**',
+                        '!vendor/**',
+                        '!*.DS_Store',
+                        '!Thumbs.db',
+                        '!*.swp',
+                        '!*.swo',
+                        '!build/**',
+                        '!dist/**',
+                        '!Gruntfile.js',
+                        '!package.json',
+                        '!package-lock.json'
+                    ],
+                    dest: 'local_localcustomadmin/'
+                }]
+            }
+        },
+
         // Watch for changes and optionally trigger LiveReload
         watch: {
             options: {
@@ -73,6 +108,7 @@ module.exports = function (grunt) {
 
     // Load plugins
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Helpful log when files change
@@ -84,4 +120,6 @@ module.exports = function (grunt) {
     grunt.registerTask('default', ['watch']);
     // Moodle-style AMD build task
     grunt.registerTask('amd', ['uglify:amd']);
+    // ZIP compression task
+    grunt.registerTask('zip', ['compress:main']);
 };

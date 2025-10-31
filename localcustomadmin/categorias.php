@@ -35,7 +35,7 @@ $PAGE->set_pagelayout('base');
 $PAGE->set_title('Gerenciamento de Categorias - Fluent Design');
 
 // Include JavaScript for tree functionality
-$PAGE->requires->js_call_amd('local_localcustomadmin/categories_accordion', 'init');
+// $PAGE->requires->js_call_amd('local_localcustomadmin/categories_accordion', 'init');
 
 // Breadcrumb navigation
 $PAGE->navbar->add('Cursos', new moodle_url('/local/localcustomadmin/cursos.php'));
