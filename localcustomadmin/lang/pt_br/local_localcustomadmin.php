@@ -397,3 +397,4 @@ $string['sync_courses_action_desc'] = 'Envia todos os cursos do Moodle como post
 $string['view_course_mappings_desc'] = 'Visualizar mapeamento entre cursos Moodle e posts WordPress';
 $string['recent_courses'] = 'Cursos Recentes';
 $string['no_courses_found'] = 'Nenhum curso encontrado';
+$string['invalidaction'] = 'Ação inválida ou não permitida.';

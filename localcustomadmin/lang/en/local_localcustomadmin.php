@@ -439,4 +439,5 @@ $string['prices_synced'] = '{$a} prices synced from WordPress.';
 $string['sync_category_prices'] = 'Sync Prices';
 $string['category_prices_synced'] = '{$a} course prices updated from category.';
 $string['no_category_prices'] = 'No prices found for this category.';
+$string['invalidaction'] = 'Invalid or not allowed action.';
 
