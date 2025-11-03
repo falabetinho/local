@@ -53,82 +53,7 @@ $PAGE->requires->css(new moodle_url('/local/localcustomadmin/styles.css'));
 
 echo $OUTPUT->header();
 
-// Build SQL query
-$sql = "SELECT c.id, c.fullname, c.shortname, c.category, c.visible, c.timecreated, c.timemodified,
-               COUNT(DISTINCT ue.userid) as enrollments
-        FROM {course} c
-        LEFT JOIN {enrol} e ON e.courseid = c.id
-        LEFT JOIN {user_enrolments} ue ON ue.enrolid = e.id
-        WHERE c.id != :siteid";
-
-$params = ['siteid' => SITEID];
-
-// Apply filters
-if (!empty($search)) {
-    $sql .= " AND (c.fullname LIKE :search1 OR c.shortname LIKE :search2)";
-    $params['search1'] = '%' . $DB->sql_like_escape($search) . '%';
-    $params['search2'] = '%' . $DB->sql_like_escape($search) . '%';
-}
-
-if ($categoryid > 0) {
-    // Buscar todas as subcategorias (filhas diretas e indiretas) da categoria pai
-    require_once($CFG->dirroot . '/course/classes/category.php');
-    $allcategoryids = [];
-    $queue = [$categoryid];
-    $visited = [];
-    while ($queue) {
-        $current = array_pop($queue);
-        if (in_array($current, $visited)) continue;
-        $visited[] = $current;
-        $allcategoryids[] = $current;
-        $cat = \core_course_category::get($current, IGNORE_MISSING);
-        if ($cat) {
-            $children = $cat->get_children();
-            foreach ($children as $childcat) {
-                if (!in_array($childcat->id, $visited) && !in_array($childcat->id, $queue)) {
-                    $queue[] = $childcat->id;
-                }
-            }
-        }
-    }
-    // Substitui o filtro para buscar cursos em todas as categorias filhas
-    list($in_sql, $in_params) = $DB->get_in_or_equal($allcategoryids, SQL_PARAMS_NAMED);
-    $sql .= " AND c.category $in_sql";
-    $params = array_merge($params, $in_params);
-}
-
-if ($visibility === 'visible') {
-    $sql .= " AND c.visible = 1";
-} else if ($visibility === 'hidden') {
-    $sql .= " AND c.visible = 0";
-}
-
-$sql .= " GROUP BY c.id, c.fullname, c.shortname, c.category, c.visible, c.timecreated, c.timemodified
-          ORDER BY c.fullname ASC";
-
-// Get courses with pagination
-$totalcount = $DB->count_records_sql("SELECT COUNT(DISTINCT c.id) FROM {course} c WHERE c.id != :siteid", ['siteid' => SITEID]);
-$courses = $DB->get_records_sql($sql, $params, $page * $perpage, $perpage);
-
-// Get all categories for filter
-$categories = $DB->get_records('course_categories', null, 'name ASC');
-
-// Get statistics
-$totalcourses = $DB->count_records('course') - 1;
-$visiblecourses = $DB->count_records('course', ['visible' => 1]) - 1;
-$hiddencourses = $totalcourses - $visiblecourses;
-
-// Get total enrollments
-$totalenrollments = $DB->count_records_sql(
-    "SELECT COUNT(DISTINCT ue.userid) 
-     FROM {user_enrolments} ue 
-     JOIN {enrol} e ON e.id = ue.enrolid 
-     JOIN {course} c ON c.id = e.courseid 
-     WHERE c.id != ?", 
-    [SITEID]
-);
 ?>
-
 <!-- Back button - First element -->
 <div class="back-button-container">
     <a href="<?php echo new moodle_url('/local/localcustomadmin/cursos.php'); ?>" class="btn-back">
@@ -137,19 +62,19 @@ $totalenrollments = $DB->count_records_sql(
     </a>
 </div>
 
-<div class="manage-courses-container">
+<div class="elegant-courses-container">
     <!-- Elegant Header -->
-    <div class="manage-header">
-        <div class="manage-header-content">
-            <div class="manage-header-text">
-                <h1>
-                    <i class="fas fa-graduation-cap"></i>
+    <div class="hero-header">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <i class="fas fa-graduation-cap hero-icon"></i>
                     Gerenciar Cursos
                 </h1>
-                <p>Gerencie todos os cursos da plataforma em um só lugar</p>
+                <p class="hero-subtitle">Gerencie todos os cursos da plataforma em um só lugar</p>
             </div>
-            <div class="manage-header-actions">
-                <a href="<?php echo new moodle_url('/local/localcustomadmin/edit_curso.php'); ?>" class="btn-manage btn-manage-primary">
+            <div class="hero-actions">
+                <a href="<?php echo new moodle_url('/local/localcustomadmin/edit_curso.php'); ?>" class="btn-elegant btn-primary">
                     <i class="fas fa-plus"></i>
                     Novo Curso
                 </a>
@@ -159,40 +84,40 @@ $totalenrollments = $DB->count_records_sql(
 
     <!-- Statistics Cards -->
     <div class="stats-grid">
-        <div class="stat-card-manage">
-            <div class="stat-card-icon primary">
+        <div class="elegant-stat-card">
+            <div class="stat-icon bg-primary">
                 <i class="fas fa-graduation-cap"></i>
             </div>
-            <div class="stat-card-content">
-                <h3><?php echo $totalcourses; ?></h3>
-                <p>Total de Cursos</p>
+            <div class="stat-content">
+                <span class="stat-value"><?php echo $totalcourses; ?></span>
+                <span class="stat-label">Total de Cursos</span>
             </div>
         </div>
-        <div class="stat-card-manage">
-            <div class="stat-card-icon success">
+        <div class="elegant-stat-card">
+            <div class="stat-icon bg-success">
                 <i class="fas fa-eye"></i>
             </div>
-            <div class="stat-card-content">
-                <h3><?php echo $visiblecourses; ?></h3>
-                <p>Cursos Visíveis</p>
+            <div class="stat-content">
+                <span class="stat-value"><?php echo $visiblecourses; ?></span>
+                <span class="stat-label">Cursos Visíveis</span>
             </div>
         </div>
-        <div class="stat-card-manage">
-            <div class="stat-card-icon warning">
+        <div class="elegant-stat-card">
+            <div class="stat-icon bg-warning">
                 <i class="fas fa-eye-slash"></i>
             </div>
-            <div class="stat-card-content">
-                <h3><?php echo $hiddencourses; ?></h3>
-                <p>Cursos Ocultos</p>
+            <div class="stat-content">
+                <span class="stat-value"><?php echo $hiddencourses; ?></span>
+                <span class="stat-label">Cursos Ocultos</span>
             </div>
         </div>
-        <div class="stat-card-manage">
-            <div class="stat-card-icon info">
+        <div class="elegant-stat-card">
+            <div class="stat-icon bg-info">
                 <i class="fas fa-users"></i>
             </div>
-            <div class="stat-card-content">
-                <h3><?php echo $totalenrollments; ?></h3>
-                <p>Total de Matrículas</p>
+            <div class="stat-content">
+                <span class="stat-value"><?php echo $totalenrollments; ?></span>
+                <span class="stat-label">Total de Matrículas</span>
             </div>
         </div>
     </div>
@@ -201,7 +126,7 @@ $totalenrollments = $DB->count_records_sql(
     <div class="filters-section">
         <div class="filters-header">
             <h3>
-                <i class="fas fa-filter"></i>
+                <i class="fas fa-filter mr-2"></i>
                 Filtros
             </h3>
         </div>
@@ -279,7 +204,7 @@ $totalenrollments = $DB->count_records_sql(
                                 <strong><?php echo $course->enrollments; ?></strong> alunos
                             </td>
                             <td>
-                                <span class="badge-status <?php echo $course->visible ? 'visible' : 'hidden'; ?>">
+                                <span class="badge-status <?php echo $course->visible ? 'status-success' : 'status-danger'; ?>">
                                     <i class="fas fa-circle"></i>
                                     <?php echo $course->visible ? 'Visível' : 'Oculto'; ?>
                                 </span>
@@ -323,12 +248,17 @@ $totalenrollments = $DB->count_records_sql(
             <div class="empty-state">
                 <h3>Nenhum curso encontrado</h3>
                 <p>Tente ajustar seus filtros ou criar um novo curso</p>
-                <a href="<?php echo new moodle_url('/local/localcustomadmin/edit_curso.php'); ?>" class="btn-manage btn-manage-primary">
+                <a href="<?php echo new moodle_url('/local/localcustomadmin/edit_curso.php'); ?>" class="btn-elegant btn-primary btn-large">
                     <i class="fas fa-plus"></i>
                     Criar Novo Curso
                 </a>
             </div>
         <?php endif; ?>
+    </div>
+    <div class="elegant-footer">
+        <div class="footer-info">
+            <span class="footer-text">Gerenciando cursos com elegância</span>
+        </div>
     </div>
 </div>
 

@@ -114,7 +114,8 @@ $templatecontext = [
         'has_pagination' => $total_users > $perpage
     ],
     'has_users' => !empty($users),
-    'total_users' => $total_users
+    'total_users' => $total_users,
+    'reset_filters_url' => (new moodle_url('/local/localcustomadmin/usuarios.php'))->out(),
 ];
 
 // Populate users data

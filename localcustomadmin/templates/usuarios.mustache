@@ -66,10 +66,16 @@
                     </select>
                 </div>
                 <div class="filter-group" style="align-self: end;">
-                    <button type="submit" class="btn-manage btn-manage-primary" style="width: 100%;">
-                        <i class="fas fa-search"></i>
-                        Filtrar
-                    </button>
+                    <div class="btn-group" role="group" aria-label="Ações de filtro" style="width: 100%;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                            Filtrar
+                        </button>
+                        <a href="{{reset_filters_url}}" class="btn btn-outline-secondary">
+                            <i class="fas fa-undo"></i>
+                            Resetar Filtros
+                        </a>
+                    </div>
                 </div>
             </div>
         </form>
