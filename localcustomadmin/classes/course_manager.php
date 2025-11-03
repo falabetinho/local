@@ -33,7 +33,7 @@ class course_manager {
 
     /**
      * Initialize course enrollments with pricing from category prices table
-     * Creates a fee-based enrollment method if one doesn't exist
+     * Creates a customstatus enrollment method if one doesn't exist
      * and initializes it with the active category price
      *
      * @param int $courseid Course ID
@@ -56,12 +56,12 @@ class course_manager {
             return self::ensure_manual_enrolment($courseid);
         }
 
-        // Check if a fee enrollment already exists
-        $feeenrol = self::get_or_create_fee_enrolment($courseid);
+        // Check if a customstatus enrollment already exists
+        $customenrol = self::get_or_create_customstatus_enrolment($courseid);
 
-        if ($feeenrol) {
-            // Update the fee enrollment with the active price
-            self::update_fee_enrolment($feeenrol->id, $activeprice);
+        if ($customenrol) {
+            // Update the customstatus enrollment with the active price
+            self::update_customstatus_enrolment($customenrol->id, $activeprice);
         }
 
         // Ensure manual enrollment also exists (for free access)
@@ -71,36 +71,31 @@ class course_manager {
     }
 
     /**
-     * Get or create a fee-based enrollment instance for the course
+     * Get or create a customstatus enrollment instance for the course
      *
      * @param int $courseid Course ID
      * @return object|null The enrollment instance or null if cannot be created
      */
-    private static function get_or_create_fee_enrolment($courseid) {
+    private static function get_or_create_customstatus_enrolment($courseid) {
         global $DB;
 
-        // Try to get existing fee enrollment
-        $feeenrol = $DB->get_record('enrol', array('courseid' => $courseid, 'enrol' => 'fee'), '*', IGNORE_MULTIPLE);
+        // Try to get existing customstatus enrollment
+        $customenrol = $DB->get_record('enrol', array('courseid' => $courseid, 'enrol' => 'customstatus'), '*', IGNORE_MULTIPLE);
 
-        if ($feeenrol) {
-            return $feeenrol;
+        if ($customenrol) {
+            return $customenrol;
         }
 
-        // Try to create one using native Moodle enrol_fee plugin
-        $enrolfee = enrol_get_plugin('fee');
-        if (!$enrolfee) {
-            // Fee enrollment plugin not enabled
-            return null;
-        }
-
-        // Create new fee enrollment
+        // Create new customstatus enrollment
         $data = new \stdClass();
-        $data->enrol = 'fee';
+        $data->enrol = 'customstatus';
         $data->status = ENROL_INSTANCE_ENABLED;
         $data->courseid = $courseid;
         $data->cost = 0; // Will be updated with actual price
-        $data->currency = 'USD';
+        $data->currency = 'BRL';
         $data->roleid = $DB->get_field('role', 'id', array('shortname' => 'student'), IGNORE_MULTIPLE) ?? 5;
+        $data->timecreated = time();
+        $data->timemodified = time();
 
         $id = $DB->insert_record('enrol', $data);
 
@@ -142,13 +137,13 @@ class course_manager {
     }
 
     /**
-     * Update fee enrollment with pricing information
+     * Update customstatus enrollment with pricing information
      *
      * @param int $enrolid Enrollment instance ID
      * @param object $price Price object from category_prices table
      * @return bool
      */
-    private static function update_fee_enrolment($enrolid, $price) {
+    private static function update_customstatus_enrolment($enrolid, $price) {
         global $DB;
 
         $enrol = new \stdClass();
@@ -170,7 +165,7 @@ class course_manager {
     }
 
     /**
-     * Handle category change - deletes old enrollments and recreates with new category pricing
+     * Handle category change - deletes old customstatus enrollments and recreates with new category pricing
      *
      * @param int $courseid Course ID
      * @param int $newcategoryid New category ID
@@ -191,12 +186,12 @@ class course_manager {
             return false;
         }
 
-        // Delete existing fee enrollments for this course
-        $DB->delete_records('enrol', array('courseid' => $courseid, 'enrol' => 'fee'));
+        // Delete existing customstatus enrollments for this course
+        $DB->delete_records('enrol', array('courseid' => $courseid, 'enrol' => 'customstatus'));
 
-        // Delete related user enrollments for fee method
-        $feeenrols = $DB->get_records('enrol', array('courseid' => $courseid, 'enrol' => 'fee'));
-        foreach ($feeenrols as $enrol) {
+        // Delete related user enrollments for customstatus method
+        $customenrols = $DB->get_records('enrol', array('courseid' => $courseid, 'enrol' => 'customstatus'));
+        foreach ($customenrols as $enrol) {
             $DB->delete_records('user_enrolments', array('enrolid' => $enrol->id));
         }
 

@@ -1,3 +1,321 @@
+/* Centralized CSS for Local Custom Admin plugin */
+
+/* --- Elegant Form Container and Header --- */
+.elegant-form-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0;
+}
+.elegant-form-header {
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    color: white;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+.elegant-form-header::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='3'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    opacity: 0.3;
+}
+.elegant-form-header-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+.elegant-form-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.elegant-form-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    margin: 0;
+}
+.elegant-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.elegant-back-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: white;
+}
+.elegant-form-content {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+}
+.elegant-form-inner {
+    padding: 0;
+}
+/* --- Tabs --- */
+.elegant-tabs-container {
+    margin-bottom: 2rem;
+}
+.elegant-tabs {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.elegant-tab-item {
+    flex: 1;
+}
+.elegant-tab-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 12px 12px 0 0;
+    background: #f7fafc;
+    color: #2b53a0;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+    border: none;
+    cursor: pointer;
+}
+.elegant-tab-link.active {
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
+    color: white;
+}
+.elegant-tab-link.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+.elegant-tab-content {
+    background: white;
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+}
+.elegant-tab-pane {
+    display: none;
+}
+.elegant-tab-pane.active {
+    display: block;
+}
+/* --- Statistics Cards --- */
+.row.mb-4 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.elegant-stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+    min-height: 140px;
+    height: 100%;
+    flex: 1 1 0;
+}
+.elegant-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+}
+.stat-icon.bg-primary {
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
+}
+.stat-icon.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, #34ce57 100%);
+}
+.stat-icon.bg-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #20c9e3 100%);
+}
+.stat-icon.bg-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #ffd54f 100%);
+}
+.stat-content {
+    flex: 1;
+}
+.stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2c3e50;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+.stat-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+/* --- Table and other styles --- */
+.elegant-table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+.elegant-enrolments-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.elegant-enrolments-table thead {
+    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
+    color: white;
+}
+.elegant-enrolments-table thead th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.elegant-enrolments-table tbody tr {
+    border-bottom: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+.elegant-enrolments-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+.elegant-enrolments-table tbody tr:last-child {
+    border-bottom: none;
+}
+.elegant-enrolments-table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+.elegant-enrolments-table .method-cell {
+    font-weight: 500;
+}
+.elegant-enrolments-table .method-icon {
+    color: #2b53a0;
+}
+.elegant-enrolments-table .status-cell {
+    text-align: center;
+}
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+.status-badge.status-active {
+    background-color: #d4edda;
+    color: #155724;
+}
+.status-badge.status-inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+.elegant-enrolments-table .price-cell {
+    font-weight: 600;
+    color: #2b53a0;
+}
+.elegant-enrolments-table .students-cell {
+    text-align: center;
+}
+.elegant-enrolments-table .validity-cell {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+.elegant-enrolments-table .actions-cell {
+    text-align: center;
+    white-space: nowrap;
+}
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    margin: 0 0.25rem;
+    transition: all 0.2s ease;
+    color: #6c757d;
+    background: transparent;
+    text-decoration: none;
+}
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.btn-action-users {
+    color: #17a2b8;
+}
+.btn-action-users:hover {
+    color: #17a2b8;
+    background-color: rgba(23, 162, 184, 0.1);
+}
+.btn-action-edit {
+    color: #ffc107;
+}
+.btn-action-edit:hover {
+    color: #ffc107;
+    background-color: rgba(255, 193, 7, 0.1);
+}
+/* --- Empty state --- */
+.elegant-empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+.elegant-empty-state .empty-icon {
+    font-size: 3rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+.elegant-empty-state .empty-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+.elegant-empty-state .empty-description {
+    color: #6c757d;
+}
+/* --- Integration Panel (from previous styles) --- */
 .integration-panel {
     max-width: 1200px;
     margin: 0 auto;
@@ -6,30 +324,25 @@
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
 .integration-header {
     text-align: center;
     margin-bottom: 30px;
 }
-
 .integration-title {
     font-size: 2rem;
     font-weight: bold;
     color: #333;
 }
-
 .integration-description {
     font-size: 1.2rem;
     color: #666;
 }
-
 .integration-cards-container {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
 }
-
 .integration-card {
     flex: 1 1 calc(33.333% - 20px);
     max-width: calc(33.333% - 20px);
@@ -40,49 +353,41 @@
     text-align: center;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 .integration-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
-
 .integration-card-icon {
     font-size: 3rem;
     margin-bottom: 15px;
     color: #0073e6;
 }
-
 .icon-categories::before {
-    content: "\f07c"; /* Example FontAwesome icon */
+    content: "\f07c";
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
 }
-
 .icon-courses::before {
-    content: "\f02d"; /* Example FontAwesome icon */
+    content: "\f02d";
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
 }
-
 .icon-prices::before {
-    content: "\f155"; /* Example FontAwesome icon */
+    content: "\f155";
     font-family: "Font Awesome 5 Free";
     font-weight: 900;
 }
-
 .integration-card-title {
     font-size: 1.5rem;
     font-weight: bold;
     color: #333;
     margin-bottom: 10px;
 }
-
 .integration-card-description {
     font-size: 1rem;
     color: #666;
     margin-bottom: 20px;
 }
-
 .integration-card-button {
     display: inline-block;
     padding: 10px 20px;
@@ -93,7 +398,6 @@
     text-decoration: none;
     transition: background-color 0.2s ease;
 }
-
 .integration-card-button:hover {
     background-color: #005bb5;
 }

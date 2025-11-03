@@ -53,6 +53,7 @@ $templatecontext = [
     'back_to_index_url' => (new moodle_url('/local/localcustomadmin/wordpress_integration.php'))->out()
 ];
 
+$PAGE->requires->css(new moodle_url('/local/localcustomadmin/styles.css'));
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('local_localcustomadmin/sync_categories', $templatecontext);
 echo $OUTPUT->footer();

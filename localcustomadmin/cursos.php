@@ -43,6 +43,7 @@ $PAGE->set_title(get_string('courses_management', 'local_localcustomadmin'));
 $PAGE->navbar->add($displayname, '/local/localcustomadmin/index.php');
 $PAGE->navbar->add(get_string('courses', 'local_localcustomadmin'));
 
+$PAGE->requires->css(new moodle_url('/local/localcustomadmin/styles.css'));
 echo $OUTPUT->header();
 
 // Get courses data

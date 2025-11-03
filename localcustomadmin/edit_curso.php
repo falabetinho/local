@@ -187,8 +187,9 @@ if ($form->is_cancelled()) {
             }
         }
 
+        // Permanece na página atual após salvar
         redirect(
-            new moodle_url('/local/localcustomadmin/cursos.php'),
+            new moodle_url('/local/localcustomadmin/edit_curso.php', ['id' => $id, 'tab' => $tab]),
             get_string('courseupdated', 'local_localcustomadmin'),
             \core\output\notification::NOTIFY_SUCCESS
         );
@@ -200,8 +201,9 @@ if ($form->is_cancelled()) {
         $course = create_course($formdata);
         $courseid = $course->id;
 
+        // Permanece na página de edição do novo curso
         redirect(
-            new moodle_url('/local/localcustomadmin/cursos.php'),
+            new moodle_url('/local/localcustomadmin/edit_curso.php', ['id' => $courseid, 'tab' => $tab]),
             get_string('coursecreated', 'local_localcustomadmin'),
             \core\output\notification::NOTIFY_SUCCESS
         );
@@ -218,32 +220,32 @@ if ($editing && $course) {
  */
 function render_pricing_tab($courseid) {
     global $DB;
-    
+
     $html = '';
-    
     $html .= '<div class="alert alert-info">';
     $html .= '<i class="fas fa-info-circle mr-2"></i>';
     $html .= get_string('course_enrolments_info', 'local_localcustomadmin');
     $html .= '</div>';
-    
-    // Statistics Cards
-    $enrolments = enrol_get_instances($courseid, true);
+
+    // Recupera todos os enrolments, inclusive customstatus, diretamente da tabela
+    $enrolments = $DB->get_records('enrol', ['courseid' => $courseid]);
+
     $totalenrolments = count($enrolments);
     $activeenrolments = 0;
     $totalrevenue = 0;
-    
+
     // Count total students
     $totalstudents = 0;
     $enrolids = [];
     foreach ($enrolments as $enrol) {
         $enrolids[] = $enrol->id;
     }
-    
+
     if (!empty($enrolids)) {
         list($insql, $params) = $DB->get_in_or_equal($enrolids);
         $totalstudents = $DB->count_records_select('user_enrolments', "enrolid $insql", $params);
     }
-    
+
     foreach ($enrolments as $enrol) {
         if ($enrol->status == ENROL_INSTANCE_ENABLED) {
             $activeenrolments++;
@@ -308,7 +310,6 @@ function render_pricing_tab($courseid) {
     $html .= '</a>';
     $html .= '</div>';
     
-    // Get all enrolment methods for this course
     if (empty($enrolments)) {
         $html .= '<div class="elegant-empty-state">';
         $html .= '<div class="empty-icon"><i class="fas fa-user-slash"></i></div>';
@@ -317,7 +318,7 @@ function render_pricing_tab($courseid) {
         $html .= '</div>';
         return $html;
     }
-    
+
     $html .= '<div class="elegant-table-wrapper">';
     $html .= '<table class="elegant-enrolments-table">';
     $html .= '<thead>';
@@ -331,105 +332,56 @@ function render_pricing_tab($courseid) {
     $html .= '</tr>';
     $html .= '</thead>';
     $html .= '<tbody>';
-    
+
     foreach ($enrolments as $enrolment) {
-        try {
-            $enrolmethod = enrol_get_plugin($enrolment->enrol);
-            if (!$enrolmethod) {
-                continue;
+        // Exibe todos os métodos, inclusive customstatus
+        $methodname = $enrolment->enrol === 'customstatus'
+            ? 'Custom Status'
+            : (function_exists('enrol_get_plugin') && enrol_get_plugin($enrolment->enrol)
+                ? enrol_get_plugin($enrolment->enrol)->get_instance_name($enrolment)
+                : ucfirst($enrolment->enrol));
+
+        $price = '-';
+        if (isset($enrolment->cost) && $enrolment->cost > 0) {
+            $price = 'R$ ' . number_format($enrolment->cost, 2, ',', '.');
+            if (isset($enrolment->customint4) && $enrolment->customint4 > 1) {
+                $price .= ' <small class="text-muted">(' . $enrolment->customint4 . 'x)</small>';
             }
-            
-            $methodname = $enrolmethod->get_instance_name($enrolment);
-            
-            // Price with installments info
-            $price = '-';
-            if (isset($enrolment->cost) && $enrolment->cost > 0) {
-                $price = 'R$ ' . number_format($enrolment->cost, 2, ',', '.');
-                if (isset($enrolment->customint4) && $enrolment->customint4 > 1) {
-                    $price .= ' <small class="text-muted">(' . $enrolment->customint4 . 'x)</small>';
-                }
-            }
-            
-            $isactive = $enrolment->status == ENROL_INSTANCE_ENABLED;
-            $statusclass = $isactive ? 'status-active' : 'status-inactive';
-            $statustext = $isactive ? get_string('active') : get_string('inactive');
-            $statusicon = $isactive ? 'fa-check-circle' : 'fa-times-circle';
-            
-            // Count enrolled students for this method
-            $enrolledcount = $DB->count_records('user_enrolments', ['enrolid' => $enrolment->id]);
-            
-            // Validity period
-            $validity = '';
-            if ($enrolment->enrolstartdate > 0) {
-                $validity = userdate($enrolment->enrolstartdate, '%d/%m/%Y');
-                if ($enrolment->enrolenddate > 0) {
-                    $validity .= ' - ' . userdate($enrolment->enrolenddate, '%d/%m/%Y');
-                } else {
-                    $validity .= ' - ∞';
-                }
-            } else {
-                $validity = '<span class="text-muted">Sem limite</span>';
-            }
-            
-            $html .= '<tr class="enrolment-row">';
-            
-            // Method name
-            $html .= '<td class="method-cell">';
-            $html .= '<div class="method-name">';
-            $html .= '<i class="fas fa-key method-icon mr-2"></i>';
-            $html .= '<strong>' . htmlspecialchars($methodname) . '</strong>';
-            $html .= '</div>';
-            $html .= '</td>';
-            
-            // Status
-            $html .= '<td class="status-cell">';
-            $html .= '<span class="status-badge ' . $statusclass . '">';
-            $html .= '<i class="fas ' . $statusicon . ' mr-2"></i>';
-            $html .= $statustext;
-            $html .= '</span>';
-            $html .= '</td>';
-            
-            // Price
-            $html .= '<td class="price-cell">';
-            if ($price !== '-') {
-                $html .= '<span class="price-value">' . $price . '</span>';
-            } else {
-                $html .= '<span class="text-muted">-</span>';
-            }
-            $html .= '</td>';
-            
-            // Enrolled students count
-            $html .= '<td class="students-cell">';
-            $html .= '<span class="badge badge-info">' . $enrolledcount . ' aluno(s)</span>';
-            $html .= '</td>';
-            
-            // Validity period
-            $html .= '<td class="validity-cell">';
-            $html .= '<small>' . $validity . '</small>';
-            $html .= '</td>';
-            
-            // Actions
-            $html .= '<td class="actions-cell">';
-            
-            // Link to participants filtered by this enrolment
-            $html .= '<a href="' . new moodle_url('/user/index.php', ['id' => $courseid]) . '" class="btn-action btn-action-users" title="Ver Alunos">';
-            $html .= '<i class="fas fa-users"></i>';
-            $html .= '</a>';
-            
-            // Edit button (could link to Moodle's enrol edit page)
-            $editurl = new moodle_url('/enrol/editinstance.php', ['courseid' => $courseid, 'id' => $enrolment->id, 'type' => $enrolment->enrol]);
-            $html .= '<a href="' . $editurl . '" class="btn-action btn-action-edit" title="Editar">';
-            $html .= '<i class="fas fa-edit"></i>';
-            $html .= '</a>';
-            
-            $html .= '</td>';
-            
-            $html .= '</tr>';
-        } catch (Exception $e) {
-            continue;
         }
+
+        $isactive = $enrolment->status == ENROL_INSTANCE_ENABLED;
+        $statusclass = $isactive ? 'status-active' : 'status-inactive';
+        $statustext = $isactive ? get_string('active') : get_string('inactive');
+        $statusicon = $isactive ? 'fa-check-circle' : 'fa-times-circle';
+
+        $enrolledcount = $DB->count_records('user_enrolments', ['enrolid' => $enrolment->id]);
+
+        $validity = '';
+        if (!empty($enrolment->enrolstartdate) && $enrolment->enrolstartdate > 0) {
+            $validity = userdate($enrolment->enrolstartdate, '%d/%m/%Y');
+            if (!empty($enrolment->enrolenddate) && $enrolment->enrolenddate > 0) {
+                $validity .= ' - ' . userdate($enrolment->enrolenddate, '%d/%m/%Y');
+            } else {
+                $validity .= ' - ∞';
+            }
+        } else {
+            $validity = '<span class="text-muted">Sem limite</span>';
+        }
+
+        $html .= '<tr class="enrolment-row">';
+        $html .= '<td class="method-cell"><div class="method-name"><i class="fas fa-key method-icon mr-2"></i><strong>' . htmlspecialchars($methodname) . '</strong></div></td>';
+        $html .= '<td class="status-cell"><span class="status-badge ' . $statusclass . '"><i class="fas ' . $statusicon . ' mr-2"></i>' . $statustext . '</span></td>';
+        $html .= '<td class="price-cell">' . ($price !== '-' ? '<span class="price-value">' . $price . '</span>' : '<span class="text-muted">-</span>') . '</td>';
+        $html .= '<td class="students-cell"><span class="badge badge-info">' . $enrolledcount . ' aluno(s)</span></td>';
+        $html .= '<td class="validity-cell"><small>' . $validity . '</small></td>';
+        $html .= '<td class="actions-cell">';
+        $html .= '<a href="' . new moodle_url('/user/index.php', ['id' => $courseid]) . '" class="btn-action btn-action-users" title="Ver Alunos"><i class="fas fa-users"></i></a>';
+        $editurl = new moodle_url('/enrol/editinstance.php', ['courseid' => $courseid, 'id' => $enrolment->id, 'type' => $enrolment->enrol]);
+        $html .= '<a href="' . $editurl . '" class="btn-action btn-action-edit" title="Editar"><i class="fas fa-edit"></i></a>';
+        $html .= '</td>';
+        $html .= '</tr>';
     }
-    
+
     $html .= '</tbody>';
     $html .= '</table>';
     $html .= '</div>';
@@ -437,335 +389,11 @@ function render_pricing_tab($courseid) {
     return $html;
 }
 
+// Inclua o CSS centralizado antes do header
+$PAGE->requires->css(new moodle_url('/local/localcustomadmin/styles.css'));
+
 // Output page
 echo $OUTPUT->header();
-
-// Add elegant form styles
-echo '<style>
-.elegant-form-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0;
-}
-
-.elegant-form-header {
-    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
-    padding: 3rem 2rem;
-    border-radius: 20px;
-    color: white;
-    margin-bottom: 2rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.elegant-form-header::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.1\'%3E%3Ccircle cx=\'30\' cy=\'30\' r=\'3\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    opacity: 0.3;
-}
-
-.elegant-form-header-content {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
-}
-
-.elegant-form-title {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.elegant-form-subtitle {
-    font-size: 1.1rem;
-    opacity: 0.95;
-    margin: 0;
-}
-
-.elegant-back-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    color: white;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.elegant-back-btn:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    color: white;
-}
-
-.elegant-form-content {
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    padding: 2rem;
-}
-
-.elegant-form-inner {
-    padding: 0;
-}
-
-/* Tab panes visibility */
-.elegant-tab-pane {
-    display: none;
-}
-
-.elegant-tab-pane.active {
-    display: block;
-}
-
-/* Disabled tab */
-.elegant-tab-link.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-/* Statistics Cards */
-.elegant-stat-card {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    transition: all 0.3s ease;
-    border: 1px solid #e0e0e0;
-}
-
-.elegant-stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
-
-.stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: white;
-    flex-shrink: 0;
-}
-
-.stat-icon.bg-primary {
-    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
-}
-
-.stat-icon.bg-success {
-    background: linear-gradient(135deg, #28a745 0%, #34ce57 100%);
-}
-
-.stat-icon.bg-info {
-    background: linear-gradient(135deg, #17a2b8 0%, #20c9e3 100%);
-}
-
-.stat-icon.bg-warning {
-    background: linear-gradient(135deg, #ffc107 0%, #ffd54f 100%);
-}
-
-.stat-content {
-    flex: 1;
-}
-
-.stat-value {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #2c3e50;
-    line-height: 1;
-    margin-bottom: 0.25rem;
-}
-
-.stat-label {
-    font-size: 0.875rem;
-    color: #6c757d;
-    font-weight: 500;
-}
-
-/* Enrolment table enhancements */
-.elegant-table-wrapper {
-    overflow-x: auto;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.elegant-enrolments-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.elegant-enrolments-table thead {
-    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
-    color: white;
-}
-
-.elegant-enrolments-table thead th {
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.elegant-enrolments-table tbody tr {
-    border-bottom: 1px solid #e9ecef;
-    transition: all 0.2s ease;
-}
-
-.elegant-enrolments-table tbody tr:hover {
-    background-color: #f8f9fa;
-}
-
-.elegant-enrolments-table tbody tr:last-child {
-    border-bottom: none;
-}
-
-.elegant-enrolments-table td {
-    padding: 1rem;
-    vertical-align: middle;
-}
-
-.elegant-enrolments-table .method-cell {
-    font-weight: 500;
-}
-
-.elegant-enrolments-table .method-icon {
-    color: #2b53a0;
-}
-
-.elegant-enrolments-table .status-cell {
-    text-align: center;
-}
-
-.status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.375rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.875rem;
-    font-weight: 600;
-}
-
-.status-badge.status-active {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.status-badge.status-inactive {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-.elegant-enrolments-table .price-cell {
-    font-weight: 600;
-    color: #2b53a0;
-}
-
-.elegant-enrolments-table .students-cell {
-    text-align: center;
-}
-
-.elegant-enrolments-table .validity-cell {
-    color: #6c757d;
-    font-size: 0.875rem;
-}
-
-.elegant-enrolments-table .actions-cell {
-    text-align: center;
-    white-space: nowrap;
-}
-
-.btn-action {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    margin: 0 0.25rem;
-    transition: all 0.2s ease;
-    color: #6c757d;
-    background: transparent;
-    text-decoration: none;
-}
-
-.btn-action:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.btn-action-users {
-    color: #17a2b8;
-}
-
-.btn-action-users:hover {
-    color: #17a2b8;
-    background-color: rgba(23, 162, 184, 0.1);
-}
-
-.btn-action-edit {
-    color: #ffc107;
-}
-
-.btn-action-edit:hover {
-    color: #ffc107;
-    background-color: rgba(255, 193, 7, 0.1);
-}
-
-/* Empty state */
-.elegant-empty-state {
-    text-align: center;
-    padding: 3rem;
-    background: #f8f9fa;
-    border-radius: 12px;
-}
-
-.elegant-empty-state .empty-icon {
-    font-size: 3rem;
-    color: #dee2e6;
-    margin-bottom: 1rem;
-}
-
-.elegant-empty-state .empty-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #495057;
-    margin-bottom: 0.5rem;
-}
-
-.elegant-empty-state .empty-description {
-    color: #6c757d;
-}
-</style>';
 
 // Back button - First element
 echo '<div class="back-button-container">';

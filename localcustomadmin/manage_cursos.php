@@ -48,6 +48,9 @@ $PAGE->navbar->add(get_string('localcustomadmin', 'local_localcustomadmin'), '/l
 $PAGE->navbar->add(get_string('courses', 'local_localcustomadmin'), '/local/localcustomadmin/cursos.php');
 $PAGE->navbar->add(get_string('manage_courses', 'local_localcustomadmin'));
 
+// Inclua o CSS centralizado antes do header
+$PAGE->requires->css(new moodle_url('/local/localcustomadmin/styles.css'));
+
 echo $OUTPUT->header();
 
 // Build SQL query
@@ -68,8 +71,30 @@ if (!empty($search)) {
 }
 
 if ($categoryid > 0) {
-    $sql .= " AND c.category = :categoryid";
-    $params['categoryid'] = $categoryid;
+    // Buscar todas as subcategorias (filhas diretas e indiretas) da categoria pai
+    require_once($CFG->dirroot . '/course/classes/category.php');
+    $allcategoryids = [];
+    $queue = [$categoryid];
+    $visited = [];
+    while ($queue) {
+        $current = array_pop($queue);
+        if (in_array($current, $visited)) continue;
+        $visited[] = $current;
+        $allcategoryids[] = $current;
+        $cat = \core_course_category::get($current, IGNORE_MISSING);
+        if ($cat) {
+            $children = $cat->get_children();
+            foreach ($children as $childcat) {
+                if (!in_array($childcat->id, $visited) && !in_array($childcat->id, $queue)) {
+                    $queue[] = $childcat->id;
+                }
+            }
+        }
+    }
+    // Substitui o filtro para buscar cursos em todas as categorias filhas
+    list($in_sql, $in_params) = $DB->get_in_or_equal($allcategoryids, SQL_PARAMS_NAMED);
+    $sql .= " AND c.category $in_sql";
+    $params = array_merge($params, $in_params);
 }
 
 if ($visibility === 'visible') {
@@ -102,383 +127,7 @@ $totalenrollments = $DB->count_records_sql(
      WHERE c.id != ?", 
     [SITEID]
 );
-
 ?>
-
-<style>
-.manage-courses-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0;
-}
-
-.manage-header {
-    background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%);
-    padding: 3rem 2rem;
-    border-radius: 20px;
-    color: white;
-    margin-bottom: 2rem;
-    position: relative;
-    overflow: hidden;
-}
-
-.manage-header::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='3'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    opacity: 0.3;
-}
-
-.manage-header-content {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
-}
-
-.manage-header-text h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.manage-header-text p {
-    font-size: 1.1rem;
-    opacity: 0.95;
-    margin: 0;
-}
-
-.manage-header-actions {
-    display: flex;
-    gap: 1rem;
-}
-
-.btn-manage {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    border-radius: 12px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: none;
-    cursor: pointer;
-}
-
-.btn-manage-primary {
-    background: white;
-    color: #2b53a0;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.btn-manage-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
-    color: #2b53a0;
-}
-
-.btn-manage-secondary {
-    background: rgba(255, 255, 255, 0.15);
-    color: white;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.btn-manage-secondary:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateY(-2px);
-    color: white;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-.stat-card-manage {
-    background: white;
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.stat-card-manage:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
-
-.stat-card-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-}
-
-.stat-card-icon.primary { background: linear-gradient(135deg, #2b53a0 0%, #4a90e2 100%); color: white; }
-.stat-card-icon.success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; }
-.stat-card-icon.warning { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
-.stat-card-icon.info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
-
-.stat-card-content h3 {
-    margin: 0;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #2d3748;
-}
-
-.stat-card-content p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #718096;
-}
-
-.filters-section {
-    background: white;
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.filters-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.filters-header h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #2d3748;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.filters-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-}
-
-.filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.filter-group label {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #4a5568;
-}
-
-.filter-input {
-    padding: 0.75rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 10px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-}
-
-.filter-input:focus {
-    outline: none;
-    border-color: #2b53a0;
-}
-
-.courses-table-container {
-    background: white;
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    margin-bottom: 2rem;
-}
-
-.courses-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.courses-table thead th {
-    background: #f7fafc;
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: #2d3748;
-    border-bottom: 2px solid #e2e8f0;
-}
-
-.courses-table tbody tr {
-    transition: background 0.2s ease;
-}
-
-.courses-table tbody tr:hover {
-    background: #f7fafc;
-}
-
-.courses-table tbody td {
-    padding: 1rem;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.course-name {
-    font-weight: 600;
-    color: #2d3748;
-}
-
-.course-shortname {
-    color: #718096;
-    font-size: 0.9rem;
-}
-
-.course-category {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    background: #edf2f7;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    color: #4a5568;
-}
-
-.badge-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.badge-status.visible {
-    background: #c6f6d5;
-    color: #22543d;
-}
-
-.badge-status.hidden {
-    background: #fed7d7;
-    color: #742a2a;
-}
-
-.course-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.btn-icon {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
-}
-
-.btn-icon.edit {
-    background: #edf2f7;
-    color: #2b53a0;
-}
-
-.btn-icon.edit:hover {
-    background: #2b53a0;
-    color: white;
-}
-
-.btn-icon.view {
-    background: #edf2f7;
-    color: #4299e1;
-}
-
-.btn-icon.view:hover {
-    background: #4299e1;
-    color: white;
-}
-
-.btn-icon.delete {
-    background: #fed7d7;
-    color: #e53e3e;
-}
-
-.btn-icon.delete:hover {
-    background: #e53e3e;
-    color: white;
-}
-
-.pagination-container {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 2rem;
-}
-
-.pagination-btn {
-    padding: 0.5rem 1rem;
-    border: 2px solid #e2e8f0;
-    background: white;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.pagination-btn:hover {
-    border-color: #2b53a0;
-    color: #2b53a0;
-}
-
-.pagination-btn.active {
-    background: #2b53a0;
-    border-color: #2b53a0;
-    color: white;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-}
-
-.empty-state i {
-    font-size: 4rem;
-    color: #cbd5e0;
-    margin-bottom: 1rem;
-}
-
-.empty-state h3 {
-    font-size: 1.5rem;
-    color: #2d3748;
-    margin-bottom: 0.5rem;
-}
-
-.empty-state p {
-    color: #718096;
-    margin-bottom: 2rem;
-}
-</style>
 
 <!-- Back button - First element -->
 <div class="back-button-container">
@@ -582,10 +231,16 @@ $totalenrollments = $DB->count_records_sql(
                     </select>
                 </div>
                 <div class="filter-group" style="align-self: end;">
-                    <button type="submit" class="btn-manage btn-manage-primary" style="width: 100%;">
-                        <i class="fas fa-search"></i>
-                        Filtrar
-                    </button>
+                    <div class="btn-group" role="group" aria-label="Ações de filtro" style="width: 100%;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                            Filtrar
+                        </button>
+                        <a href="<?php echo new moodle_url('/local/localcustomadmin/manage_cursos.php'); ?>" class="btn btn-outline-secondary">
+                            <i class="fas fa-undo"></i>
+                            Resetar Filtros
+                        </a>
+                    </div>
                 </div>
             </div>
         </form>
