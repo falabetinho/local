@@ -441,3 +441,8 @@ $string['category_prices_synced'] = '{$a} course prices updated from category.';
 $string['no_category_prices'] = 'No prices found for this category.';
 $string['invalidaction'] = 'Invalid or not allowed action.';
 
+$string['course_showcase'] = 'Course Showcase';
+$string['course_showcase_desc'] = 'Discover our available courses';
+$string['free'] = 'Free';
+$string['total_students'] = 'Total Students';
+

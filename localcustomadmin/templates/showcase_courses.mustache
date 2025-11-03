@@ -1,0 +1,132 @@
+{{!
+    Course showcase template
+}}
+
+<div class="showcase-container">
+    
+    <!-- Hero Section -->
+    <div class="showcase-hero">
+        <div class="showcase-hero-content">
+            <h1 class="showcase-hero-title">
+                <i class="fas fa-graduation-cap"></i>
+                {{page_title}}
+            </h1>
+            <p class="showcase-hero-subtitle">{{page_subtitle}}</p>
+            
+            <!-- Statistics -->
+            <div class="showcase-stats">
+                {{#stats}}
+                <div class="showcase-stat-card {{class}}">
+                    <div class="showcase-stat-icon">
+                        <i class="fas {{icon}}"></i>
+                    </div>
+                    <div class="showcase-stat-content">
+                        <span class="showcase-stat-value">{{value}}</span>
+                        <span class="showcase-stat-label">{{label}}</span>
+                    </div>
+                </div>
+                {{/stats}}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filters Section -->
+    <div class="showcase-filters">
+        <form method="GET" action="{{current_url}}" class="showcase-filters-form">
+            <div class="showcase-filters-grid">
+                <div class="showcase-filter-group">
+                    <label>
+                        <i class="fas fa-search mr-2"></i>
+                        Buscar Curso
+                    </label>
+                    <input type="text" name="search" class="showcase-filter-input" 
+                           placeholder="Digite o nome do curso..." value="{{filters.search}}">
+                </div>
+                
+                <div class="showcase-filter-group">
+                    <label>
+                        <i class="fas fa-sitemap mr-2"></i>
+                        Categoria
+                    </label>
+                    <select name="category" class="showcase-filter-input">
+                        <option value="0">Todas as categorias</option>
+                        {{#categories}}
+                        <option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                        {{/categories}}
+                    </select>
+                </div>
+                
+                <div class="showcase-filter-group">
+                    <label>
+                        <i class="fas fa-sort mr-2"></i>
+                        Ordenar por
+                    </label>
+                    <select name="sort" class="showcase-filter-input">
+                        <option value="name" {{#filters.sort_name}}selected{{/filters.sort_name}}>Nome</option>
+                        <option value="popular" {{#filters.sort_popular}}selected{{/filters.sort_popular}}>Mais Populares</option>
+                        <option value="price" {{#filters.sort_price}}selected{{/filters.sort_price}}>Menor Preço</option>
+                    </select>
+                </div>
+                
+                <div class="showcase-filter-group" style="align-self: end;">
+                    <button type="submit" class="btn btn-primary showcase-filter-btn">
+                        <i class="fas fa-search"></i>
+                        Filtrar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Courses Grid -->
+    {{#has_courses}}
+    <div class="showcase-courses-grid">
+        {{#courses}}
+        <div class="showcase-course-card">
+            <div class="showcase-course-image">
+                <img src="{{courseimage}}" alt="{{fullname}}">
+                <div class="showcase-course-overlay">
+                    <span class="showcase-course-category">
+                        <i class="fas fa-folder mr-2"></i>{{categoryname}}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="showcase-course-content">
+                <h3 class="showcase-course-title">{{fullname}}</h3>
+                <p class="showcase-course-summary">{{summary_short}}</p>
+                
+                <div class="showcase-course-meta">
+                    <div class="showcase-course-stat">
+                        <i class="fas fa-users"></i>
+                        <span>{{enrollments}} alunos</span>
+                    </div>
+                </div>
+                
+                <div class="showcase-course-footer">
+                    <div class="showcase-course-price {{price_class}}">
+                        <i class="fas fa-tag mr-2"></i>
+                        <span>{{price_display}}</span>
+                    </div>
+                    <a href="{{courseurl}}" class="btn-showcase btn-showcase-primary">
+                        Ver Curso
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {{/courses}}
+    </div>
+    {{/has_courses}}
+    
+    {{^has_courses}}
+    <div class="showcase-empty-state">
+        <div class="showcase-empty-icon">
+            <i class="fas fa-search"></i>
+        </div>
+        <h3>Nenhum curso encontrado</h3>
+        <p>Tente ajustar seus filtros ou realizar uma nova busca</p>
+    </div>
+    {{/has_courses}}
+    
+</div>
