@@ -1493,7 +1493,7 @@
 .elegant-footer {
     margin: 48px 32px 32px;
     padding: 24px 0;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid #e7e9ec;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -2840,5 +2840,44 @@ body.modal-open {
 }
 
 /* ========================================
-   END Fluent Core for Cursos
+   ELEGANT STATS GRID (Reusable)
+   - Mobile/Tablet: 2 columns
+   - Desktop (>=992px): 4 columns
    ======================================== */
+.elegant-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+/* Map existing Bootstrap row to grid inside Elegant containers */
+.elegant-courses-container .row.mb-4,
+.elegant-users-container .row.mb-4 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Remove default gutters from col-* when used as grid items */
+.elegant-courses-container .row.mb-4 > [class^="col-"],
+.elegant-courses-container .row.mb-4 > [class*=" col-"],
+.elegant-users-container .row.mb-4 > [class^="col-"],
+.elegant-users-container .row.mb-4 > [class*=" col-"] {
+    padding: 0;
+}
+
+/* Desktop: 4 items per row */
+@media (min-width: 992px) {
+    .elegant-stats-grid,
+    .elegant-courses-container .row.mb-4,
+    .elegant-users-container .row.mb-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+/* Ensure stat cards stretch nicely inside grid */
+.elegant-stat-card {
+    height: 100%;
+}

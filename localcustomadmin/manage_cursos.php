@@ -27,6 +27,7 @@ require_once('../../config.php');
 require_login();
 
 $context = context_system::instance();
+
 require_capability('local/localcustomadmin:manage', $context);
 
 // Get parameters
@@ -51,216 +52,119 @@ $PAGE->navbar->add(get_string('manage_courses', 'local_localcustomadmin'));
 // Inclua o CSS centralizado antes do header
 $PAGE->requires->css(new moodle_url('/local/localcustomadmin/styles.css'));
 
+// Estatísticas
+$totalcourses = $DB->count_records_select('course', 'id != :siteid', ['siteid' => SITEID]);
+$visiblecourses = $DB->count_records_select('course', 'id != :siteid AND visible = 1', ['siteid' => SITEID]);
+$hiddencourses = $totalcourses - $visiblecourses;
+$totalenrollments = (int)$DB->get_field_sql(
+    "SELECT COUNT(ue.id)
+       FROM {user_enrolments} ue
+       JOIN {enrol} e ON e.id = ue.enrolid
+       JOIN {course} c ON c.id = e.courseid
+      WHERE c.id != :siteid",
+    ['siteid' => SITEID]
+);
+
+// Filtros
+$where = ['c.id != :siteid']; $params = ['siteid' => SITEID];
+if (!empty($search)) {
+    $where[] = '(c.fullname LIKE :s OR c.shortname LIKE :s)';
+    $params['s'] = '%' . $DB->sql_like_escape($search) . '%';
+}
+if (!empty($categoryid)) {
+    $where[] = 'c.category = :categoryid';
+    $params['categoryid'] = $categoryid;
+}
+if ($visibility === 'visible') {
+    $where[] = 'c.visible = 1';
+} else if ($visibility === 'hidden') {
+    $where[] = 'c.visible = 0';
+}
+$whereclause = implode(' AND ', $where);
+
+// Contagem total p/ paginação
+$countsql = "SELECT COUNT(1) FROM {course} c WHERE {$whereclause}";
+$totalcount = (int)$DB->count_records_sql($countsql, $params);
+
+// Cursos (com matrículas)
+$sql = "SELECT c.id, c.fullname, c.shortname, c.category, c.visible,
+               (SELECT COUNT(ue.id)
+                  FROM {enrol} e
+                  JOIN {user_enrolments} ue ON ue.enrolid = e.id
+                 WHERE e.courseid = c.id) AS enrollments
+          FROM {course} c
+         WHERE {$whereclause}
+      ORDER BY c.fullname ASC";
+$courserecords = $DB->get_records_sql($sql, $params, $page * $perpage, $perpage);
+
+// Categorias para filtro e map
+$categories = $DB->get_records('course_categories', null, 'name ASC');
+$categoriesmap = [];
+foreach ($categories as $cat) {
+    $categoriesmap[$cat->id] = format_string($cat->name);
+}
+
+// Monta contexto de cursos
+$coursesctx = [];
+foreach ($courserecords as $c) {
+    $courseurl = new moodle_url('/course/view.php', ['id' => $c->id]);
+    $editurl = new moodle_url('/local/localcustomadmin/edit_curso.php', ['id' => $c->id]);
+    $coursesctx[] = [
+        'id' => $c->id,
+        'fullname' => format_string($c->fullname),
+        'shortname' => format_string($c->shortname),
+        'categoryname' => $categoriesmap[$c->category] ?? 'N/A',
+        'enrollments' => (int)$c->enrollments,
+        'visible' => (int)$c->visible,
+        'status_class' => $c->visible ? 'success' : 'secondary',
+        'status_text' => $c->visible ? get_string('visible') : get_string('hidden'),
+        'courseurl' => $courseurl->out(),
+        'editurl' => $editurl->out(),
+    ];
+}
+
+// Contexto do template
+$templatecontext = [
+    'page_title' => get_string('manage_courses', 'local_localcustomadmin'),
+    'page_description' => get_string('manage_courses_desc', 'local_localcustomadmin'),
+    'statistics' => [
+        ['icon' => 'fa-graduation-cap', 'value' => $totalcourses,    'label' => get_string('total_courses', 'local_localcustomadmin'), 'bgclass' => 'bg-primary'],
+        ['icon' => 'fa-eye',            'value' => $visiblecourses,   'label' => get_string('visible_courses', 'local_localcustomadmin'), 'bgclass' => 'bg-success'],
+        ['icon' => 'fa-eye-slash',      'value' => $hiddencourses,    'label' => get_string('hidden_courses', 'local_localcustomadmin'),  'bgclass' => 'bg-warning'],
+        ['icon' => 'fa-users',          'value' => $totalenrollments, 'label' => get_string('enrolments', 'enrol'),                        'bgclass' => 'bg-info'],
+    ],
+    'filters' => [
+        'search' => $search,
+        'categoryid' => $categoryid,
+        'visibility' => $visibility,
+    ],
+    'categories' => array_values(array_map(function($cat) use ($categoryid) {
+        return ['id' => $cat->id, 'name' => format_string($cat->name), 'selected' => ((int)$categoryid === (int)$cat->id)];
+    }, $categories)),
+    'courses' => $coursesctx,
+    'has_courses' => !empty($coursesctx),
+    'add_course_url' => (new moodle_url('/local/localcustomadmin/edit_curso.php'))->out(),
+    'back_to_index_url' => (new moodle_url('/local/localcustomadmin/cursos.php'))->out(),
+];
+
+// Paginação
+if ($totalcount > $perpage) {
+    $base = new moodle_url('/local/localcustomadmin/manage_cursos.php', [
+        'search' => $search,
+        'categoryid' => $categoryid,
+        'visibility' => $visibility,
+        'perpage' => $perpage
+    ]);
+    $templatecontext['pagination'] = [
+        'has_pagination' => true,
+        'current_page' => $page + 1,
+        'total_pages' => ceil($totalcount / $perpage),
+        'prev_url' => $page > 0 ? $base->out(false, ['page' => $page - 1]) : null,
+        'next_url' => (($page + 1) * $perpage < $totalcount) ? $base->out(false, ['page' => $page + 1]) : null,
+    ];
+}
+
+// Render
 echo $OUTPUT->header();
-
-?>
-<!-- Back button - First element -->
-<div class="back-button-container">
-    <a href="<?php echo new moodle_url('/local/localcustomadmin/cursos.php'); ?>" class="btn-back">
-        <i class="fas fa-arrow-left"></i>
-        Voltar
-    </a>
-</div>
-
-<div class="elegant-courses-container">
-    <!-- Elegant Header -->
-    <div class="hero-header">
-        <div class="hero-content">
-            <div class="hero-text">
-                <h1 class="hero-title">
-                    <i class="fas fa-graduation-cap hero-icon"></i>
-                    Gerenciar Cursos
-                </h1>
-                <p class="hero-subtitle">Gerencie todos os cursos da plataforma em um só lugar</p>
-            </div>
-            <div class="hero-actions">
-                <a href="<?php echo new moodle_url('/local/localcustomadmin/edit_curso.php'); ?>" class="btn-elegant btn-primary">
-                    <i class="fas fa-plus"></i>
-                    Novo Curso
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Statistics Cards -->
-    <div class="stats-grid">
-        <div class="elegant-stat-card">
-            <div class="stat-icon bg-primary">
-                <i class="fas fa-graduation-cap"></i>
-            </div>
-            <div class="stat-content">
-                <span class="stat-value"><?php echo $totalcourses; ?></span>
-                <span class="stat-label">Total de Cursos</span>
-            </div>
-        </div>
-        <div class="elegant-stat-card">
-            <div class="stat-icon bg-success">
-                <i class="fas fa-eye"></i>
-            </div>
-            <div class="stat-content">
-                <span class="stat-value"><?php echo $visiblecourses; ?></span>
-                <span class="stat-label">Cursos Visíveis</span>
-            </div>
-        </div>
-        <div class="elegant-stat-card">
-            <div class="stat-icon bg-warning">
-                <i class="fas fa-eye-slash"></i>
-            </div>
-            <div class="stat-content">
-                <span class="stat-value"><?php echo $hiddencourses; ?></span>
-                <span class="stat-label">Cursos Ocultos</span>
-            </div>
-        </div>
-        <div class="elegant-stat-card">
-            <div class="stat-icon bg-info">
-                <i class="fas fa-users"></i>
-            </div>
-            <div class="stat-content">
-                <span class="stat-value"><?php echo $totalenrollments; ?></span>
-                <span class="stat-label">Total de Matrículas</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Filters Section -->
-    <div class="filters-section">
-        <div class="filters-header">
-            <h3>
-                <i class="fas fa-filter mr-2"></i>
-                Filtros
-            </h3>
-        </div>
-        <form method="get" action="">
-            <div class="filters-grid">
-                <div class="filter-group">
-                    <label>Buscar</label>
-                    <input type="text" name="search" class="filter-input" placeholder="Nome ou código do curso..." value="<?php echo s($search); ?>">
-                </div>
-                <div class="filter-group">
-                    <label>Categoria</label>
-                    <select name="categoryid" class="filter-input">
-                        <option value="0">Todas as categorias</option>
-                        <?php foreach ($categories as $cat): ?>
-                            <option value="<?php echo $cat->id; ?>" <?php echo ($categoryid == $cat->id) ? 'selected' : ''; ?>>
-                                <?php echo format_string($cat->name); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Visibilidade</label>
-                    <select name="visibility" class="filter-input">
-                        <option value="all" <?php echo ($visibility === 'all') ? 'selected' : ''; ?>>Todos</option>
-                        <option value="visible" <?php echo ($visibility === 'visible') ? 'selected' : ''; ?>>Visíveis</option>
-                        <option value="hidden" <?php echo ($visibility === 'hidden') ? 'selected' : ''; ?>>Ocultos</option>
-                    </select>
-                </div>
-                <div class="filter-group" style="align-self: end;">
-                    <div class="btn-group" role="group" aria-label="Ações de filtro" style="width: 100%;">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-search"></i>
-                            Filtrar
-                        </button>
-                        <a href="<?php echo new moodle_url('/local/localcustomadmin/manage_cursos.php'); ?>" class="btn btn-outline-secondary">
-                            <i class="fas fa-undo"></i>
-                            Resetar Filtros
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <!-- Courses Table -->
-    <div class="courses-table-container">
-        <?php if (!empty($courses)): ?>
-            <table class="courses-table">
-                <thead>
-                    <tr>
-                        <th>Curso</th>
-                        <th>Categoria</th>
-                        <th>Matrículas</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($courses as $course): 
-                        $category = $DB->get_record('course_categories', ['id' => $course->category]);
-                        $courseurl = new moodle_url('/course/view.php', ['id' => $course->id]);
-                        $editurl = new moodle_url('/local/localcustomadmin/edit_curso.php', ['id' => $course->id]);
-                    ?>
-                        <tr>
-                            <td>
-                                <div class="course-name"><?php echo format_string($course->fullname); ?></div>
-                                <div class="course-shortname"><?php echo format_string($course->shortname); ?></div>
-                            </td>
-                            <td>
-                                <span class="course-category">
-                                    <?php echo $category ? format_string($category->name) : 'N/A'; ?>
-                                </span>
-                            </td>
-                            <td>
-                                <strong><?php echo $course->enrollments; ?></strong> alunos
-                            </td>
-                            <td>
-                                <span class="badge-status <?php echo $course->visible ? 'status-success' : 'status-danger'; ?>">
-                                    <i class="fas fa-circle"></i>
-                                    <?php echo $course->visible ? 'Visível' : 'Oculto'; ?>
-                                </span>
-                            </td>
-                            <td>
-                                <div class="course-actions">
-                                    <a href="<?php echo $editurl; ?>" class="btn-icon edit" title="Editar">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="<?php echo $courseurl; ?>" class="btn-icon view" title="Visualizar">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-
-            <!-- Pagination -->
-            <?php if ($totalcount > $perpage): ?>
-                <div class="pagination-container">
-                    <?php
-                    $totalpages = ceil($totalcount / $perpage);
-                    for ($i = 0; $i < $totalpages; $i++):
-                        $pageurl = new moodle_url('/local/localcustomadmin/manage_cursos.php', [
-                            'page' => $i,
-                            'perpage' => $perpage,
-                            'search' => $search,
-                            'categoryid' => $categoryid,
-                            'visibility' => $visibility
-                        ]);
-                    ?>
-                        <a href="<?php echo $pageurl; ?>" class="pagination-btn <?php echo ($page === $i) ? 'active' : ''; ?>">
-                            <?php echo $i + 1; ?>
-                        </a>
-                    <?php endfor; ?>
-                </div>
-            <?php endif; ?>
-        <?php else: ?>
-            <div class="empty-state">
-                <h3>Nenhum curso encontrado</h3>
-                <p>Tente ajustar seus filtros ou criar um novo curso</p>
-                <a href="<?php echo new moodle_url('/local/localcustomadmin/edit_curso.php'); ?>" class="btn-elegant btn-primary btn-large">
-                    <i class="fas fa-plus"></i>
-                    Criar Novo Curso
-                </a>
-            </div>
-        <?php endif; ?>
-    </div>
-    <div class="elegant-footer">
-        <div class="footer-info">
-            <span class="footer-text">Gerenciando cursos com elegância</span>
-        </div>
-    </div>
-</div>
-
-<?php
+echo $OUTPUT->render_from_template('local_localcustomadmin/manage_cursos', $templatecontext);
 echo $OUTPUT->footer();

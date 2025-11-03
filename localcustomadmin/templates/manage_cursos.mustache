@@ -1,0 +1,166 @@
+<div class="elegant-courses-container">
+    <!-- Back -->
+    <div class="back-button-container">
+        <a href="{{back_to_index_url}}" class="btn-back mt-2 mb-2">
+            <i class="fas fa-arrow-left"></i> {{#str}}back, local_localcustomadmin{{/str}}
+        </a>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero-header">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <i class="fas fa-graduation-cap hero-icon"></i>
+                    {{page_title}}
+                </h1>
+                <p class="hero-subtitle">{{page_description}}</p>
+            </div>
+            <div class="hero-actions">
+                <a href="{{add_course_url}}" class="btn-elegant btn-primary">
+                    <i class="fas fa-plus"></i> {{#str}}new, core{{/str}} {{#str}}course, core{{/str}}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="elegant-stats-grid">
+        {{#statistics}}
+        <div class="elegant-stat-card">
+            <div class="stat-icon {{bgclass}}">
+                <i class="fas {{icon}}"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-value">{{value}}</span>
+                <span class="stat-label">{{label}}</span>
+            </div>
+        </div>
+        {{/statistics}}
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-section">
+        <div class="filters-header">
+            <h3><i class="fas fa-filter mr-2"></i> {{#str}}filters, core{{/str}}</h3>
+        </div>
+        <form method="get" action="">
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label>{{#str}}search, core{{/str}}</label>
+                    <input type="text" name="search" class="filter-input" placeholder="Nome ou código..."
+                           value="{{filters.search}}">
+                </div>
+                <div class="filter-group">
+                    <label>{{#str}}category, local_localcustomadmin{{/str}}</label>
+                    <select name="categoryid" class="filter-input">
+                        <option value="0">{{#str}}all, core{{/str}}</option>
+                        {{#categories}}
+                        <option value="{{id}}" {{#selected}}selected{{/selected}}>{{name}}</option>
+                        {{/categories}}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Visibilidade</label>
+                    <select name="visibility" class="filter-input">
+                        <option value="all" {{#filters.visibility_all}}selected{{/filters.visibility_all}}>Todos</option>
+                        <option value="visible" {{#filters.visibility_visible}}selected{{/filters.visibility_visible}}>Visíveis</option>
+                        <option value="hidden" {{#filters.visibility_hidden}}selected{{/filters.visibility_hidden}}>Ocultos</option>
+                    </select>
+                </div>
+                <div class="filter-group" style="align-self: end;">
+                    <div class="btn-group" role="group" style="width: 100%;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> {{#str}}filter, core{{/str}}
+                        </button>
+                        <a href="/local/localcustomadmin/manage_cursos.php" class="btn btn-outline-secondary">
+                            <i class="fas fa-undo"></i> {{#str}}reset, core{{/str}}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Courses list (cards) -->
+    {{#has_courses}}
+    <div class="elegant-courses-section">
+        <div class="courses-header">
+            <h3 class="courses-title"><i class="fas fa-book-open mr-2"></i> {{#str}}courses, local_localcustomadmin{{/str}}</h3>
+        </div>
+
+        {{#courses}}
+        <div class="elegant-course-card mt-2 mb-2">
+            <div class="course-card-main">
+                <div class="course-info">
+                    <div class="course-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="course-details">
+                        <h4 class="course-name">
+                            <a href="{{courseurl}}">{{fullname}}</a>
+                        </h4>
+                        <p class="course-shortname">
+                            <i class="fas fa-tag mr-2"></i><strong>Código:</strong> {{shortname}}
+                        </p>
+                        <p class="course-shortname">
+                            <i class="fas fa-folder-open mr-2"></i>{{categoryname}}
+                        </p>
+                    </div>
+                </div>
+                <div class="course-meta">
+                    <div class="course-stat">
+                        <i class="fas fa-users"></i>
+                        <span class="stat-value">{{enrollments}}</span>
+                        <span class="stat-label">Alunos</span>
+                    </div>
+                    <div class="course-status">
+                        <span class="status-badge status-{{status_class}}">
+                            <i class="fas fa-circle mr-2"></i>{{status_text}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="course-actions">
+                <a href="{{editurl}}" class="btn-action btn-action-edit" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="{{courseurl}}" class="btn-action btn-action-view" title="Visualizar">
+                    <i class="fas fa-eye"></i>
+                </a>
+            </div>
+        </div>
+        {{/courses}}
+
+        {{#pagination.has_pagination}}
+        <div class="pagination-container">
+            {{#pagination.prev_url}}
+            <a href="{{.}}" class="pagination-btn"><i class="fas fa-chevron-left"></i> Anterior</a>
+            {{/pagination.prev_url}}
+            <span class="pagination-info">Página {{pagination.current_page}} de {{pagination.total_pages}}</span>
+            {{#pagination.next_url}}
+            <a href="{{.}}" class="pagination-btn">Próxima <i class="fas fa-chevron-right"></i></a>
+            {{/pagination.next_url}}
+        </div>
+        {{/pagination.has_pagination}}
+    </div>
+    {{/has_courses}}
+
+    {{^has_courses}}
+    <div class="elegant-empty-state">
+        <div class="empty-content">
+            <h3 class="empty-title">{{#str}}nocourses, core{{/str}}</h3>
+            <p class="empty-description">Tente ajustar os filtros ou crie um novo curso</p>
+            <a href="{{add_course_url}}" class="btn-elegant btn-primary btn-large">
+                <i class="fas fa-plus"></i> {{#str}}addnewcourse, core{{/str}}
+            </a>
+        </div>
+    </div>
+    {{/has_courses}}
+
+    <div class="elegant-footer">
+        <div class="footer-info">
+            <span class="footer-text">Gerenciando cursos com elegância</span>
+        </div>
+    </div>
+</div>
